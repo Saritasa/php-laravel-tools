@@ -84,7 +84,8 @@ class TemplateWriter
     /**
      * Fills placeholders in template. Second step of template building process.
      *
-     * @param array $placeholders
+     * @param array $placeholders Array with key-value pairs where key is placeholder name
+     * and value is placeholder's content
      *
      * @return TemplateWriter
      * @throws \Exception
@@ -116,7 +117,7 @@ class TemplateWriter
      *
      * @param string $resultFileName Result file name to write.
      *
-     * @return bool
+     * @return boolean
      */
     public function write(string $resultFileName): bool
     {

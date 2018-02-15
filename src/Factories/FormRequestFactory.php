@@ -231,11 +231,12 @@ class FormRequestFactory
     /**
      * Build and write new form request file.
      *
-     * @param FormRequestFactoryConfig $formRequestFactoryConfig
+     * @param FormRequestFactoryConfig $formRequestFactoryConfig Form request factory configuration
      *
      * @return void
      * @throws Exception
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws ConfigurationException
      */
     public function build(FormRequestFactoryConfig $formRequestFactoryConfig): void
     {

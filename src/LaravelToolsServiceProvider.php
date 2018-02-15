@@ -10,10 +10,11 @@ use Saritasa\LaravelTools\Database\DatabaseConnectionManager;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
 
-
 class LaravelToolsServiceProvider extends ServiceProvider
 {
     /**
+     * Indicates if loading of the provider is deferred.
+     *
      * @var bool
      */
     protected $defer = true;
@@ -49,7 +50,7 @@ class LaravelToolsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Returns array vith provided services.
+     * Returns array with provided services.
      *
      * @return array
      */

@@ -70,7 +70,11 @@ class RuleBuilder
      */
     private function checkRequired(Column $column): void
     {
-        $this->appendRule($column->getNotnull() ? $this->ruleDictionary->required() : $this->ruleDictionary->nullable());
+        $this->appendRule(
+            $column->getNotnull()
+                ? $this->ruleDictionary->required()
+                : $this->ruleDictionary->nullable()
+        );
     }
 
     /**
