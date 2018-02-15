@@ -1,8 +1,9 @@
 <?php
 
-namespace Saritasa\LaravelTools\templates;
+namespace Saritasa\LaravelTools\Services;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Filesystem\Filesystem;
 
 /**
  * Scaffold templates writer. Takes template, fills placeholders and writes result file.
@@ -10,18 +11,28 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 class TemplateWriter
 {
     /**
+     * Filesystem service.
+     *
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
+     * Scaffold templates writer. Takes template, fills placeholders and writes result file.
+     *
+     * @param Filesystem $filesystem Filesystem service
+     */
+    public function __construct(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
+    }
+
+    /**
      * Template file content.
      *
      * @var string
      */
     private $templateContent = null;
-
-    /**
-     * Determines is placeholders in taken template was filled.
-     *
-     * @var bool
-     */
-    private $placeholdersFilled = false;
 
     /**
      * Retrieves template content. First step of template building process.
@@ -33,14 +44,11 @@ class TemplateWriter
      */
     public function take(string $templateName): self
     {
-        $templateFullName = __DIR__ . DIRECTORY_SEPARATOR . $templateName;
-
-        if (!is_readable($templateFullName)) {
-            throw new FileNotFoundException("Template file [{$templateFullName}] not found");
+        if (!is_readable($templateName)) {
+            throw new FileNotFoundException("Template file [{$templateName}] not found");
         }
 
-        $this->templateContent = file_get_contents($templateFullName);
-        $this->placeholdersFilled = false;
+        $this->templateContent = $this->filesystem->get($templateName);
 
         return $this;
     }
@@ -64,8 +72,12 @@ class TemplateWriter
      */
     private function validatePlaceholders(): void
     {
-        if (!$this->placeholdersFilled) {
-            throw new \UnexpectedValueException('Template placeholders not filled. Did You fill() placeholders?');
+        $placeholders = false;
+        if (preg_match_all('/\{\{([^{}]*)\}\}/', $this->templateContent, $placeholders)) {
+            $notFilledPlaceholders = implode(', ', $placeholders[1]);
+            throw new \UnexpectedValueException(
+                "Template placeholder(s) [{$notFilledPlaceholders}] not filled. Did You fill() placeholders?"
+            );
         }
     }
 
@@ -92,9 +104,8 @@ class TemplateWriter
             );
 
             if ($replacementsCount == 0) {
-                throw new \Exception("Placeholder {{[{$placeholder}}} not found in template");
+                throw new \Exception("Placeholder {{{$placeholder}}} not found in template");
             }
-            $this->placeholdersFilled = true;
         }
 
         return $this;
@@ -113,6 +124,6 @@ class TemplateWriter
 
         $this->validatePlaceholders();
 
-        return (bool)file_put_contents($resultFileName, $this->templateContent);
+        return (bool)$this->filesystem->put($resultFileName, $this->templateContent);
     }
 }

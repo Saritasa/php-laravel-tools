@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools\Database;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
 
 /**
  * Database schema reader. Allows to retrieve table details.
@@ -29,10 +30,16 @@ class SchemaReader
      * Database schema reader. Allows to retrieve table details.
      *
      * @param Connection $connection Connection to retrieve information from
+     *
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
+
+        // TODO try to retrieve constants and pass to Rule::in()
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', Type::STRING);
+
         $this->schemaManager = $connection->getSchemaManager();
     }
 

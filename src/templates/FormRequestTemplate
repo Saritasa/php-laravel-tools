@@ -1,0 +1,25 @@
+<?php
+
+namespace {{namespace}};
+
+{{uses}}
+
+/**
+* {{formRequestClassName}} form request.
+*
+{{readableProperties}}
+*/
+class {{formRequestClassName}} extends \{{formRequestParent}}
+{
+    /**
+    * Rules that should be applied to validate request.
+    *
+    * @return array
+    */
+    public function rules(): array
+    {
+        return [
+            {{rules}}
+        ];
+    }
+}
