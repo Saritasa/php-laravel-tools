@@ -23,83 +23,45 @@ There are two generated sets:
 + Properties docblock with type, name and description (from column comment)
 + Form request rules
 
-#### Example
+## Form request builder
+Allows to build form request for model create or update request
+### Form request attributes names
+Attributes names format is configurable via `models.suggest_attribute_names_constants` config
+and can be formatted as follows:
++ Simple string: **'role_id'**
++ Model attribute constant name: **User::ROLE_ID**
 
-```php
-/**
-* UserRequest form request.
-*
-* @property-read string $first_name 
-* @property-read string|null $last_name 
-* @property-read string $email 
-* @property-read string|null $password 
-* @property-read integer|null $company_id 
-* @property-read string|null $phone 
-* @property-read string|null $avatar_url 
-* @property-read float|null $approval_price Price for pre-approval
-* @property-read boolean|null $role_id 
-* @property-read integer|null $contractor_id 
-* @property-read string|null $remember_token 
-* @property-read boolean|null $is_temporary_password
-*/
-class UserRequest extends \Illuminate\Foundation\Http\FormRequest
-{
-    /**
-    * Rules that should be applied to validate request.
-    *
-    * @return array
-    */
-    public function rules(): array
-    {
-        return [
-            'first_name' => 'required|string',
-            'last_name' => 'nullable|string',
-            'email' => 'required|string',
-            'password' => 'nullable|string',
-            'company_id' => 'nullable|integer',
-            'phone' => 'nullable|string',
-            'avatar_url' => 'nullable|string',
-            'approval_price' => 'nullable|float',
-            'role_id' => 'nullable|boolean',
-            'contractor_id' => 'nullable|integer',
-            'remember_token' => 'nullable|string',
-            'is_temporary_password' => 'nullable|boolean'
-        ];
-    }
-}
-```
+### Validation rules dictionaries
+There are two validation rule dictionary that can be configured in `rules.dictionary` config:
++ **StringValidationRulesDictionary** that builds string rules: 'required|integer'
++ **FluentValidationRulesDictionary** that builds object rules: Rule::required()->int()
 
-And one more example:
-
+### Example
+'String' example, where attributes names and rules is a just string:
 ```php
 <?php
 
 namespace App\Http\Requests;
 
 /**
-* JobRequest form request.
+* BidRequest form request.
 *
-* @property-read integer $manager_id Property manager ID who created job
-* @property-read string $title Job title
-* @property-read text|null $description Note for job
-* @property-read boolean|null $is_urgent Filag set if job is urgent
-* @property-read integer $status_id Job status ID.
-* @property-read integer $category_id Job service ID
-* @property-read integer $property_id Property ID (address)
-* @property-read string|null $unit Unit #
-* @property-read datetime $proposed_start_date Proposed job start  date
-* @property-read datetime $estimate_review_date Proposed job enddate
-* @property-read datetime|null $start_date real start_date
-* @property-read datetime|null $completed_at real end_date
-* @property-read decimal|null $price real price
-* @property-read integer|null $accepted_bid_id 
-* @property-read integer|null $contractor_id 
-* @property-read float|null $rating Rating. Sets when job Approved, 
-* @property-read integer $created_by 
-* @property-read integer|null $updated_by 
-* @property-read boolean $reopens_count
+* @property-read integer $user_id User who created bid
+* @property-read integer $contractor_id Contractor ID
+* @property-read integer $job_id Job ID
+* @property-read integer|null $status_id
+* @property-read integer|null $accepted_by Manager who accepted bid
+* @property-read integer|null $pre_approved_by
+* @property-read string $proposed_start_date Estimated Start date
+* @property-read integer $days_count Estimated  End date
+* @property-read string $proposed_end_date Estimated Start date
+* @property-read float $proposed_cost Estimated cost
+* @property-read string|null $note
+* @property-read string|null $proposal_attachment Attached proposal
+* @property-read string|null $proposal_uploaded_at Proposal uploaded date
+* @property-read string $url_token
 */
-class JobRequest extends \Illuminate\Foundation\Http\FormRequest
+class BidRequest extends \Illuminate\Foundation\Http\FormRequest
 {
     /**
     * Rules that should be applied to validate request.
@@ -109,40 +71,91 @@ class JobRequest extends \Illuminate\Foundation\Http\FormRequest
     public function rules(): array
     {
         return [
-            'manager_id' => 'required|integer',
-            'title' => 'required|string',
-            'description' => 'nullable|text',
-            'is_urgent' => 'nullable|boolean',
-            'status_id' => 'required|integer',
-            'category_id' => 'required|integer',
-            'property_id' => 'required|integer',
-            'unit' => 'nullable|string',
-            'proposed_start_date' => 'required|datetime',
-            'estimate_review_date' => 'required|datetime',
-            'start_date' => 'nullable|datetime',
-            'completed_at' => 'nullable|datetime',
-            'price' => 'nullable|decimal',
-            'accepted_bid_id' => 'nullable|integer',
-            'contractor_id' => 'nullable|integer',
-            'rating' => 'nullable|float',
-            'created_by' => 'required|integer',
-            'updated_by' => 'nullable|integer',
-            'reopens_count' => 'required|boolean'
+            'user_id' => 'required|exists:users,id|integer',
+            'contractor_id' => 'required|exists:contractors,id|integer',
+            'job_id' => 'required|exists:jobs,id|integer',
+            'status_id' => 'nullable|exists:bid_statuses,id|integer',
+            'accepted_by' => 'nullable|exists:users,id|integer',
+            'pre_approved_by' => 'nullable|exists:users,id|integer',
+            'proposed_start_date' => 'required|date',
+            'days_count' => 'required|integer',
+            'proposed_end_date' => 'required|date',
+            'proposed_cost' => 'required|numeric',
+            'note' => 'nullable|string|max:65535',
+            'proposal_attachment' => 'nullable|string|max:255',
+            'proposal_uploaded_at' => 'nullable|date',
+            'url_token' => 'required|string|max:191'
         ];
     }
 }
 
 ```
 
-#### What's next?
-For now it's just basic information and not working form request but it will be improved soon :)
+OOP example, where attribute names is a model constants and rules is fluent validation object:
 
+```php
+<?php
+
+namespace App\Http\Requests;
+
+use App\Models\Bid;
+
+/**
+* BidRequest form request.
+*
+* @property-read integer $user_id User who created bid
+* @property-read integer $contractor_id Contractor ID
+* @property-read integer $job_id Job ID
+* @property-read integer|null $status_id
+* @property-read integer|null $accepted_by Manager who accepted bid
+* @property-read integer|null $pre_approved_by
+* @property-read string $proposed_start_date Estimated Start date
+* @property-read integer $days_count Estimated  End date
+* @property-read string $proposed_end_date Estimated Start date
+* @property-read float $proposed_cost Estimated cost
+* @property-read string|null $note
+* @property-read string|null $proposal_attachment Attached proposal
+* @property-read string|null $proposal_uploaded_at Proposal uploaded date
+* @property-read string $url_token
+*/
+class BidRequest extends \Illuminate\Foundation\Http\FormRequest
+{
+    /**
+    * Rules that should be applied to validate request.
+    *
+    * @return array
+    */
+    public function rules(): array
+    {
+        return [
+            Bid::USER_ID => \Saritasa\Laravel\Validation\Rule::required()->exists('users','id')->int(),
+            Bid::CONTRACTOR_ID => \Saritasa\Laravel\Validation\Rule::required()->exists('contractors','id')->int(),
+            Bid::JOB_ID => \Saritasa\Laravel\Validation\Rule::required()->exists('jobs','id')->int(),
+            Bid::STATUS_ID => \Saritasa\Laravel\Validation\Rule::nullable()->exists('bid_statuses','id')->int(),
+            Bid::ACCEPTED_BY => \Saritasa\Laravel\Validation\Rule::nullable()->exists('users','id')->int(),
+            Bid::PRE_APPROVED_BY => \Saritasa\Laravel\Validation\Rule::nullable()->exists('users','id')->int(),
+            Bid::PROPOSED_START_DATE => \Saritasa\Laravel\Validation\Rule::required()->date(),
+            Bid::DAYS_COUNT => \Saritasa\Laravel\Validation\Rule::required()->int(),
+            Bid::PROPOSED_END_DATE => \Saritasa\Laravel\Validation\Rule::required()->date(),
+            Bid::PROPOSED_COST => \Saritasa\Laravel\Validation\Rule::required()->numeric(),
+            Bid::NOTE => \Saritasa\Laravel\Validation\Rule::nullable()->string()->max(65535),
+            Bid::PROPOSAL_ATTACHMENT => \Saritasa\Laravel\Validation\Rule::nullable()->string()->max(255),
+            Bid::PROPOSAL_UPLOADED_AT => \Saritasa\Laravel\Validation\Rule::nullable()->date(),
+            Bid::URL_TOKEN => \Saritasa\Laravel\Validation\Rule::required()->string()->max(191)
+        ];
+    }
+}
+
+```
+
+## Known issues
++ Enum DB type is casted as String via custom doctrine mapping
++ Tinyint type is casted by Doctrine as Boolean
+
+## What's next?
 What need to improve:
-1. Type mapping for properties in doc-block (now there doctrine-type name are placed instead of PHP-types)
-2. Extend available rules dictionary (and extract interface to have ability add laravel-fluent-validation rules dictionary)
-3. There is parameter in config that requests to use model constants instead of strings attributes names in request
-4. Declare only necessary packages in composer.json
-5. Unit tests of course :)
+1. Declare only necessary packages in composer.json instead of entire laravel
+2. Unit tests of course :)
 
 ## Contributing
 See [CONTRIBUTING](CONTRIBUTING.md) and [Code of Conduct](CONDUCT.md),
