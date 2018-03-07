@@ -13,6 +13,7 @@ use Saritasa\LaravelTools\Mappings\DbalToLaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
 use Saritasa\LaravelTools\Mappings\ILaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
+use Saritasa\LaravelTools\Rules\IValidationRulesDictionary;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 
 class LaravelToolsServiceProvider extends ServiceProvider
@@ -52,6 +53,8 @@ class LaravelToolsServiceProvider extends ServiceProvider
                     return $app->make(DatabaseConnectionManager::class)->getConnection();
                 });
 
+            $rulesDictionary = config('laravel_tools.rules.dictionary');
+
             $this->app->when(FormRequestFactory::class)
                 ->needs(IPhpTypeMapper::class)
                 ->give(DbalToPhpTypeMapper::class);
@@ -59,6 +62,10 @@ class LaravelToolsServiceProvider extends ServiceProvider
             $this->app->when(RuleBuilder::class)
                 ->needs(ILaravelValidationTypeMapper::class)
                 ->give(DbalToLaravelValidationTypeMapper::class);
+
+            $this->app->when(RuleBuilder::class)
+                ->needs(IValidationRulesDictionary::class)
+                ->give($rulesDictionary);
         }
     }
 

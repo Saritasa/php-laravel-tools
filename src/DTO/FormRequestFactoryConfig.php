@@ -16,6 +16,8 @@ class FormRequestFactoryConfig extends DtoModel
     const RESULT_FILENAME = 'resultFilename';
     const TEMPLATE_FILENAME = 'templateFilename';
     const EXCLUDED_ATTRIBUTES = 'excludedAttributes';
+    const SUGGEST_ATTRIBUTE_NAMES_CONSTANTS = 'suggestAttributeNamesConstants';
+    const VALIDATION_RULES_DICTIONARY = 'validationRuleDictionary';
 
     /**
      * Namespace of new form request.
@@ -65,4 +67,11 @@ class FormRequestFactoryConfig extends DtoModel
      * @var array
      */
     public $excludedAttributes = [];
+
+    /**
+     * Suggest that model contain constants with attribute names (like const FIRST_NAME = 'first_name').
+     *
+     * @var bool
+     */
+    public $suggestAttributeNamesConstants = true;
 }

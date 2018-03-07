@@ -8,23 +8,8 @@ return [
         // Models namespace
         'namespace' => 'App\Models',
 
-        // TODO implement and use
         // Suggest that model contain constants with attribute names (like const FIRST_NAME = 'first_name')
-        'use_attribute_names_constants' => true,
-
-        /**
-         * Allows to bind Saritasa's Enum class as available column value types.
-         *
-         * ...
-         * 'enums_mappings' => [
-         *   'some_column' => App\Enums\SomeEnum::class
-         * ]
-         * ...
-         * will generate rule Rule::enum(SomeEnum::class) for column with name 'some_column' in any table.
-         **/
-        'enums_mappings' => [
-            // TODO implement and use
-        ],
+        'suggest_attribute_names_constants' => true,
     ],
 
     'form_requests' => [
@@ -45,4 +30,10 @@ return [
             'deleted_at',
         ],
     ],
+
+    'rules' => [
+        // Validation rules dictionary
+        'dictionary' => \Saritasa\LaravelTools\Rules\StringValidationRulesDictionary::class,
+        // 'dictionary' => \Saritasa\LaravelTools\Rules\FluentValidationRulesDictionary::class
+    ]
 ];
