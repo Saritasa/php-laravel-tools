@@ -143,10 +143,23 @@ class FormRequestFactory
      * Configure factory to build new form request.
      *
      * @param FormRequestFactoryConfig $config Form Request configuration
+     *
+     * @throws RuntimeException When factory's configuration doesn't contain model class name
+     * @throws UnexpectedValueException When passed model class is not a Model class instance
      */
     private function configure(FormRequestFactoryConfig $config): void
     {
         $this->config = $config;
+
+        if (!$this->config->modelClassName) {
+            throw new RuntimeException('Form request model not configured');
+        }
+
+        if (!is_a($this->config->modelClassName, Model::class, true)) {
+            throw new UnexpectedValueException(
+                "Class [{$this->config->modelClassName}] is not a valid Model class name"
+            );
+        }
     }
 
     /**
@@ -179,21 +192,9 @@ class FormRequestFactory
      *
      * @return string
      * @see configure method for details
-     * @throws RuntimeException When factory's configuration doesn't contain model class name
-     * @throws UnexpectedValueException When passed model class is not a Model class instance
      */
     private function getTableName(): string
     {
-        if (!$this->config->modelClassName) {
-            throw new RuntimeException('Form request model not configured');
-        }
-
-        if (!is_a($this->config->modelClassName, Model::class, true)) {
-            throw new UnexpectedValueException(
-                "Class [{$this->config->modelClassName}] is not a valid Model class name"
-            );
-        }
-
         /**
          * Model for which need to build form request.
          *
