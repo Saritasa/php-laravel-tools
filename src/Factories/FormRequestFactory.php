@@ -3,6 +3,8 @@
 namespace Saritasa\LaravelTools\Factories;
 
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\ForeignKeyConstraint;
+use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -27,10 +29,8 @@ class FormRequestFactory
     const PLACEHOLDER_FORM_REQUEST_PARENT = 'formRequestParent';
     const PLACEHOLDER_RULES = 'rules';
 
-    /**
-     * Form request template name.
-     */
-    const TEMPLATE_NAME = 'FormRequestTemplate';
+    private const INDENT_SIZE = 4;
+    private const RULES_INDENTS = 3;
 
     /**
      * Form request builder configuration.
@@ -61,11 +61,32 @@ class FormRequestFactory
     private $ruleBuilder;
 
     /**
+     * Target model's table details.
+     *
+     * @var Table
+     */
+    private $table;
+
+    /**
      * Target model's table columns.
      *
      * @var Column[]
      */
     private $columns;
+
+    /**
+     * Target model's foreign keys.
+     *
+     * @var ForeignKeyConstraint[]
+     */
+    private $foreignKeys;
+
+    /**
+     * Array with form request used classes.
+     *
+     * @var string[]
+     */
+    private $formRequestUsedClasses = [];
 
     /**
      * Storage type to PHP scalar type mapper.
@@ -96,6 +117,29 @@ class FormRequestFactory
     }
 
     /**
+     * Build and write new form request file.
+     *
+     * @param FormRequestFactoryConfig $formRequestFactoryConfig Form request configuration
+     *
+     * @return void
+     * @throws Exception
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function build(FormRequestFactoryConfig $formRequestFactoryConfig): void
+    {
+        $this->configure($formRequestFactoryConfig);
+
+        $this->readTableInformation($this->getTableName());
+
+        $filledPlaceholders = $this->getPlaceHoldersValues();
+
+        $this->templateWriter
+            ->take($this->config->templateFilename)
+            ->fill($filledPlaceholders)
+            ->write($this->config->resultFilename);
+    }
+
+    /**
      * Configure factory to build new form request.
      *
      * @param FormRequestFactoryConfig $config Form Request configuration
@@ -103,6 +147,31 @@ class FormRequestFactory
     private function configure(FormRequestFactoryConfig $config): void
     {
         $this->config = $config;
+    }
+
+    /**
+     * Read model's table information.
+     *
+     * @param string $tableName Table name to retrieve information for
+     *
+     * @return void
+     */
+    private function readTableInformation(string $tableName): void
+    {
+        $this->table = $this->schemaReader->getTableDetails($tableName);
+
+        $this->foreignKeys = [];
+        foreach ($this->table->getForeignKeys() as $foreignKey) {
+            $localColumn = $foreignKey->getLocalColumns()[0];
+            $this->foreignKeys[$localColumn] = $foreignKey;
+        };
+
+        $this->columns = [];
+        foreach ($this->table->getColumns() as $column) {
+            if (!in_array($column->getName(), $this->config->excludedAttributes)) {
+                $this->columns[$column->getName()] = $column;
+            }
+        }
     }
 
     /**
@@ -136,55 +205,42 @@ class FormRequestFactory
     }
 
     /**
-     * Read model's columns information.
-     *
-     * @param string $getTableName Table name to retrieve columns information for
-     *
-     * @return void
-     */
-    private function readColumnsInformation(string $getTableName): void
-    {
-        $columns = $this->schemaReader->getColumnsDetails($getTableName);
-
-        $this->columns = array_filter($columns, function (Column $column) {
-            return !in_array($column->getName(), $this->config->excludedAttributes);
-        });
-    }
-
-    /**
-     * Builds rules for target model.
+     * Returns template's placeholders values.
      *
      * @return array
      * @throws Exception
      */
-    private function buildRules(): array
+    private function getPlaceHoldersValues(): array
     {
-        $rules = [];
-
-        foreach ($this->columns as $column) {
-            $columnName = $column->getName();
-            $columnRule = $this->ruleBuilder->generateRules($column);
-            $rules[] = "'{$columnName}' => {$columnRule}";
-        }
-
-        return $rules;
+        return [
+            static::PLACEHOLDER_NAMESPACE => $this->config->namespace,
+            static::PLACEHOLDER_FORM_REQUEST_CLASS_NAME => $this->config->className,
+            static::PLACEHOLDER_FORM_REQUEST_PARENT => $this->config->parentClassName,
+            static::PLACEHOLDER_READABLE_PROPERTIES => $this->getClassPropertiesDockBlock(),
+            static::PLACEHOLDER_RULES => $this->formatRules($this->buildRules()),
+            static::PLACEHOLDER_USES => $this->formatUsedClasses(),
+        ];
     }
 
     /**
-     * Format validation rules array as part of PHP class.
-     *
-     * @param array $rules Rules to format
+     * Format form request class PHPDoc properties like "@property-read {type} $variable".
      *
      * @return string
+     * @throws RuntimeException
      */
-    private function formatRules(array $rules): string
+    private function getClassPropertiesDockBlock(): string
     {
-        // TODO improve hardcoded indent
-        $indent = str_repeat(' ', 3 * 4);
+        $docBlockProperties = [];
+        foreach ($this->columns as $column) {
+            $propertyName = $column->getName();
+            $type = $this->getColumnPHPType($column->getType());
+            $description = $column->getComment();
+            $nullableType = $column->getNotnull() ? '' : '|null';
 
-        $formattedRules = implode(",\n{$indent}", $rules);
+            $docBlockProperties[] = trim("* @property-read {$type}{$nullableType} \${$propertyName} {$description}");
+        }
 
-        return trim($formattedRules);
+        return implode("\n", $docBlockProperties);
     }
 
     /**
@@ -201,68 +257,87 @@ class FormRequestFactory
     }
 
     /**
-     * Format form request class PHPDoc properties like "property-read type $variable."
+     * Format validation rules array as part of PHP class.
+     *
+     * @param array $rules Rules to format
      *
      * @return string
-     * @throws RuntimeException
      */
-    private function getClassPropertiesDockBlock(): string
+    private function formatRules(array $rules): string
     {
-        $docBlock = '';
-        foreach ($this->columns as $column) {
-            $property = $column->getName();
-            $type = $this->getColumnPHPType($column->getType());
-            $description = $column->getComment();
-            $nullableType = $column->getNotnull() ? '' : '|null';
+        $indent = $this->getRulesIndent();
 
-            $docBlock .= "* @property-read {$type}{$nullableType} \${$property} {$description}\n";
-        }
+        $formattedRules = implode(",\n{$indent}", $rules);
 
-        return trim($docBlock);
+        return trim($formattedRules);
     }
 
     /**
-     * Returns template's placeholders values.
+     * Returns rules indent.
+     *
+     * @return string
+     */
+    private function getRulesIndent(): string
+    {
+        return str_repeat(' ', static::INDENT_SIZE * static::RULES_INDENTS);
+    }
+
+    /**
+     * Builds rules for target model.
      *
      * @return array
      * @throws Exception
      */
-    private function getPlaceHoldersValues(): array
+    private function buildRules(): array
     {
-        $rules = $this->buildRules();
+        $rules = [];
 
-        return [
-            // TODO build USES array
-            static::PLACEHOLDER_USES => '',
-            static::PLACEHOLDER_READABLE_PROPERTIES => $this->getClassPropertiesDockBlock(),
-            static::PLACEHOLDER_NAMESPACE => $this->config->namespace,
-            static::PLACEHOLDER_FORM_REQUEST_CLASS_NAME => $this->config->className,
-            static::PLACEHOLDER_FORM_REQUEST_PARENT => $this->config->parentClassName,
-            static::PLACEHOLDER_RULES => $this->formatRules($rules),
+        foreach ($this->columns as $columnName => $columnDetails) {
+            $foreignKeyConstraints = $this->foreignKeys[$columnName] ?? null;
+            $columnRule = $this->ruleBuilder->generateRules($columnDetails, $foreignKeyConstraints);
+            $formattedAttributeName = $this->formatAttributeName($columnName);
+            $rules[] = "{$formattedAttributeName} => {$columnRule}";
+        }
 
-        ];
+        return $rules;
     }
 
     /**
-     * Build and write new form request file.
+     * Returns formatted column name for validation rules attribute.
      *
-     * @param FormRequestFactoryConfig $formRequestFactoryConfig Form request configuration
+     * @param string $columnName Column name to format attribute name
      *
-     * @return void
-     * @throws Exception
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @return string
      */
-    public function build(FormRequestFactoryConfig $formRequestFactoryConfig): void
+    private function formatAttributeName(string $columnName): string
     {
-        $this->configure($formRequestFactoryConfig);
+        if ($this->config->suggestAttributeNamesConstants) {
+            $this->formRequestUsedClasses[] = $this->config->modelClassName;
+            $modelClassName = array_last(explode('\\', $this->config->modelClassName));
+            $constantName = strtoupper($columnName);
 
-        $this->readColumnsInformation($this->getTableName());
+            $this->formRequestUsedClasses = array_unique($this->formRequestUsedClasses);
 
-        $filledPlaceholders = $this->getPlaceHoldersValues();
+            return "{$modelClassName}::{$constantName}";
+        }
 
-        $this->templateWriter
-            ->take($this->config->templateFilename)
-            ->fill($filledPlaceholders)
-            ->write($this->config->resultFilename);
+        return "'{$columnName}'";
+    }
+
+    /**
+     * Returns USE section of built form request class.
+     *
+     * @return string
+     */
+    private function formatUsedClasses(): string
+    {
+        $result = [];
+        foreach ($this->formRequestUsedClasses as $usedClass) {
+            $result[] = "use {$usedClass};";
+        }
+
+        sort($result);
+
+        return implode("\n", $result);
     }
 }

@@ -16,6 +16,12 @@ class TemplateWriter
      * @var Filesystem
      */
     private $filesystem;
+    /**
+     * Template file content.
+     *
+     * @var string
+     */
+    private $templateContent = null;
 
     /**
      * Scaffold templates writer. Takes template, fills placeholders and writes result file.
@@ -26,13 +32,6 @@ class TemplateWriter
     {
         $this->filesystem = $filesystem;
     }
-
-    /**
-     * Template file content.
-     *
-     * @var string
-     */
-    private $templateContent = null;
 
     /**
      * Retrieves template content. First step of template building process.
@@ -51,34 +50,6 @@ class TemplateWriter
         $this->templateContent = $this->filesystem->get($templateName);
 
         return $this;
-    }
-
-    /**
-     * Checks that template content was successfully loaded.
-     *
-     * @return void
-     */
-    private function validateTemplateContent(): void
-    {
-        if (!$this->templateContent) {
-            throw new \UnexpectedValueException('Template content is empty. Did You take() any template?');
-        }
-    }
-
-    /**
-     * Checks that template placeholders was successfully filled.
-     *
-     * @return void
-     */
-    private function validatePlaceholders(): void
-    {
-        $placeholders = false;
-        if (preg_match_all('/\{\{([^{}]*)\}\}/', $this->templateContent, $placeholders)) {
-            $notFilledPlaceholders = implode(', ', $placeholders[1]);
-            throw new \UnexpectedValueException(
-                "Template placeholder(s) [{$notFilledPlaceholders}] not filled. Did You fill() placeholders?"
-            );
-        }
     }
 
     /**
@@ -113,6 +84,18 @@ class TemplateWriter
     }
 
     /**
+     * Checks that template content was successfully loaded.
+     *
+     * @return void
+     */
+    private function validateTemplateContent(): void
+    {
+        if (!$this->templateContent) {
+            throw new \UnexpectedValueException('Template content is empty. Did You take() any template?');
+        }
+    }
+
+    /**
      * Write filled template to file. Last step of template building process.
      *
      * @param string $resultFileName Result file name to write.
@@ -126,5 +109,21 @@ class TemplateWriter
         $this->validatePlaceholders();
 
         return (bool)$this->filesystem->put($resultFileName, $this->templateContent);
+    }
+
+    /**
+     * Checks that template placeholders was successfully filled.
+     *
+     * @return void
+     */
+    private function validatePlaceholders(): void
+    {
+        $placeholders = false;
+        if (preg_match_all('/\{\{([^{}]*)\}\}/', $this->templateContent, $placeholders)) {
+            $notFilledPlaceholders = implode(', ', $placeholders[1]);
+            throw new \UnexpectedValueException(
+                "Template placeholder(s) [{$notFilledPlaceholders}] not filled. Did You fill() placeholders?"
+            );
+        }
     }
 }

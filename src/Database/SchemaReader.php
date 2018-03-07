@@ -4,7 +4,7 @@ namespace Saritasa\LaravelTools\Database;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 
 /**
@@ -37,21 +37,20 @@ class SchemaReader
     {
         $this->connection = $connection;
 
-        // TODO try to retrieve constants and pass to Rule::in()
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', Type::STRING);
 
         $this->schemaManager = $connection->getSchemaManager();
     }
 
     /**
-     * Retrieves information about columns in table.
+     * Retrieves information about table details.
      *
      * @param string $table Table name to retrieve information from
      *
-     * @return Column[]|array
+     * @return Table
      */
-    public function getColumnsDetails(string $table): array
+    public function getTableDetails(string $table): Table
     {
-        return $this->schemaManager->listTableColumns($table);
+        return $this->schemaManager->listTableDetails($table);
     }
 }

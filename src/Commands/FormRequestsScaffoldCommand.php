@@ -47,13 +47,16 @@ class FormRequestsScaffoldCommand extends Command
     }
 
     /**
-     * Get model class name to which need to build form request.
+     * Execute the console command.
      *
-     * @return string
+     * @throws Exception
      */
-    protected function getModelClass(): string
+    public function handle()
     {
-        return $this->argument('model');
+        $formRequestClassName = $this->getFormRequestClassName();
+        $modelClassName = $this->getModelClass();
+
+        $this->formRequestService->generateFormRequest($modelClassName, $formRequestClassName);
     }
 
     /**
@@ -67,15 +70,12 @@ class FormRequestsScaffoldCommand extends Command
     }
 
     /**
-     * Execute the console command.
+     * Get model class name to which need to build form request.
      *
-     * @throws Exception
+     * @return string
      */
-    public function handle()
+    protected function getModelClass(): string
     {
-        $formRequestClassName = $this->getFormRequestClassName();
-        $modelClassName = $this->getModelClass();
-
-        $this->formRequestService->generateFormRequest($modelClassName, $formRequestClassName);
+        return $this->argument('model');
     }
 }

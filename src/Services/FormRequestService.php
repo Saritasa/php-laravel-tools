@@ -53,17 +53,65 @@ class FormRequestService
     }
 
     /**
-     * Returns full path to new form request.
+     * Generates new Form Request class
      *
-     * @param string $formRequestName Form Request name to retrieve path for
+     * @param string $modelClassName Model class name to which need to generate request
+     * @param null|string $formRequestClassName Result form request class name. When not passed
+     * then will be automatically generated according to model class name
+     *
+     * @return void
+     * @throws RuntimeException When form request factory not correctly configured
+     * @throws \Exception
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException When template file not found
+     */
+    public function generateFormRequest(string $modelClassName, ?string $formRequestClassName = null): void
+    {
+        $formRequestFactoryConfiguration = $this->getFactoryConfiguration($modelClassName, $formRequestClassName);
+
+        $this->formRequestFactory->build($formRequestFactoryConfiguration);
+    }
+
+    /**
+     * Builds form request factory configuration.
+     *
+     * @param string $modelClassName Target model class name
+     * @param null|string $formRequestClassName Result form request file name
+     * @param null|string $templateName Form request template
+     *
+     * @return FormRequestFactoryConfig
+     * @throws RuntimeException
+     */
+    private function getFactoryConfiguration(
+        string $modelClassName,
+        ?string $formRequestClassName = null,
+        ?string $templateName = ScaffoldTemplates::FORM_REQUEST_TEMPLATE
+    ): FormRequestFactoryConfig {
+        $formRequestClassName = $formRequestClassName ?? $this->generateFormRequestClassName($modelClassName);
+
+        return new FormRequestFactoryConfig([
+            FormRequestFactoryConfig::NAMESPACE => $this->getFormRequestsNamespace(),
+            FormRequestFactoryConfig::PARENT_CLASS_NAME => $this->getFormRequestParentClassName(),
+            FormRequestFactoryConfig::CLASS_NAME => $formRequestClassName,
+            FormRequestFactoryConfig::MODEL_CLASS_NAME => $this->getModelFullClassName($modelClassName),
+            FormRequestFactoryConfig::RESULT_FILENAME => $this->getResultFileName($formRequestClassName),
+            FormRequestFactoryConfig::TEMPLATE_FILENAME => $this->templatesManager->getTemplatePath($templateName),
+            FormRequestFactoryConfig::EXCLUDED_ATTRIBUTES => $this->getIgnoredAttributes(),
+            FormRequestFactoryConfig::SUGGEST_ATTRIBUTE_NAMES_CONSTANTS => $this->getSuggestAttributesConstants(),
+        ]);
+    }
+
+    /**
+     * Generate form request class name from model class name.
+     *
+     * @param string $modelClassName Model class name to generate form request for
      *
      * @return string
      */
-    private function getResultFileName(string $formRequestName): string
+    protected function generateFormRequestClassName(string $modelClassName)
     {
-        $formRequestsPath = $this->configRepository->get('laravel_tools.form_requests.path');
+        $formRequestClassName = $modelClassName . 'Request';
 
-        return rtrim($formRequestsPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $formRequestName . '.php';
+        return Str::studly($formRequestClassName);
     }
 
     /**
@@ -101,6 +149,34 @@ class FormRequestService
     }
 
     /**
+     * Returns fully-qualified model class name for which need to generate form request.
+     *
+     * @param string $model Model class name
+     *
+     * @return string
+     */
+    private function getModelFullClassName(string $model): string
+    {
+        $modelsNamespace = trim($this->configRepository->get('laravel_tools.models.namespace'), '\\');
+
+        return "{$modelsNamespace}\\{$model}";
+    }
+
+    /**
+     * Returns full path to new form request.
+     *
+     * @param string $formRequestName Form Request name to retrieve path for
+     *
+     * @return string
+     */
+    private function getResultFileName(string $formRequestName): string
+    {
+        $formRequestsPath = $this->configRepository->get('laravel_tools.form_requests.path');
+
+        return rtrim($formRequestsPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $formRequestName . '.php';
+    }
+
+    /**
      * Returns model attributes names that should be ignored by factory builder.
      *
      * @return array
@@ -118,77 +194,12 @@ class FormRequestService
     }
 
     /**
-     * Returns fully-qualified model class name for which need to generate form request.
+     * Returns true if need to use constants instead of string attributes names.
      *
-     * @param string $model Model class name
-     *
-     * @return string
+     * @return boolean
      */
-    private function getModelFullClassName(string $model): string
+    private function getSuggestAttributesConstants(): bool
     {
-        $modelsNamespace = trim($this->configRepository->get('laravel_tools.models.namespace'), '\\');
-
-        return "{$modelsNamespace}\\{$model}";
-    }
-
-    /**
-     * Generate form request class name from model class name.
-     *
-     * @param string $modelClassName Model class name to generate form request for
-     *
-     * @return string
-     */
-    protected function generateFormRequestClassName(string $modelClassName)
-    {
-        $formRequestClassName = $modelClassName . 'Request';
-
-        return Str::studly($formRequestClassName);
-    }
-
-    /**
-     * Builds form request factory configuration.
-     *
-     * @param string $modelClassName Target model class name
-     * @param null|string $formRequestClassName Result form request file name
-     * @param null|string $templateName Form request template
-     *
-     * @return FormRequestFactoryConfig
-     * @throws RuntimeException
-     */
-    private function getFactoryConfiguration(
-        string $modelClassName,
-        ?string $formRequestClassName = null,
-        ?string $templateName = ScaffoldTemplates::FORM_REQUEST_TEMPLATE
-    ): FormRequestFactoryConfig {
-        $formRequestClassName = $formRequestClassName ?? $this->generateFormRequestClassName($modelClassName);
-
-        return new FormRequestFactoryConfig([
-            FormRequestFactoryConfig::NAMESPACE => $this->getFormRequestsNamespace(),
-            FormRequestFactoryConfig::PARENT_CLASS_NAME => $this->getFormRequestParentClassName(),
-            FormRequestFactoryConfig::CLASS_NAME => $formRequestClassName,
-            FormRequestFactoryConfig::MODEL_CLASS_NAME => $this->getModelFullClassName($modelClassName),
-            FormRequestFactoryConfig::RESULT_FILENAME => $this->getResultFileName($formRequestClassName),
-            FormRequestFactoryConfig::TEMPLATE_FILENAME => $this->templatesManager->getTemplatePath($templateName),
-            FormRequestFactoryConfig::EXCLUDED_ATTRIBUTES => $this->getIgnoredAttributes(),
-        ]);
-    }
-
-    /**
-     * Generates new Form Request class
-     *
-     * @param string $modelClassName Model class name to which need to generate request
-     * @param null|string $formRequestClassName Result form request class name. When not passed
-     * then will be automatically generated according to model class name
-     *
-     * @return void
-     * @throws RuntimeException When form request factory not correctly configured
-     * @throws \Exception
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException When template file not found
-     */
-    public function generateFormRequest(string $modelClassName, ?string $formRequestClassName = null): void
-    {
-        $formRequestFactoryConfiguration = $this->getFactoryConfiguration($modelClassName, $formRequestClassName);
-
-        $this->formRequestFactory->build($formRequestFactoryConfiguration);
+        return $this->configRepository->get('laravel_tools.models.suggest_attribute_names_constants', true);
     }
 }

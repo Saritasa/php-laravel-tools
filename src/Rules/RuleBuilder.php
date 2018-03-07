@@ -3,6 +3,7 @@
 namespace Saritasa\LaravelTools\Rules;
 
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Types\Type;
 use Saritasa\LaravelTools\Enums\LaravelValidationTypes;
 use Saritasa\LaravelTools\Mappings\ILaravelValidationTypeMapper;
@@ -15,7 +16,7 @@ class RuleBuilder
     /**
      * Rule dictionary that allows to retrieve rule.
      *
-     * @var RuleDictionary
+     * @var IValidationRulesDictionary
      */
     private $ruleDictionary;
 
@@ -36,13 +37,62 @@ class RuleBuilder
     /**
      * Rule builder. Allows to build validation rules set for column.
      *
-     * @param RuleDictionary $ruleDictionary Rule dictionary that allows to retrieve rule
+     * @param IValidationRulesDictionary $ruleDictionary Rule dictionary that allows to retrieve rule
      * @param ILaravelValidationTypeMapper $validationTypeMapper Storage-specific type to validation type mapper
      */
-    public function __construct(RuleDictionary $ruleDictionary, ILaravelValidationTypeMapper $validationTypeMapper)
-    {
+    public function __construct(
+        IValidationRulesDictionary $ruleDictionary,
+        ILaravelValidationTypeMapper $validationTypeMapper
+    ) {
         $this->ruleDictionary = $ruleDictionary;
         $this->validationTypeMapper = $validationTypeMapper;
+    }
+
+    /**
+     * Generates rules for column.
+     *
+     * @param Column $column Column to generate rules for
+     * @param ForeignKeyConstraint|null $foreignKeyConstraint Column foreign key constraints
+     *
+     * @return string
+     */
+    public function generateRules(Column $column, ?ForeignKeyConstraint $foreignKeyConstraint): string
+    {
+        $this->rules = [];
+
+        // Check is column required
+        $this->applyRequiredRule($column);
+
+        // Check is column can be null
+        $this->applyNullableRule($column);
+
+        // Check existence in related table
+        if ($foreignKeyConstraint) {
+            $this->applyExistsRule($foreignKeyConstraint);
+        }
+
+        // Apply column type validation
+        $this->applyTypeRule($column);
+
+        // Apply column max length rule
+        $this->applyMaxLengthRule($column);
+
+        //Build rule string
+        return $this->buildRuleString();
+    }
+
+    /**
+     * Checks is column is required and applies necessary rules.
+     *
+     * @param Column $column Column to check
+     *
+     * @return void
+     */
+    private function applyRequiredRule(Column $column): void
+    {
+        if ($column->getNotnull()) {
+            $this->appendRule($this->ruleDictionary->required());
+        }
     }
 
     /**
@@ -58,52 +108,31 @@ class RuleBuilder
     }
 
     /**
-     * Builds rule string.
-     *
-     * @return string
-     */
-    private function buildRuleString(): string
-    {
-        $prefix = $this->ruleDictionary->rulesPrefix();
-        $suffix = $this->ruleDictionary->rulesSuffix();
-        $delimiter = $this->ruleDictionary->rulesDelimiter();
-
-        return $prefix . implode($delimiter, $this->rules) . $suffix;
-    }
-
-    /**
-     * Generates rules for column.
-     *
-     * @param Column $column Column to generate rules for
-     *
-     * @return string
-     */
-    public function generateRules(Column $column): string
-    {
-        $this->rules = [];
-        // Check is column required or can be nullable
-        $this->checkRequired($column);
-        // Apply column type validation
-        $this->applyTypeRule($column);
-        // Apply column max length rule
-        $this->checkMaxLength($column);
-
-        //Build rule string
-        return $this->buildRuleString();
-    }
-
-    /**
-     * Checks is column is required and applies necessary rules.
+     * Checks is column is nullable and applies necessary rules.
      *
      * @param Column $column Column to check
      *
      * @return void
      */
-    private function checkRequired(Column $column): void
+    private function applyNullableRule(Column $column): void
     {
-        $this->appendRule($column->getNotnull()
-            ? $this->ruleDictionary->required()
-            : $this->ruleDictionary->nullable());
+        if (!$column->getNotnull()) {
+            $this->appendRule($this->ruleDictionary->nullable());
+        }
+    }
+
+    /**
+     * Check existence in related table.
+     *
+     * @param ForeignKeyConstraint $foreignKeyConstraint Column foreign key constraints
+     *
+     * @return void
+     */
+    private function applyExistsRule(ForeignKeyConstraint $foreignKeyConstraint): void
+    {
+        $foreignTableName = $foreignKeyConstraint->getForeignTableName();
+        $foreignKey = $foreignKeyConstraint->getForeignColumns()[0];
+        $this->appendRule($this->ruleDictionary->ruleExists($foreignTableName, $foreignKey));
     }
 
     /**
@@ -152,11 +181,26 @@ class RuleBuilder
      *
      * @return void
      */
-    private function checkMaxLength(Column $column): void
+    private function applyMaxLengthRule(Column $column): void
     {
-        if ($column->getType()->getName() === Type::STRING || $column->getType()->getName() === Type::TEXT) {
-            $maxLength = $column->getLength();
+        $maxLength = $column->getLength();
+        $supportedMaxLengthTypes = [Type::STRING, Type::TEXT];
+        if ($maxLength && in_array($column->getType()->getName(), $supportedMaxLengthTypes)) {
             $this->appendRule($this->ruleDictionary->ruleMax($maxLength));
         }
+    }
+
+    /**
+     * Builds rule string.
+     *
+     * @return string
+     */
+    private function buildRuleString(): string
+    {
+        $prefix = $this->ruleDictionary->rulesPrefix();
+        $suffix = $this->ruleDictionary->rulesSuffix();
+        $delimiter = $this->ruleDictionary->rulesDelimiter();
+
+        return $prefix . implode($delimiter, $this->rules) . $suffix;
     }
 }
