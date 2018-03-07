@@ -4,7 +4,7 @@ namespace Saritasa\LaravelTools\Services;
 
 use Illuminate\Config\Repository;
 use Illuminate\Support\Str;
-use Saritasa\Exceptions\ConfigurationException;
+use RuntimeException;
 use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
@@ -70,14 +70,14 @@ class FormRequestService
      * Returns form request target namespace.
      *
      * @return string
-     * @throws ConfigurationException When form request namespace is empty
+     * @throws RuntimeException When form request namespace is empty
      */
     private function getFormRequestsNamespace(): string
     {
         $namespace = $this->configRepository->get('laravel_tools.form_requests.namespace');
 
         if (!$namespace) {
-            throw new ConfigurationException('Form request namespace not configured');
+            throw new RuntimeException('Form request namespace not configured');
         }
 
         return $namespace;
@@ -87,14 +87,14 @@ class FormRequestService
      * Returns form request parent class name.
      *
      * @return string
-     * @throws ConfigurationException When form request parent is empty
+     * @throws RuntimeException When form request parent is empty
      */
     private function getFormRequestParentClassName(): string
     {
         $parentClassName = $this->configRepository->get('laravel_tools.form_requests.parent');
 
         if (!$parentClassName) {
-            throw new ConfigurationException('Form request parent class name not configured');
+            throw new RuntimeException('Form request parent class name not configured');
         }
 
         return $parentClassName;
@@ -104,14 +104,14 @@ class FormRequestService
      * Returns model attributes names that should be ignored by factory builder.
      *
      * @return array
-     * @throws ConfigurationException When ignored attributes configuration is not an array
+     * @throws RuntimeException When ignored attributes configuration is not an array
      */
     private function getIgnoredAttributes(): array
     {
         $ignoredAttributes = $this->configRepository->get('laravel_tools.form_requests.except');
 
         if (!is_array($ignoredAttributes)) {
-            throw new ConfigurationException('Form request ignored attributes cofiguration is invalid');
+            throw new RuntimeException('Form request ignored attributes configuration is invalid');
         }
 
         return $ignoredAttributes;
@@ -153,7 +153,7 @@ class FormRequestService
      * @param null|string $templateName Form request template
      *
      * @return FormRequestFactoryConfig
-     * @throws ConfigurationException
+     * @throws RuntimeException
      */
     private function getFactoryConfiguration(
         string $modelClassName,
@@ -181,7 +181,7 @@ class FormRequestService
      * then will be automatically generated according to model class name
      *
      * @return void
-     * @throws ConfigurationException When form request factory not correctly configured
+     * @throws RuntimeException When form request factory not correctly configured
      * @throws \Exception
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException When template file not found
      */

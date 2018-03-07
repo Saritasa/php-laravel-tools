@@ -6,9 +6,10 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\Type;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Saritasa\Exceptions\ConfigurationException;
+use RuntimeException;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
+use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 use UnexpectedValueException;
@@ -67,18 +68,31 @@ class FormRequestFactory
     private $columns;
 
     /**
+     * Storage type to PHP scalar type mapper.
+     *
+     * @var IPhpTypeMapper
+     */
+    private $phpTypeMapper;
+
+    /**
      * Form Request class builder. Allows to create FormRequest class for model.
      * This form request class will contain model's attributes validation based on model's table structure.
      *
      * @param SchemaReader $schemaReader Database table information reader
      * @param TemplateWriter $templateWriter Templates files writer
      * @param RuleBuilder $ruleBuilder Column rule builder
+     * @param IPhpTypeMapper $phpTypeMapper Storage type to PHP scalar type mapper
      */
-    public function __construct(SchemaReader $schemaReader, TemplateWriter $templateWriter, RuleBuilder $ruleBuilder)
-    {
+    public function __construct(
+        SchemaReader $schemaReader,
+        TemplateWriter $templateWriter,
+        RuleBuilder $ruleBuilder,
+        IPhpTypeMapper $phpTypeMapper
+    ) {
         $this->schemaReader = $schemaReader;
         $this->templateWriter = $templateWriter;
         $this->ruleBuilder = $ruleBuilder;
+        $this->phpTypeMapper = $phpTypeMapper;
     }
 
     /**
@@ -96,13 +110,13 @@ class FormRequestFactory
      *
      * @return string
      * @see configure method for details
-     * @throws ConfigurationException When factory's configuration doesn't contain model class name
+     * @throws RuntimeException When factory's configuration doesn't contain model class name
      * @throws UnexpectedValueException When passed model class is not a Model class instance
      */
     private function getTableName(): string
     {
         if (!$this->config->modelClassName) {
-            throw new ConfigurationException('Form request model not configured');
+            throw new RuntimeException('Form request model not configured');
         }
 
         if (!is_a($this->config->modelClassName, Model::class, true)) {
@@ -150,7 +164,7 @@ class FormRequestFactory
         foreach ($this->columns as $column) {
             $columnName = $column->getName();
             $columnRule = $this->ruleBuilder->generateRules($column);
-            $rules[] = "'{$columnName}' => '{$columnRule}'";
+            $rules[] = "'{$columnName}' => {$columnRule}";
         }
 
         return $rules;
@@ -179,17 +193,18 @@ class FormRequestFactory
      * @param Type $type Column type to retrieve php-type
      *
      * @return string
+     * @throws RuntimeException
      */
     private function getColumnPHPType(Type $type): string
     {
-        // TODO perform mapping
-        return $type->getName();
+        return $this->phpTypeMapper->getPhpType($type->getName());
     }
 
     /**
      * Format form request class PHPDoc properties like "property-read type $variable."
      *
      * @return string
+     * @throws RuntimeException
      */
     private function getClassPropertiesDockBlock(): string
     {
@@ -231,12 +246,11 @@ class FormRequestFactory
     /**
      * Build and write new form request file.
      *
-     * @param FormRequestFactoryConfig $formRequestFactoryConfig Form request factory configuration
+     * @param FormRequestFactoryConfig $formRequestFactoryConfig Form request configuration
      *
      * @return void
      * @throws Exception
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     * @throws ConfigurationException
      */
     public function build(FormRequestFactoryConfig $formRequestFactoryConfig): void
     {
