@@ -38,11 +38,12 @@ class PhpDocClassDescriptionBuilder
     {
         $result = [];
         $result[] = '/**';
-        $result[] = "* {$classDescription}";
+        $result[] = ' *';
+        $result[] = " * {$classDescription}";
         foreach ($classProperties as $classProperty) {
             $result[] = $this->phpDocPropertyBuilder->render($classProperty);
         }
-        $result[] = '*/';
+        $result[] = ' */';
 
         return implode("\n", $result);
     }

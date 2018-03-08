@@ -112,27 +112,29 @@ OOP example, where attribute names is a model constants and rules is fluent vali
 
 namespace App\Http\Requests;
 
+use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Bid;
+use Saritasa\Laravel\Validation\Rule;
 
 /**
 * BidRequest form request.
 *
-* @property-read integer $user_id User who created bid
-* @property-read integer $contractor_id Contractor ID
-* @property-read integer $job_id Job ID
-* @property-read integer|null $status_id
-* @property-read integer|null $accepted_by Manager who accepted bid
-* @property-read integer|null $pre_approved_by
-* @property-read string $proposed_start_date Estimated Start date
-* @property-read integer $days_count Estimated  End date
-* @property-read string $proposed_end_date Estimated Start date
-* @property-read float $proposed_cost Estimated cost
-* @property-read string|null $note
-* @property-read string|null $proposal_attachment Attached proposal
-* @property-read string|null $proposal_uploaded_at Proposal uploaded date
-* @property-read string $url_token
+* @property integer $user_id User who created bid
+* @property integer $contractor_id Contractor ID
+* @property integer $job_id Job ID
+* @property integer|null $status_id
+* @property integer|null $accepted_by Manager who accepted bid
+* @property integer|null $pre_approved_by
+* @property string $proposed_start_date Estimated Start date
+* @property integer $days_count Estimated  End date
+* @property string $proposed_end_date Estimated Start date
+* @property float $proposed_cost Estimated cost
+* @property string|null $note
+* @property string|null $proposal_attachment Attached proposal
+* @property string|null $proposal_uploaded_at Proposal uploaded date
+* @property string $url_token
 */
-class BidRequest extends \Illuminate\Foundation\Http\FormRequest
+class BidRequest extends FormRequest
 {
     /**
     * Rules that should be applied to validate request.
@@ -142,20 +144,20 @@ class BidRequest extends \Illuminate\Foundation\Http\FormRequest
     public function rules(): array
     {
         return [
-            Bid::USER_ID => \Saritasa\Laravel\Validation\Rule::required()->exists('users','id')->int(),
-            Bid::CONTRACTOR_ID => \Saritasa\Laravel\Validation\Rule::required()->exists('contractors','id')->int(),
-            Bid::JOB_ID => \Saritasa\Laravel\Validation\Rule::required()->exists('jobs','id')->int(),
-            Bid::STATUS_ID => \Saritasa\Laravel\Validation\Rule::nullable()->exists('bid_statuses','id')->int(),
-            Bid::ACCEPTED_BY => \Saritasa\Laravel\Validation\Rule::nullable()->exists('users','id')->int(),
-            Bid::PRE_APPROVED_BY => \Saritasa\Laravel\Validation\Rule::nullable()->exists('users','id')->int(),
-            Bid::PROPOSED_START_DATE => \Saritasa\Laravel\Validation\Rule::required()->date(),
-            Bid::DAYS_COUNT => \Saritasa\Laravel\Validation\Rule::required()->int(),
-            Bid::PROPOSED_END_DATE => \Saritasa\Laravel\Validation\Rule::required()->date(),
-            Bid::PROPOSED_COST => \Saritasa\Laravel\Validation\Rule::required()->numeric(),
-            Bid::NOTE => \Saritasa\Laravel\Validation\Rule::nullable()->string()->max(65535),
-            Bid::PROPOSAL_ATTACHMENT => \Saritasa\Laravel\Validation\Rule::nullable()->string()->max(255),
-            Bid::PROPOSAL_UPLOADED_AT => \Saritasa\Laravel\Validation\Rule::nullable()->date(),
-            Bid::URL_TOKEN => \Saritasa\Laravel\Validation\Rule::required()->string()->max(191)
+            Bid::USER_ID => Rule::required()->exists('users','id')->int(),
+            Bid::CONTRACTOR_ID => Rule::required()->exists('contractors','id')->int(),
+            Bid::JOB_ID => Rule::required()->exists('jobs','id')->int(),
+            Bid::STATUS_ID => Rule::nullable()->exists('bid_statuses','id')->int(),
+            Bid::ACCEPTED_BY => Rule::nullable()->exists('users','id')->int(),
+            Bid::PRE_APPROVED_BY => Rule::nullable()->exists('users','id')->int(),
+            Bid::PROPOSED_START_DATE => Rule::required()->date(),
+            Bid::DAYS_COUNT => Rule::required()->int(),
+            Bid::PROPOSED_END_DATE => Rule::required()->date(),
+            Bid::PROPOSED_COST => Rule::required()->numeric(),
+            Bid::NOTE => Rule::nullable()->string()->max(65535),
+            Bid::PROPOSAL_ATTACHMENT => Rule::nullable()->string()->max(255),
+            Bid::PROPOSAL_UPLOADED_AT => Rule::nullable()->date(),
+            Bid::URL_TOKEN => Rule::required()->string()->max(191)
         ];
     }
 }
