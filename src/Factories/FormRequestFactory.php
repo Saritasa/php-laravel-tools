@@ -306,7 +306,7 @@ class FormRequestFactory
             $foreignKeyConstraints = $this->foreignKeys[$columnName] ?? null;
             $columnRule = $this->ruleBuilder->generateRules($columnDetails, $foreignKeyConstraints);
             $formattedAttributeName = $this->formatAttributeName($columnName);
-            $rules[] = "\\{$formattedAttributeName} => {$columnRule}";
+            $rules[] = "{$formattedAttributeName} => {$columnRule}";
         }
 
         return $rules;
@@ -325,7 +325,7 @@ class FormRequestFactory
             $modelClassName = $this->config->modelClassName;
             $constantName = strtoupper($columnName);
 
-            return "{$modelClassName}::{$constantName}";
+            return "\\{$modelClassName}::{$constantName}";
         }
 
         return "'{$columnName}'";

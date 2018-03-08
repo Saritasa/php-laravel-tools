@@ -1,5 +1,9 @@
 # Changes History
 
+0.1.3
+-----
+Resolve issue with string representation of form request rules attribute
+
 0.1.2
 -----
 Improve generated class description format
