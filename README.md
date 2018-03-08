@@ -10,10 +10,24 @@ This package was designed to help developers scaffold parts of code for Laravel-
 
 ## Usage
 
-Install the ```saritasa/laravel-tools``` package:
+Install the ```saritasa/laravel-tools``` package as dev dependency:
 
 ```bash
-$ composer require saritasa/laravel-tools
+$ composer require saritasa/laravel-tools --dev
+```
+
+and register service provider in **AppServiceProvider**
+
+```php
+    public function register()
+    {
+        if ($this->app->environment() === 'local') {
+            // If we are in local environment, enable some developer's tools
+            ...
+            $this->app->register(LaravelToolsServiceProvider::class);
+            ...
+        }
+    }
 ```
 
 ## Available artisan commands
@@ -157,6 +171,7 @@ What need to improve:
 1. Declare only necessary packages in composer.json instead of entire laravel
 2. Unit tests of course :)
 3. Import class in case of fluent validation rules dictionary
+4. Config publishing
 
 ## Contributing
 See [CONTRIBUTING](CONTRIBUTING.md) and [Code of Conduct](CONDUCT.md),
