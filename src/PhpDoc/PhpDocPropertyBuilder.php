@@ -34,7 +34,7 @@ class PhpDocPropertyBuilder
         }
 
         return trim(
-            "* @property{$accessModifier} " .
+            " * @property{$accessModifier} " .
             "{$classProperty->type}{$nullableType} \${$classProperty->name} " .
             "{$classProperty->description}"
         );
