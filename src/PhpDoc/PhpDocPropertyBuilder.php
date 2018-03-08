@@ -20,8 +20,10 @@ class PhpDocPropertyBuilder
      */
     public function render(ClassPropertyObject $classProperty): string
     {
-        $nullableType = $classProperty->nullable ? '|null' : '';
-        switch ($classProperty->access_type) {
+        $nullableType = $classProperty->nullable
+            ? '|null'
+            : '';
+        switch ($classProperty->accessType) {
             case PhpDocPropertyAccessTypes::READ:
                 $accessModifier = '-read';
                 break;

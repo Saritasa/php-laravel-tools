@@ -50,5 +50,5 @@ class ClassPropertyObject extends DtoModel
      * @see PhpDocPropertyAccessTypes for available values
      * @var string
      */
-    public $access_type;
+    public $accessType;
 }
