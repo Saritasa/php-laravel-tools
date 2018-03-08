@@ -172,6 +172,7 @@ What need to improve:
 2. Unit tests of course :)
 3. Import class in case of fluent validation rules dictionary
 4. Config publishing
+5. DTO for model generation
 
 ## Contributing
 See [CONTRIBUTING](CONTRIBUTING.md) and [Code of Conduct](CONDUCT.md),
