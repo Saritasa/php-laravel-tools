@@ -261,7 +261,7 @@ class FormRequestFactory
             ]);
         }
 
-        $classDescription = "{$this->config->className} form request.";
+        $classDescription = "{$this->config->className} form request";
 
         return $this->phpDocClassDescriptionBuilder->render($classDescription, $classProperties);
     }
