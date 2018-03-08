@@ -119,20 +119,20 @@ use Saritasa\Laravel\Validation\Rule;
 /**
 * BidRequest form request.
 *
-* @property integer $user_id User who created bid
-* @property integer $contractor_id Contractor ID
-* @property integer $job_id Job ID
-* @property integer|null $status_id
-* @property integer|null $accepted_by Manager who accepted bid
-* @property integer|null $pre_approved_by
-* @property string $proposed_start_date Estimated Start date
-* @property integer $days_count Estimated  End date
-* @property string $proposed_end_date Estimated Start date
-* @property float $proposed_cost Estimated cost
-* @property string|null $note
-* @property string|null $proposal_attachment Attached proposal
-* @property string|null $proposal_uploaded_at Proposal uploaded date
-* @property string $url_token
+* @property-read integer $user_id User who created bid
+* @property-read integer $contractor_id Contractor ID
+* @property-read integer $job_id Job ID
+* @property-read integer|null $status_id
+* @property-read integer|null $accepted_by Manager who accepted bid
+* @property-read integer|null $pre_approved_by
+* @property-read string $proposed_start_date Estimated Start date
+* @property-read integer $days_count Estimated  End date
+* @property-read string $proposed_end_date Estimated Start date
+* @property-read float $proposed_cost Estimated cost
+* @property-read string|null $note
+* @property-read string|null $proposal_attachment Attached proposal
+* @property-read string|null $proposal_uploaded_at Proposal uploaded date
+* @property-read string $url_token
 */
 class BidRequest extends FormRequest
 {

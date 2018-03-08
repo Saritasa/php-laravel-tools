@@ -1,5 +1,10 @@
 # Changes History
 
+0.1.4
+-----
++ Resolve issue with class property description access type
++ Add PhpDoc renderer functions tests
+
 0.1.3
 -----
 Resolve issue with string representation of form request rules attribute
