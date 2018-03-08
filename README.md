@@ -170,9 +170,7 @@ class BidRequest extends \Illuminate\Foundation\Http\FormRequest
 What need to improve:
 1. Declare only necessary packages in composer.json instead of entire laravel
 2. Unit tests of course :)
-3. Import class in case of fluent validation rules dictionary
-4. Config publishing
-5. DTO for model generation
+3. Generation of DTO for model and return this DTO from form request
 
 ## Contributing
 See [CONTRIBUTING](CONTRIBUTING.md) and [Code of Conduct](CONDUCT.md),
