@@ -54,10 +54,10 @@ class DbalToLaravelValidationTypeMapper implements ILaravelValidationTypeMapper
      *
      * @param string $type DBAL type name
      *
-     * @return string
+     * @return string|null
      */
-    public function getValidationType(string $type): string
+    public function getValidationType(string $type): ?string
     {
-        return $this->typeMappings[$type] ?? null;
+        return $this->typeMappings[strtolower($type)] ?? null;
     }
 }

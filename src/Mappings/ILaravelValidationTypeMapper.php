@@ -12,7 +12,7 @@ interface ILaravelValidationTypeMapper
      *
      * @param string $type Storage-specific type name
      *
-     * @return string
+     * @return string|null
      */
-    public function getValidationType(string $type): string;
+    public function getValidationType(string $type): ?string;
 }

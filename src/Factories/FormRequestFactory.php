@@ -5,13 +5,15 @@ namespace Saritasa\LaravelTools\Factories;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Type;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use RuntimeException;
 use Saritasa\LaravelTools\Database\SchemaReader;
+use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
+use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
+use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 use UnexpectedValueException;
@@ -25,7 +27,7 @@ class FormRequestFactory
     const PLACEHOLDER_NAMESPACE = 'namespace';
     const PLACEHOLDER_USES = 'uses';
     const PLACEHOLDER_FORM_REQUEST_CLASS_NAME = 'formRequestClassName';
-    const PLACEHOLDER_READABLE_PROPERTIES = 'readableProperties';
+    const CLASS_PHP_DOC = 'classPhpDoc';
     const PLACEHOLDER_FORM_REQUEST_PARENT = 'formRequestParent';
     const PLACEHOLDER_RULES = 'rules';
 
@@ -96,6 +98,13 @@ class FormRequestFactory
     private $phpTypeMapper;
 
     /**
+     * Allows to build PHPDoc class description.
+     *
+     * @var PhpDocClassDescriptionBuilder
+     */
+    private $phpDocClassDescriptionBuilder;
+
+    /**
      * Form Request class builder. Allows to create FormRequest class for model.
      * This form request class will contain model's attributes validation based on model's table structure.
      *
@@ -103,17 +112,20 @@ class FormRequestFactory
      * @param TemplateWriter $templateWriter Templates files writer
      * @param RuleBuilder $ruleBuilder Column rule builder
      * @param IPhpTypeMapper $phpTypeMapper Storage type to PHP scalar type mapper
+     * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Allows to build PHPDoc class description
      */
     public function __construct(
         SchemaReader $schemaReader,
         TemplateWriter $templateWriter,
         RuleBuilder $ruleBuilder,
-        IPhpTypeMapper $phpTypeMapper
+        IPhpTypeMapper $phpTypeMapper,
+        PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder
     ) {
         $this->schemaReader = $schemaReader;
         $this->templateWriter = $templateWriter;
         $this->ruleBuilder = $ruleBuilder;
         $this->phpTypeMapper = $phpTypeMapper;
+        $this->phpDocClassDescriptionBuilder = $phpDocClassDescriptionBuilder;
     }
 
     /**
@@ -213,14 +225,21 @@ class FormRequestFactory
      */
     private function getPlaceHoldersValues(): array
     {
-        return [
-            static::PLACEHOLDER_NAMESPACE => $this->config->namespace,
+        $placeholders = [
             static::PLACEHOLDER_FORM_REQUEST_CLASS_NAME => $this->config->className,
-            static::PLACEHOLDER_FORM_REQUEST_PARENT => $this->config->parentClassName,
-            static::PLACEHOLDER_READABLE_PROPERTIES => $this->getClassPropertiesDockBlock(),
+            static::PLACEHOLDER_FORM_REQUEST_PARENT => '\\'.$this->config->parentClassName,
+            static::CLASS_PHP_DOC => $this->getClassDocBlock(),
             static::PLACEHOLDER_RULES => $this->formatRules($this->buildRules()),
-            static::PLACEHOLDER_USES => $this->formatUsedClasses(),
         ];
+
+        array_walk($placeholders, function (&$placeholder) {
+            $placeholder = $this->extractUsedClasses($placeholder);
+        });
+
+        $placeholders[static::PLACEHOLDER_NAMESPACE] = $this->config->namespace;
+        $placeholders[static::PLACEHOLDER_USES] = $this->formatUsedClasses();
+
+        return $placeholders;
     }
 
     /**
@@ -229,32 +248,22 @@ class FormRequestFactory
      * @return string
      * @throws RuntimeException
      */
-    private function getClassPropertiesDockBlock(): string
+    private function getClassDocBlock(): string
     {
-        $docBlockProperties = [];
+        $classProperties = [];
         foreach ($this->columns as $column) {
-            $propertyName = $column->getName();
-            $type = $this->getColumnPHPType($column->getType());
-            $description = $column->getComment();
-            $nullableType = $column->getNotnull() ? '' : '|null';
-
-            $docBlockProperties[] = trim("* @property-read {$type}{$nullableType} \${$propertyName} {$description}");
+            $classProperties[] = new ClassPropertyObject([
+                ClassPropertyObject::NAME => $column->getName(),
+                ClassPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
+                ClassPropertyObject::NULLABLE => !$column->getNotnull(),
+                ClassPropertyObject::DESCRIPTION => $column->getComment(),
+                ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+            ]);
         }
 
-        return implode("\n", $docBlockProperties);
-    }
+        $classDescription = "{$this->config->className} form request.";
 
-    /**
-     * Returns PHP-version of column type.
-     *
-     * @param Type $type Column type to retrieve php-type
-     *
-     * @return string
-     * @throws RuntimeException
-     */
-    private function getColumnPHPType(Type $type): string
-    {
-        return $this->phpTypeMapper->getPhpType($type->getName());
+        return $this->phpDocClassDescriptionBuilder->render($classDescription, $classProperties);
     }
 
     /**
@@ -297,7 +306,7 @@ class FormRequestFactory
             $foreignKeyConstraints = $this->foreignKeys[$columnName] ?? null;
             $columnRule = $this->ruleBuilder->generateRules($columnDetails, $foreignKeyConstraints);
             $formattedAttributeName = $this->formatAttributeName($columnName);
-            $rules[] = "{$formattedAttributeName} => {$columnRule}";
+            $rules[] = "\\{$formattedAttributeName} => {$columnRule}";
         }
 
         return $rules;
@@ -313,16 +322,40 @@ class FormRequestFactory
     private function formatAttributeName(string $columnName): string
     {
         if ($this->config->suggestAttributeNamesConstants) {
-            $this->formRequestUsedClasses[] = $this->config->modelClassName;
-            $modelClassName = array_last(explode('\\', $this->config->modelClassName));
+            $modelClassName = $this->config->modelClassName;
             $constantName = strtoupper($columnName);
-
-            $this->formRequestUsedClasses = array_unique($this->formRequestUsedClasses);
 
             return "{$modelClassName}::{$constantName}";
         }
 
         return "'{$columnName}'";
+    }
+
+    /**
+     * Extract and replace fully-qualified class names from placeholder.
+     *
+     * @param string $placeholder Placeholder to extract class names from
+     *
+     * @return string Optimized placeholder
+     */
+    public function extractUsedClasses($placeholder): string
+    {
+        $classNamespaceRegExp = '/(\\\\{1,2}[\\\\a-zA-Z0-9_]+)[:\n]{0,2}/';
+        $matches = [];
+        $optimizedPlaceholder = $placeholder;
+        if (preg_match_all($classNamespaceRegExp, $placeholder, $matches)) {
+            foreach ($matches[1] as $match) {
+                $usedClassName = $match;
+                $this->formRequestUsedClasses[] = trim($usedClassName, '\\');
+                $namespaceParts = explode('\\', $usedClassName);
+                $resultClassName = array_pop($namespaceParts);
+                $optimizedPlaceholder = str_replace($usedClassName, $resultClassName, $optimizedPlaceholder);
+            }
+        }
+
+        $this->formRequestUsedClasses = array_unique($this->formRequestUsedClasses);
+
+        return $optimizedPlaceholder;
     }
 
     /**
