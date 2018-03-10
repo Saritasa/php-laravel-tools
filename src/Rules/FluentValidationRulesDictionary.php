@@ -139,6 +139,6 @@ class FluentValidationRulesDictionary implements IValidationRulesDictionary
      */
     public function ruleExists(string $tableName, string $column): string
     {
-        return "exists('{$tableName}','{$column}')";
+        return "exists('{$tableName}', '{$column}')";
     }
 }
