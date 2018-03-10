@@ -16,6 +16,7 @@ class TemplateWriter
      * @var Filesystem
      */
     private $filesystem;
+
     /**
      * Template file content.
      *
@@ -47,7 +48,9 @@ class TemplateWriter
             throw new FileNotFoundException("Template file [{$templateName}] not found");
         }
 
-        $this->templateContent = $this->filesystem->get($templateName);
+        $templateContent = $this->filesystem->get($templateName);
+
+        $this->setTemplateContent($templateContent);
 
         return $this;
     }
@@ -63,17 +66,19 @@ class TemplateWriter
      */
     public function fill(array $placeholders): self
     {
-        $this->validateTemplateContent();
+        $templateContent = $this->getTemplateContent();
 
         foreach ($placeholders as $placeholder => $value) {
             $replacementsCount = 0;
 
-            $this->templateContent = str_replace(
+            $templateContent = str_replace(
                 "{{{$placeholder}}}",
                 $value,
-                $this->templateContent,
+                $templateContent,
                 $replacementsCount
             );
+
+            $this->setTemplateContent($templateContent);
 
             if ($replacementsCount == 0) {
                 throw new \Exception("Placeholder {{{$placeholder}}} not found in template");
@@ -84,15 +89,27 @@ class TemplateWriter
     }
 
     /**
-     * Checks that template content was successfully loaded.
+     * Returns current template content value.
      *
-     * @return void
+     * @return string
      */
-    private function validateTemplateContent(): void
+    public function getTemplateContent(): string
     {
         if (!$this->templateContent) {
             throw new \UnexpectedValueException('Template content is empty. Did You take() any template?');
         }
+
+        return $this->templateContent;
+    }
+
+    /**
+     * Set current template content.
+     *
+     * @param string $templateContent
+     */
+    public function setTemplateContent(string $templateContent): void
+    {
+        $this->templateContent = $templateContent;
     }
 
     /**
@@ -104,11 +121,9 @@ class TemplateWriter
      */
     public function write(string $resultFileName): bool
     {
-        $this->validateTemplateContent();
-
         $this->validatePlaceholders();
 
-        return (bool)$this->filesystem->put($resultFileName, $this->templateContent);
+        return (bool)$this->filesystem->put($resultFileName, $this->getTemplateContent());
     }
 
     /**
@@ -119,7 +134,7 @@ class TemplateWriter
     private function validatePlaceholders(): void
     {
         $placeholders = false;
-        if (preg_match_all('/\{\{([^{}]*)\}\}/', $this->templateContent, $placeholders)) {
+        if (preg_match_all('/\{\{([^{}]*)\}\}/', $this->getTemplateContent(), $placeholders)) {
             $notFilledPlaceholders = implode(', ', $placeholders[1]);
             throw new \UnexpectedValueException(
                 "Template placeholder(s) [{$notFilledPlaceholders}] not filled. Did You fill() placeholders?"
