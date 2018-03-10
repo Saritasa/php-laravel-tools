@@ -105,7 +105,7 @@ class TemplateWriter
     /**
      * Set current template content.
      *
-     * @param string $templateContent
+     * @param string $templateContent Template content to set as current
      */
     public function setTemplateContent(string $templateContent): void
     {
