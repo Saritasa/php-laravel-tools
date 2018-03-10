@@ -28,8 +28,7 @@ class RuleBuilderTest extends TestCase
     }
 
     /**
-     *
-     *
+     * Test that rule builder builds valid rule set for given column.
      *
      * @return void
      * @throws \Doctrine\DBAL\DBALException
@@ -68,8 +67,7 @@ class RuleBuilderTest extends TestCase
             Type::DATETIME => 'date',
             Type::TARRAY => null,
         ];
-        foreach ($typesToTest as $columnType => $expectedRuleType)
-        {
+        foreach ($typesToTest as $columnType => $expectedRuleType) {
             $column->setType(Type::getType($columnType));
             $actual = $this->ruleBuilder->generateRules($column, null);
             if (is_null($expectedRuleType)) {
