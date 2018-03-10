@@ -1,5 +1,9 @@
 # Changes History
 
+0.1.5
+-----
++ Add more unit tests
+
 0.1.4
 -----
 + Resolve issue with class property description access type
