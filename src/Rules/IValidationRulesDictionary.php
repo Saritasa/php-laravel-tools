@@ -43,13 +43,6 @@ interface IValidationRulesDictionary
     public function nullable(): string;
 
     /**
-     * Rule 'array'.
-     *
-     * @return string
-     */
-    public function typeArray(): string;
-
-    /**
      * Rule 'boolean'.
      *
      * @return string

@@ -58,16 +58,6 @@ class StringValidationRulesDictionary implements IValidationRulesDictionary
     }
 
     /**
-     * Rule 'array'.
-     *
-     * @return string
-     */
-    public function typeArray(): string
-    {
-        return 'array';
-    }
-
-    /**
      * Rule 'boolean'.
      *
      * @return string

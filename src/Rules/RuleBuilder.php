@@ -153,9 +153,6 @@ class RuleBuilder
             case LaravelValidationTypes::STRING:
                 $typeRule = $this->ruleDictionary->typeString();
                 break;
-            case LaravelValidationTypes::ARRAY:
-                $typeRule = $this->ruleDictionary->typeArray();
-                break;
             case LaravelValidationTypes::DATE:
                 $typeRule = $this->ruleDictionary->typeDate();
                 break;

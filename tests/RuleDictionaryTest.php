@@ -37,7 +37,6 @@ class RuleDictionaryTest extends TestCase
         $rules[] = $this->stringDictionary->nullable();
         $rules[] = $this->stringDictionary->ruleExists('table', 'column');
         $rules[] = $this->stringDictionary->ruleMax(10);
-        $rules[] = $this->stringDictionary->typeArray();
         $rules[] = $this->stringDictionary->typeBoolean();
         $rules[] = $this->stringDictionary->typeDate();
         $rules[] = $this->stringDictionary->typeInteger();
@@ -48,7 +47,7 @@ class RuleDictionaryTest extends TestCase
         $suffix = $this->stringDictionary->rulesSuffix();
 
         $actual = "{$prefix}{$builtRules}{$suffix}";
-        $expected = '\'required|nullable|exists:table,column|max:10|array|boolean|date|integer|numeric|string\'';
+        $expected = '\'required|nullable|exists:table,column|max:10|boolean|date|integer|numeric|string\'';
 
         $this->assertEquals($expected, $actual);
     }
@@ -66,7 +65,6 @@ class RuleDictionaryTest extends TestCase
         $rules[] = $this->fluentDictionary->nullable();
         $rules[] = $this->fluentDictionary->ruleExists('table', 'column');
         $rules[] = $this->fluentDictionary->ruleMax(10);
-        $rules[] = $this->fluentDictionary->typeArray();
         $rules[] = $this->fluentDictionary->typeBoolean();
         $rules[] = $this->fluentDictionary->typeDate();
         $rules[] = $this->fluentDictionary->typeInteger();
@@ -78,7 +76,7 @@ class RuleDictionaryTest extends TestCase
 
         $actual = "{$prefix}{$builtRules}{$suffix}";
         $expected = '\Saritasa\Laravel\Validation\Rule::required()->nullable()->exists(\'table\', \'column\')' .
-            '->max(10)->array()->boolean()->date()->int()->numeric()->string()';
+            '->max(10)->boolean()->date()->int()->numeric()->string()';
 
         $this->assertEquals($expected, $actual);
     }
