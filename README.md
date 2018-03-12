@@ -32,6 +32,12 @@ add the LaravelToolsServiceProvider in ``AppServiceProvider.php``:
     }
 ```
 
+Publish config with
+
+```bash
+$ artisan vendor:publish --tag=laravel_tools
+```
+
 ## Available artisan commands
 ### artisan make:form_request ModelName
 Allows to generate FormRequest class with rules based on model's attributes.

@@ -1,5 +1,9 @@
 # Changes History
 
+0.1.7
+-----
++ Improve Readme with publishing config instructions
+
 0.1.6
 -----
 + Add laravel package discovery
