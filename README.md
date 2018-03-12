@@ -165,8 +165,8 @@ class BidRequest extends FormRequest
 ```
 
 ## Known issues
-+ Enum DB type is casted as String via custom doctrine mapping
-+ Tinyint type is casted by Doctrine as Boolean
++ [Enum DB type is casted as String via custom doctrine mapping](https://github.com/Saritasa/php-laravel-tools/issues/3)
++ [Tinyint type is casted by Doctrine as Boolean](https://github.com/Saritasa/php-laravel-tools/issues/4)
 
 ## What's next?
 What need to improve:
