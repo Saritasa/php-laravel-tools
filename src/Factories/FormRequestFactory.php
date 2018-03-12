@@ -338,7 +338,7 @@ class FormRequestFactory
      *
      * @return string Optimized placeholder
      */
-    public function extractUsedClasses($placeholder): string
+    private function extractUsedClasses($placeholder): string
     {
         $classNamespaceRegExp = '/(\\\\{1,2}[\\\\a-zA-Z0-9_]+)[:\n]{0,2}/';
         $matches = [];
