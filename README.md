@@ -16,7 +16,9 @@ Install the ```saritasa/laravel-tools``` package as dev dependency:
 $ composer require saritasa/laravel-tools --dev
 ```
 
-and register service provider in **AppServiceProvider**
+If you use Laravel 5.4 or less,
+or 5.5+ with [package discovery](https://laravel.com/docs/5.5/packages#package-discovery) disabled,
+add the LaravelToolsServiceProvider in ``AppServiceProvider.php``:
 
 ```php
     public function register()

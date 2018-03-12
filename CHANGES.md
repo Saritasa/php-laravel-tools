@@ -1,5 +1,11 @@
 # Changes History
 
+0.1.6
+-----
++ Add laravel package discovery
++ Change visibility of form request factory methods
++ Improve readme with links
+
 0.1.5
 -----
 + Add more unit tests
