@@ -105,7 +105,7 @@ class BidRequest extends \Illuminate\Foundation\Http\FormRequest
 
 ```
 
-OOP example, where attribute names is a model constants and rules is fluent validation object:
+OOP example, where attribute names is a model constants and rules is [fluent validation](https://github.com/Saritasa/php-laravel-fluent-validation) object:
 
 ```php
 <?php
