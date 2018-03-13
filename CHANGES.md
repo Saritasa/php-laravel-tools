@@ -1,5 +1,9 @@
 # Changes History
 
+0.1.8
+-----
++ Improve form request scaffold console command output
+
 0.1.7
 -----
 + Improve Readme with publishing config instructions
