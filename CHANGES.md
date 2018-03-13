@@ -1,5 +1,9 @@
 # Changes History
 
+0.1.9
+-----
++ Resolve issue with form request factory placeholders building
+
 0.1.8
 -----
 + Improve form request scaffold console command output

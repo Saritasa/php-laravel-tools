@@ -17,7 +17,6 @@ class FormRequestFactoryConfig extends DtoModel
     const TEMPLATE_FILENAME = 'templateFilename';
     const EXCLUDED_ATTRIBUTES = 'excludedAttributes';
     const SUGGEST_ATTRIBUTE_NAMES_CONSTANTS = 'suggestAttributeNamesConstants';
-    const VALIDATION_RULES_DICTIONARY = 'validationRuleDictionary';
 
     /**
      * Namespace of new form request.

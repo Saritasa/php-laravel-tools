@@ -235,7 +235,7 @@ class FormRequestFactory
         ];
 
         foreach ($placeholders as $placeholder => $value) {
-            $placeholders[$placeholder] = $this->extractUsedClasses($placeholder);
+            $placeholders[$placeholder] = $this->extractUsedClasses($value);
         }
 
         $placeholders[static::PLACEHOLDER_NAMESPACE] = $this->config->namespace;
