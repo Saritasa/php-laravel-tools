@@ -133,11 +133,11 @@ class FormRequestFactory
      *
      * @param FormRequestFactoryConfig $formRequestFactoryConfig Form request configuration
      *
-     * @return void
+     * @return string Result file name
      * @throws Exception
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function build(FormRequestFactoryConfig $formRequestFactoryConfig): void
+    public function build(FormRequestFactoryConfig $formRequestFactoryConfig): string
     {
         $this->configure($formRequestFactoryConfig);
 
@@ -149,6 +149,8 @@ class FormRequestFactory
             ->take($this->config->templateFilename)
             ->fill($filledPlaceholders)
             ->write($this->config->resultFilename);
+
+        return $this->config->resultFilename;
     }
 
     /**
@@ -227,14 +229,14 @@ class FormRequestFactory
     {
         $placeholders = [
             static::PLACEHOLDER_FORM_REQUEST_CLASS_NAME => $this->config->className,
-            static::PLACEHOLDER_FORM_REQUEST_PARENT => '\\'.$this->config->parentClassName,
+            static::PLACEHOLDER_FORM_REQUEST_PARENT => '\\' . $this->config->parentClassName,
             static::CLASS_PHP_DOC => $this->getClassDocBlock(),
             static::PLACEHOLDER_RULES => $this->formatRules($this->buildRules()),
         ];
 
-        array_walk($placeholders, function (&$placeholder) {
-            $placeholder = $this->extractUsedClasses($placeholder);
-        });
+        foreach ($placeholders as $placeholder => $value) {
+            $placeholders[$placeholder] = $this->extractUsedClasses($placeholder);
+        }
 
         $placeholders[static::PLACEHOLDER_NAMESPACE] = $this->config->namespace;
         $placeholders[static::PLACEHOLDER_USES] = $this->formatUsedClasses();
