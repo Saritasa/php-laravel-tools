@@ -7,6 +7,7 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use Illuminate\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +20,8 @@ use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\PhpDoc\PhpDocPropertyBuilder;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 use Saritasa\LaravelTools\Rules\StringValidationRulesDictionary;
+use Saritasa\LaravelTools\Services\FormRequestService;
+use Saritasa\LaravelTools\Services\TemplatesManager;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
 /**
@@ -182,7 +185,8 @@ class FormRequestFactoryTest extends TestCase
      * @throws \Exception
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function testBuildMethodWithEmptyModelClass() {
+    public function testBuildMethodWithEmptyModelClass()
+    {
         $table = $this->getFakeTable();
         $formRequestFactory = $this->getFormRequestFactory($table);
 
@@ -202,7 +206,8 @@ class FormRequestFactoryTest extends TestCase
      * @throws \Exception
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function testBuildMethodWithWrongModelClass() {
+    public function testBuildMethodWithWrongModelClass()
+    {
         $table = $this->getFakeTable();
         $formRequestFactory = $this->getFormRequestFactory($table);
 
@@ -212,6 +217,102 @@ class FormRequestFactoryTest extends TestCase
         $this->expectExceptionMessage('Class [Carbon\Carbon] is not a valid Model class name');
 
         $formRequestFactory->build($formRequestFactoryConfig);
+    }
+
+    /**
+     * Test form request service.
+     *
+     * @return void
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function testFormRequestService(): void
+    {
+        $table = $this->getFakeTable();
+        $formRequestFactory = $this->getFormRequestFactory($table);
+        $formRequestFactoryConfig = $this->getFormRequestFactoryConfig();
+
+        $templatesManager = new TemplatesManager();
+        $repository = new Repository([
+            'laravel_tools.form_requests.namespace' => $formRequestFactoryConfig->namespace,
+            'laravel_tools.form_requests.parent' => $formRequestFactoryConfig->parentClassName,
+            'laravel_tools.form_requests.except' => $formRequestFactoryConfig->excludedAttributes,
+            'laravel_tools.form_requests.path' => __DIR__,
+        ]);
+
+        $formRequestService = new FormRequestService($repository, $templatesManager, $formRequestFactory);
+        $resultFileName = $formRequestService->generateFormRequest(
+            $formRequestFactoryConfig->modelClassName,
+            $formRequestFactoryConfig->className
+        );
+
+        $this->assertEquals(__DIR__ . DIRECTORY_SEPARATOR . $formRequestFactoryConfig->resultFilename, $resultFileName);
+    }
+
+    /**
+     * Test form request service wrong configuration exceptions.
+     *
+     * @dataProvider formRequestServiceProvider
+     *
+     * @param string $missedConfig Config key that should be missed in config
+     * @param string $expectedExceptionMessage Expected message that should be thrown
+     *
+     * @return void
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function testFormRequestServiceConfigurationChecks(
+        string $missedConfig,
+        string $expectedExceptionMessage
+    ): void {
+        $table = $this->getFakeTable();
+        $formRequestFactory = $this->getFormRequestFactory($table);
+        $formRequestFactoryConfig = $this->getFormRequestFactoryConfig();
+
+        $templatesManager = new TemplatesManager();
+
+        $config = [
+            'laravel_tools.form_requests.namespace' => $formRequestFactoryConfig->namespace,
+            'laravel_tools.form_requests.parent' => $formRequestFactoryConfig->parentClassName,
+            'laravel_tools.form_requests.except' => $formRequestFactoryConfig->excludedAttributes,
+            'laravel_tools.form_requests.path' => __DIR__,
+        ];
+        unset($config[$missedConfig]);
+        $repository = new Repository($config);
+
+        $this->expectExceptionMessage($expectedExceptionMessage);
+
+        $formRequestService = new FormRequestService($repository, $templatesManager, $formRequestFactory);
+        $formRequestService->generateFormRequest(
+            $formRequestFactoryConfig->modelClassName,
+            $formRequestFactoryConfig->className
+        );
+    }
+
+    /**
+     * Tests set for form request service test.
+     * Contains list of attributes to check that they are missed.
+     *
+     * @return array
+     */
+    public function formRequestServiceProvider(): array
+    {
+        return [
+            'Missed namespace config' => [
+                'laravel_tools.form_requests.namespace',
+                'Form request namespace not configured',
+            ],
+            'Missed parent config' => [
+                'laravel_tools.form_requests.parent',
+                'Form request parent class name not configured',
+            ],
+            'Missed except config' => [
+                'laravel_tools.form_requests.except',
+                'Form request ignored attributes configuration is invalid',
+            ],
+        ];
     }
 
     /**
