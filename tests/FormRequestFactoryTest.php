@@ -248,6 +248,8 @@ class FormRequestFactoryTest extends TestCase
         );
 
         $this->assertEquals(__DIR__ . DIRECTORY_SEPARATOR . $formRequestFactoryConfig->resultFilename, $resultFileName);
+
+        unlink($resultFileName);
     }
 
     /**
