@@ -63,7 +63,7 @@ class FormRequestService
      * @throws \Exception
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException When template file not found
      */
-    public function generateFormRequest(string $modelClassName, ?string $formRequestClassName = null): string
+    public function generateFormRequest(string $modelClassName, string $formRequestClassName): string
     {
         $formRequestFactoryConfiguration = $this->getFactoryConfiguration($modelClassName, $formRequestClassName);
 
