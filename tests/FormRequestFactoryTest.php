@@ -353,7 +353,7 @@ class FormRequestFactoryTest extends TestCase
 
 namespace {{namespace}};
 
-{{uses}}
+{{imports}}
 
 {{classPhpDoc}}
 class {{formRequestClassName}} extends {{formRequestParent}}

@@ -25,7 +25,7 @@ use UnexpectedValueException;
 class FormRequestFactory
 {
     const PLACEHOLDER_NAMESPACE = 'namespace';
-    const PLACEHOLDER_USES = 'uses';
+    const PLACEHOLDER_IMPORTS = 'imports';
     const PLACEHOLDER_FORM_REQUEST_CLASS_NAME = 'formRequestClassName';
     const CLASS_PHP_DOC = 'classPhpDoc';
     const PLACEHOLDER_FORM_REQUEST_PARENT = 'formRequestParent';
@@ -239,7 +239,7 @@ class FormRequestFactory
         }
 
         $placeholders[static::PLACEHOLDER_NAMESPACE] = $this->config->namespace;
-        $placeholders[static::PLACEHOLDER_USES] = $this->formatUsedClasses();
+        $placeholders[static::PLACEHOLDER_IMPORTS] = $this->formatUsedClasses();
 
         return $placeholders;
     }
