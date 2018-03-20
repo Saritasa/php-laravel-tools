@@ -67,7 +67,7 @@ class FormRequestService
     {
         $formRequestFactoryConfiguration = $this->getFactoryConfiguration($modelClassName, $formRequestClassName);
 
-        return $this->formRequestFactory->build($formRequestFactoryConfiguration);
+        return $this->formRequestFactory->configure($formRequestFactoryConfiguration)->build();
     }
 
     /**

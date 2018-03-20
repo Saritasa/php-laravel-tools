@@ -3,11 +3,14 @@
 namespace Saritasa\LaravelTools\Tests;
 
 use Carbon\Carbon;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use Exception;
 use Illuminate\Config\Repository;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +20,7 @@ use Saritasa\LaravelTools\Factories\FormRequestFactory;
 use Saritasa\LaravelTools\Mappings\DbalToLaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
 use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
-use Saritasa\LaravelTools\PhpDoc\PhpDocPropertyBuilder;
+use Saritasa\LaravelTools\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 use Saritasa\LaravelTools\Rules\StringValidationRulesDictionary;
 use Saritasa\LaravelTools\Services\FormRequestService;
@@ -94,7 +97,7 @@ class FormRequestFactoryTest extends TestCase
      * Returns fake table information.
      *
      * @return Table
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     private function getFakeTable(): Table
     {
@@ -133,7 +136,7 @@ class FormRequestFactoryTest extends TestCase
         $ruleBuilder = new RuleBuilder(new StringValidationRulesDictionary(), new DbalToLaravelValidationTypeMapper());
         $phpTypeMapper = new DbalToPhpTypeMapper();
         $templateWriter = new TemplateWriter(app(Filesystem::class));
-        $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(new PhpDocPropertyBuilder());
+        $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(new PhpDocSingleLinePropertyDescriptionBuilder());
         /** @var SchemaReader $schemaReader */
         $schemaReader = \Mockery::mock(SchemaReader::class)
             ->expects('getTableDetails')
@@ -158,9 +161,9 @@ class FormRequestFactoryTest extends TestCase
      * @param string $expectedFormRequestContent Expected form request content
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws DBALException
+     * @throws Exception
+     * @throws FileNotFoundException
      */
     public function testBuildMethod(
         FormRequestFactoryConfig $formRequestFactoryConfig,
@@ -170,7 +173,7 @@ class FormRequestFactoryTest extends TestCase
 
         $formRequestFactory = $this->getFormRequestFactory($table);
 
-        $resultFileName = $formRequestFactory->build($formRequestFactoryConfig);
+        $resultFileName = $formRequestFactory->configure($formRequestFactoryConfig)->build();
         $resultFile = file_get_contents($resultFileName);
 
         $this->assertEquals($formRequestFactoryConfig->resultFilename, $resultFileName);
@@ -181,9 +184,9 @@ class FormRequestFactoryTest extends TestCase
      * Tests build() method with empty model class.
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws DBALException
+     * @throws Exception
+     * @throws FileNotFoundException
      */
     public function testBuildMethodWithEmptyModelClass()
     {
@@ -195,16 +198,16 @@ class FormRequestFactoryTest extends TestCase
 
         $this->expectExceptionMessage('Form request model not configured');
 
-        $formRequestFactory->build($formRequestFactoryConfig);
+        $formRequestFactory->configure($formRequestFactoryConfig)->build();;
     }
 
     /**
      * Tests build() method with wrong model class.
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws DBALException
+     * @throws Exception
+     * @throws FileNotFoundException
      */
     public function testBuildMethodWithWrongModelClass()
     {
@@ -216,16 +219,16 @@ class FormRequestFactoryTest extends TestCase
 
         $this->expectExceptionMessage('Class [Carbon\Carbon] is not a valid Model class name');
 
-        $formRequestFactory->build($formRequestFactoryConfig);
+        $formRequestFactory->configure($formRequestFactoryConfig)->build();;
     }
 
     /**
      * Test form request service.
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws DBALException
+     * @throws Exception
+     * @throws FileNotFoundException
      */
     public function testFormRequestService(): void
     {
@@ -261,9 +264,9 @@ class FormRequestFactoryTest extends TestCase
      * @param string $expectedExceptionMessage Expected message that should be thrown
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws DBALException
+     * @throws Exception
+     * @throws FileNotFoundException
      */
     public function testFormRequestServiceConfigurationChecks(
         string $missedConfig,

@@ -8,7 +8,7 @@ use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 /**
  * PhpDoc property line builder. Allows to generate PhpDoc property line with variable type and description.
  */
-class PhpDocPropertyBuilder
+class PhpDocSingleLinePropertyDescriptionBuilder
 {
     /**
      * Return PhpDoc property line description.

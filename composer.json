@@ -15,6 +15,7 @@
         "php": ">=7.1",
         "doctrine/dbal": "^2.6",
         "laravel/framework": "^5.4",
+        "saritasa/php-common": "^1.1",
         "saritasa/transformers": "^1.0"
     },
     "require-dev": {

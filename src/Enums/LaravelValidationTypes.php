@@ -2,10 +2,12 @@
 
 namespace Saritasa\LaravelTools\Enums;
 
+use Saritasa\Enum;
+
 /**
  * Available laravel validation rules types.
  */
-class LaravelValidationTypes
+class LaravelValidationTypes extends Enum
 {
     const ARRAY = 'array';
     const BOOLEAN = 'boolean';

@@ -12,18 +12,18 @@ class PhpDocClassDescriptionBuilder
     /**
      * PhpDoc property renderer.
      *
-     * @var PhpDocPropertyBuilder
+     * @var PhpDocSingleLinePropertyDescriptionBuilder
      */
-    private $phpDocPropertyBuilder;
+    private $phpDocClassPropertyBuilder;
 
     /**
      * Allows to render php-class description.
      *
-     * @param PhpDocPropertyBuilder $phpDocPropertyBuilder PhpDoc property renderer
+     * @param PhpDocSingleLinePropertyDescriptionBuilder $phpDocClassPropertyBuilder PhpDoc property renderer
      */
-    public function __construct(PhpDocPropertyBuilder $phpDocPropertyBuilder)
+    public function __construct(PhpDocSingleLinePropertyDescriptionBuilder $phpDocClassPropertyBuilder)
     {
-        $this->phpDocPropertyBuilder = $phpDocPropertyBuilder;
+        $this->phpDocClassPropertyBuilder = $phpDocClassPropertyBuilder;
     }
 
     /**
@@ -41,7 +41,7 @@ class PhpDocClassDescriptionBuilder
         $result[] = " * {$classDescription}.";
         $result[] = ' *';
         foreach ($classProperties as $classProperty) {
-            $result[] = $this->phpDocPropertyBuilder->render($classProperty);
+            $result[] = $this->phpDocClassPropertyBuilder->render($classProperty);
         }
         $result[] = ' */';
 

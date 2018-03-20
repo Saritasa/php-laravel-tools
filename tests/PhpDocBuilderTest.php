@@ -6,14 +6,15 @@ use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
-use Saritasa\LaravelTools\PhpDoc\PhpDocPropertyBuilder;
+use Saritasa\LaravelTools\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
+use Saritasa\LaravelTools\PhpDoc\PhpDocVariableDescriptionBuilder;
 
 /**
  * Test PhpDoc block rendering function.
  */
 class PhpDocBuilderTest extends TestCase
 {
-    /** @var PhpDocPropertyBuilder */
+    /** @var PhpDocSingleLinePropertyDescriptionBuilder */
     private $phpDocPropertyBuilder;
 
     /** @var PhpDocClassDescriptionBuilder */
@@ -22,7 +23,7 @@ class PhpDocBuilderTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->phpDocPropertyBuilder = new PhpDocPropertyBuilder();
+        $this->phpDocPropertyBuilder = new PhpDocSingleLinePropertyDescriptionBuilder();
         $this->phpDocClassDescriptionBuilder = new PhpDocClassDescriptionBuilder($this->phpDocPropertyBuilder);
     }
 

@@ -2,12 +2,12 @@
 
 namespace Saritasa\LaravelTools\DTO;
 
-use Saritasa\Transformers\DtoModel;
+use Saritasa\Dto;
 
 /**
  * Configuration for form request generation. Contains necessary class names and namespaces.
  */
-class FormRequestFactoryConfig extends DtoModel
+class FormRequestFactoryConfig extends Dto
 {
     const NAMESPACE = 'namespace';
     const PARENT_CLASS_NAME = 'parentClassName';

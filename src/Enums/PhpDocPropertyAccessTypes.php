@@ -2,10 +2,12 @@
 
 namespace Saritasa\LaravelTools\Enums;
 
+use Saritasa\Enum;
+
 /**
  * Available PhpDoc properties access type.
  */
-class PhpDocPropertyAccessTypes
+class PhpDocPropertyAccessTypes extends Enum
 {
     const READ = 'read';
     const WRITE = 'write';

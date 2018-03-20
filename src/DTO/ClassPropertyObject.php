@@ -2,13 +2,13 @@
 
 namespace Saritasa\LaravelTools\DTO;
 
+use Saritasa\Dto;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
-use Saritasa\Transformers\DtoModel;
 
 /**
  * Class property DTO. Stores property details.
  */
-class ClassPropertyObject extends DtoModel
+class ClassPropertyObject extends Dto
 {
     const NAME = 'name';
     const TYPE = 'type';
