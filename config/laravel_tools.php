@@ -22,18 +22,47 @@ return [
         // Form requests parent class FQN
         'parent' => \Illuminate\Foundation\Http\FormRequest::class,
 
-        // Attributes that should be not taken into account
+        // Attributes that should not be taken into account
         'except' => [
             'id',
             'created_at',
             'updated_at',
             'deleted_at',
         ],
+
+        // Form request class template. If template name is just a string than template from package will be taken.
+        // If path passed then file by this path will be taken
+        'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::FORM_REQUEST_TEMPLATE,
     ],
 
     'rules' => [
         // Validation rules dictionary
         'dictionary' => \Saritasa\LaravelTools\Rules\StringValidationRulesDictionary::class,
         // 'dictionary' => \Saritasa\LaravelTools\Rules\FluentValidationRulesDictionary::class
-    ]
+    ],
+
+    'dto' => [
+        // Path where DTOs are located
+        'path' => app_path('Models/Dto'),
+
+        // Visibility type of properties in generated DTO. Should be 'public', 'protected' or 'private'
+        'properties_visibility' => \Saritasa\LaravelTools\Enums\PropertiesVisibilityTypes::PROTECTED,
+
+        // DTO classes namespace
+        'namespace' => 'App\Models\Dto',
+
+        // DTO parent class FQN
+        'parent' => \Saritasa\Dto::class,
+
+        // DTO class template. If template name is just a string than template from package will be taken.
+        // If path passed then file by this path will be taken
+        'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::DTO_TEMPLATE,
+
+        // Attributes that should not be taken into account
+        'except' => [
+            'created_at',
+            'updated_at',
+            'deleted_at',
+        ],
+    ],
 ];

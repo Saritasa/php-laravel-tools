@@ -1,0 +1,13 @@
+<?php
+
+namespace {{namespace}};
+
+{{imports}}
+
+{{classPhpDoc}}
+class {{dtoClassName}} extends {{dtoParent}}
+{
+{{constants}}
+
+{{properties}}
+}
