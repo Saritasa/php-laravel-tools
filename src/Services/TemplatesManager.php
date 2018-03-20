@@ -16,8 +16,11 @@ class TemplatesManager
      */
     public function getTemplatePath(string $templateFileName): string
     {
-        $pathTree = [__DIR__, '..', 'Templates', $templateFileName];
+        if (strpos($templateFileName, DIRECTORY_SEPARATOR) === false) {
+            $pathTree = [__DIR__, '..', 'Templates', $templateFileName];
+            $templateFileName = implode(DIRECTORY_SEPARATOR, $pathTree);
+        }
 
-        return implode(DIRECTORY_SEPARATOR, $pathTree);
+        return $templateFileName;
     }
 }

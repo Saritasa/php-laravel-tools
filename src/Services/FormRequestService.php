@@ -75,15 +75,13 @@ class FormRequestService
      *
      * @param string $modelClassName Target model class name
      * @param string $formRequestClassName Result form request file name
-     * @param null|string $templateName Form request template
      *
      * @return FormRequestFactoryConfig
      * @throws RuntimeException
      */
     private function getFactoryConfiguration(
         string $modelClassName,
-        string $formRequestClassName,
-        ?string $templateName = ScaffoldTemplates::FORM_REQUEST_TEMPLATE
+        string $formRequestClassName
     ): FormRequestFactoryConfig {
 
         return new FormRequestFactoryConfig([
@@ -92,7 +90,7 @@ class FormRequestService
             FormRequestFactoryConfig::CLASS_NAME => $formRequestClassName,
             FormRequestFactoryConfig::MODEL_CLASS_NAME => $this->getModelFullClassName($modelClassName),
             FormRequestFactoryConfig::RESULT_FILENAME => $this->getResultFileName($formRequestClassName),
-            FormRequestFactoryConfig::TEMPLATE_FILENAME => $this->templatesManager->getTemplatePath($templateName),
+            FormRequestFactoryConfig::TEMPLATE_FILENAME => $this->getTemplateFileName(),
             FormRequestFactoryConfig::EXCLUDED_ATTRIBUTES => $this->getIgnoredAttributes(),
             FormRequestFactoryConfig::SUGGEST_ATTRIBUTE_NAMES_CONSTANTS => $this->getSuggestAttributesConstants(),
         ]);
@@ -185,5 +183,20 @@ class FormRequestService
     private function getSuggestAttributesConstants(): bool
     {
         return $this->configRepository->get('laravel_tools.models.suggest_attribute_names_constants', true);
+    }
+
+    /**
+     * Returns form request template file name.
+     *
+     * @return string
+     */
+    private function getTemplateFileName(): string
+    {
+        $templateFileName = $this->configRepository->get(
+            'laravel_tools.form_requests.template_file_name',
+            ScaffoldTemplates::FORM_REQUEST_TEMPLATE
+        );
+
+        return $this->templatesManager->getTemplatePath($templateFileName);
     }
 }
