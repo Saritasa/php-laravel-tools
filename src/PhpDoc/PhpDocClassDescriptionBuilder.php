@@ -39,7 +39,9 @@ class PhpDocClassDescriptionBuilder
         $result = [];
         $result[] = '/**';
         $result[] = " * {$classDescription}.";
-        $result[] = ' *';
+        if ($classProperties) {
+            $result[] = ' *';
+        }
         foreach ($classProperties as $classProperty) {
             $result[] = $this->phpDocClassPropertyBuilder->render($classProperty);
         }

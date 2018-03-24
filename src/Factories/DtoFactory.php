@@ -3,19 +3,17 @@
 namespace Saritasa\LaravelTools\Factories;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Saritasa\LaravelTools\Database\SchemaReader;
-use Saritasa\LaravelTools\DTO\ClassFactoryConfig;
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
+use Saritasa\LaravelTools\Enums\PropertiesVisibilityTypes;
 use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
 use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\PhpDoc\PhpDocVariableDescriptionBuilder;
 use Saritasa\LaravelTools\Services\TemplateWriter;
-use UnexpectedValueException;
 
 /**
  * DTO class builder. Allows to create Dto class for model.
@@ -117,14 +115,17 @@ class DtoFactory extends ModelBasedClassFactory
     private function getClassDocBlock(): string
     {
         $classProperties = [];
-        foreach ($this->columns as $column) {
-            $classProperties[] = new ClassPropertyObject([
-                ClassPropertyObject::NAME => $column->getName(),
-                ClassPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
-                ClassPropertyObject::NULLABLE => !$column->getNotnull(),
-                ClassPropertyObject::DESCRIPTION => $column->getComment(),
-                ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
-            ]);
+
+        if ($this->config->propertiesVisibility !== PropertiesVisibilityTypes::PUBLIC) {
+            foreach ($this->columns as $column) {
+                $classProperties[] = new ClassPropertyObject([
+                    ClassPropertyObject::NAME => $column->getName(),
+                    ClassPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
+                    ClassPropertyObject::NULLABLE => !$column->getNotnull(),
+                    ClassPropertyObject::DESCRIPTION => $column->getComment(),
+                    ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+                ]);
+            }
         }
 
         $classDescription = "{$this->config->className} DTO";
