@@ -20,11 +20,15 @@ class PhpDocBuilderTest extends TestCase
     /** @var PhpDocClassDescriptionBuilder */
     private $phpDocClassDescriptionBuilder;
 
+    /** @var PhpDocVariableDescriptionBuilder */
+    private $phpDocVariableDescriptionBuilder;
+
     protected function setUp()
     {
         parent::setUp();
         $this->phpDocPropertyBuilder = new PhpDocSingleLinePropertyDescriptionBuilder();
         $this->phpDocClassDescriptionBuilder = new PhpDocClassDescriptionBuilder($this->phpDocPropertyBuilder);
+        $this->phpDocVariableDescriptionBuilder = new PhpDocVariableDescriptionBuilder();
     }
 
     /**
@@ -65,6 +69,7 @@ class PhpDocBuilderTest extends TestCase
      */
     public function testClassDescriptionRenderFunction()
     {
+        // Test with class properties
         $classProperty = new ClassPropertyObject([
             ClassPropertyObject::NAME => 'variable',
             ClassPropertyObject::TYPE => 'string',
@@ -81,6 +86,61 @@ class PhpDocBuilderTest extends TestCase
             " *\n" .
             " * @property-read string \$variable Some description\n" .
             " */";
+        $this->assertEquals($expectedPhpDoc, $classPhpDoc);
+
+        // Test without class properties
+        $classPhpDoc = $this->phpDocClassDescriptionBuilder->render($classDescription, []);
+
+        $expectedPhpDoc = "/**\n" .
+            " * Some class.\n" .
+            " */";
+        $this->assertEquals($expectedPhpDoc, $classPhpDoc);
+    }
+
+    /**
+     * Test variable description rendering function.
+     *
+     * @return void
+     */
+    public function testVariableDescriptionRenderFunction()
+    {
+        // Tet simple type
+        $classProperty = new ClassPropertyObject([
+            ClassPropertyObject::NAME => 'variable',
+            ClassPropertyObject::TYPE => 'string',
+            ClassPropertyObject::NULLABLE => false,
+            ClassPropertyObject::DESCRIPTION => 'Some description',
+            ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+        ]);
+
+        $classPhpDoc = $this->phpDocVariableDescriptionBuilder->render($classProperty);
+
+        $expectedPhpDoc = "/**\n" .
+            " * Some description.\n" .
+            " *\n" .
+            " * @var string\n" .
+            " */";
+        $this->assertEquals($expectedPhpDoc, $classPhpDoc);
+
+        // Test with nullable
+        $classProperty->nullable = true;
+        $classPhpDoc = $this->phpDocVariableDescriptionBuilder->render($classProperty);
+
+        $expectedPhpDoc = "/**\n" .
+            " * Some description.\n" .
+            " *\n" .
+            " * @var string|null\n" .
+            " */";
+        $this->assertEquals($expectedPhpDoc, $classPhpDoc);
+
+        // Test with indent
+        $classPhpDoc = $this->phpDocVariableDescriptionBuilder->render($classProperty, '    ');
+
+        $expectedPhpDoc = "    /**\n" .
+            "     * Some description.\n" .
+            "     *\n" .
+            "     * @var string|null\n" .
+            "     */";
         $this->assertEquals($expectedPhpDoc, $classPhpDoc);
     }
 }
