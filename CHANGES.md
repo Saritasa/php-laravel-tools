@@ -1,5 +1,11 @@
 # Changes History
 
+0.2.0
+-----
++ Add model-based DTO generation command
++ Improve PHPDoc class description builder to allow build description without properties
++ Extract parent ClassFactory and ModelBasedClassFactory to simplify adding new classes factory
+
 0.1.10
 -----
 + Add more tests

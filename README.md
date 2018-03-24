@@ -39,11 +39,19 @@ $ artisan vendor:publish --tag=laravel_tools
 ```
 
 ## Available artisan commands
-### artisan make:form_request ModelName
+
+### artisan make:form_request ModelName FormRequestName
 Allows to generate FormRequest class with rules based on model's attributes.
 There are two generated sets:
 + Properties docblock with type, name and description (from column comment)
 + Form request rules
+
+### artisan make:dto ModelName DtoName
+Allows to generate DTO class with properties based on model's attributes.
+There are three generated sets:
++ Properties docblock with type, name and description (from column comment) for protected variables
++ DTO class properties with public or protected visibility
++ DTO constants with properties names
 
 ## Form request builder
 Allows to build form request for model create or update request
@@ -58,7 +66,7 @@ There are two validation rule dictionary that can be configured in `rules.dictio
 + **StringValidationRulesDictionary** that builds string rules: 'required|integer'
 + **FluentValidationRulesDictionary** that builds object rules: Rule::required()->int()
 
-### Example
+### Generated Form Request Example
 'String' example, where attributes names and rules is a just string:
 ```php
 <?php
@@ -172,6 +180,103 @@ class BidRequest extends FormRequest
 
 ```
 
+### Generated DTO example
+
+DTO with public properties:
+
+```php
+<?php
+
+namespace App\Models\Dto;
+
+use Saritasa\Dto;
+
+/**
+ * BidData DTO.
+ */
+class BidData extends Dto
+{
+    const ID = 'id';
+    const USER_ID = 'user_id';
+    const PROPOSAL_UPLOADED_AT = 'proposal_uploaded_at';
+    // ... and other constants with properties names
+
+    /**
+     * .
+     *
+     * @var integer
+     */
+    public $id;
+
+    /**
+     * User who created bid.
+     *
+     * @var integer
+     */
+    public $user_id;
+
+    /**
+     * Proposal uploaded date.
+     *
+     * @var string|null
+     */
+    public $proposal_uploaded_at;
+
+    // ... and other properties
+}
+```
+
+DTO with protected properties:
+
+```php
+<?php
+
+namespace App\Models\Dto;
+
+use Saritasa\Dto;
+
+/**
+ * BidData DTO.
+ *
+ * @property-read integer $id
+ * @property-read integer $user_id User who created bid
+ * @property-read string|null $proposal_uploaded_at Proposal uploaded date
+ */
+class BidData extends Dto
+{
+    const ID = 'id';
+    const USER_ID = 'user_id';
+    const PROPOSAL_UPLOADED_AT = 'proposal_uploaded_at';
+    // ... and other constants with properties names
+
+    /**
+     * .
+     *
+     * @var integer
+     */
+    protected $id;
+
+    /**
+     * User who created bid.
+     *
+     * @var integer
+     */
+    protected $user_id;
+
+    /**
+     * Proposal uploaded date.
+     *
+     * @var string|null
+     */
+    protected $proposal_uploaded_at;
+
+    // ... and other properties
+}
+
+```
+
+
+
 ## Known issues
 + [Enum DB type is casted as String via custom doctrine mapping](https://github.com/Saritasa/php-laravel-tools/issues/3)
 + [Tinyint type is casted by Doctrine as Boolean](https://github.com/Saritasa/php-laravel-tools/issues/4)
@@ -179,8 +284,9 @@ class BidRequest extends FormRequest
 ## What's next?
 What need to improve:
 1. Declare only necessary packages in composer.json instead of entire laravel
-2. Unit tests of course :)
-3. Generation of DTO for model and return this DTO from form request
+2. Allow to generate typehinted getters and setters for DTO
+3. Allow to decide public or protected visiblity type from artisan command
+4. Allow to decide need or not generate getters and setters for dto from artisan command 
 
 ## Contributing
 See [CONTRIBUTING](CONTRIBUTING.md) and [Code of Conduct](CONDUCT.md),
