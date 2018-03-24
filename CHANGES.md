@@ -1,6 +1,6 @@
 # Changes History
 
-0.2.0
+1.0.0
 -----
 + Add model-based DTO generation command
 + Improve PHPDoc class description builder to allow build description without properties

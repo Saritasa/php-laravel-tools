@@ -66,7 +66,7 @@ There are two validation rule dictionary that can be configured in `rules.dictio
 + **StringValidationRulesDictionary** that builds string rules: 'required|integer'
 + **FluentValidationRulesDictionary** that builds object rules: Rule::required()->int()
 
-### Generated Form Request Example
+### Generated Form Request example
 'String' example, where attributes names and rules is a just string:
 ```php
 <?php
