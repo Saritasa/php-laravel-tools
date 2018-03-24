@@ -196,7 +196,7 @@ class FormRequestFactoryTest extends TestCase
         $formRequestFactoryConfig = $this->getFormRequestFactoryConfig();
         $formRequestFactoryConfig->modelClassName = '';
 
-        $this->expectExceptionMessage('Form request model not configured');
+        $this->expectExceptionMessage('Model class not configured');
 
         $formRequestFactory->configure($formRequestFactoryConfig)->build();;
     }

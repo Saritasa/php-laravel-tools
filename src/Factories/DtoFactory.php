@@ -83,33 +83,6 @@ class DtoFactory extends ModelBasedClassFactory
     }
 
     /**
-     * Configure factory to build new DTO.
-     *
-     * @param DtoFactoryConfig|ClassFactoryConfig $config DTO configuration
-     *
-     * @throws RuntimeException When factory's configuration doesn't contain model class name
-     * @throws UnexpectedValueException When passed model class is not a Model class instance
-     *
-     * @return DtoFactory
-     */
-    public function configure($config)
-    {
-        $this->config = $config;
-
-        if (!$this->config->modelClassName) {
-            throw new RuntimeException('DTO not configured');
-        }
-
-        if (!is_a($this->config->modelClassName, Model::class, true)) {
-            throw new UnexpectedValueException(
-                "Class [{$this->config->modelClassName}] is not a valid Model class name"
-            );
-        }
-
-        return $this;
-    }
-
-    /**
      * Returns template's placeholders values.
      *
      * @return array

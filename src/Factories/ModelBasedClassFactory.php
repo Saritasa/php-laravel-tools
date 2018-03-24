@@ -8,10 +8,13 @@ use Doctrine\DBAL\Schema\Table;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
+use RuntimeException;
+use Saritasa\Dto;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\ClassFactoryConfig;
 use Saritasa\LaravelTools\DTO\ModelBasedClassFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
+use UnexpectedValueException;
 
 /**
  * Factory to scaffold some new class based on template and existing model class.
@@ -131,15 +134,28 @@ abstract class ModelBasedClassFactory extends ClassFactory
     }
 
     /**
-     * Configure factory to build new class.
+     * Configure factory.
      *
-     * @param ModelBasedClassFactoryConfig|ClassFactoryConfig $config Class configuration
+     * @param ModelBasedClassFactoryConfig|Dto $config Generated class configuration
+     *
+     * @throws RuntimeException When factory's configuration doesn't contain model class name
+     * @throws UnexpectedValueException When passed model class is not a Model class instance
      *
      * @return static
      */
     public function configure($config)
     {
         $this->config = $config;
+
+        if (!$this->config->modelClassName) {
+            throw new RuntimeException('Model class not configured');
+        }
+
+        if (!is_a($this->config->modelClassName, Model::class, true)) {
+            throw new UnexpectedValueException(
+                "Class [{$this->config->modelClassName}] is not a valid Model class name"
+            );
+        }
 
         return $this;
     }

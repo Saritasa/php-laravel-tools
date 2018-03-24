@@ -3,18 +3,15 @@
 namespace Saritasa\LaravelTools\Factories;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use RuntimeException;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
-use Saritasa\LaravelTools\DTO\ModelBasedClassFactoryConfig;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
 use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 use Saritasa\LaravelTools\Services\TemplateWriter;
-use UnexpectedValueException;
 
 /**
  * Form Request class builder. Allows to create FormRequest class for model.
@@ -83,33 +80,6 @@ class FormRequestFactory extends ModelBasedClassFactory
     }
 
     /**
-     * Configure factory to build new form request.
-     *
-     * @param FormRequestFactoryConfig|ModelBasedClassFactoryConfig $config Form Request configuration
-     *
-     * @throws RuntimeException When factory's configuration doesn't contain model class name
-     * @throws UnexpectedValueException When passed model class is not a Model class instance
-     *
-     * @return FormRequestFactory
-     */
-    public function configure($config)
-    {
-        $this->config = $config;
-
-        if (!$this->config->modelClassName) {
-            throw new RuntimeException('Form request model not configured');
-        }
-
-        if (!is_a($this->config->modelClassName, Model::class, true)) {
-            throw new UnexpectedValueException(
-                "Class [{$this->config->modelClassName}] is not a valid Model class name"
-            );
-        }
-
-        return $this;
-    }
-
-    /**
      * Returns template's placeholders values.
      *
      * @return array
@@ -167,21 +137,11 @@ class FormRequestFactory extends ModelBasedClassFactory
      */
     private function formatRules(array $rules): string
     {
-        $indent = $this->getRulesIndent();
+        $indent = $this->getIndent(static::RULES_INDENTS);
 
         $formattedRules = implode(",\n{$indent}", $rules);
 
         return trim($formattedRules);
-    }
-
-    /**
-     * Returns rules indent.
-     *
-     * @return string
-     */
-    private function getRulesIndent(): string
-    {
-        return str_repeat(' ', static::INDENT_SIZE * static::RULES_INDENTS);
     }
 
     /**
