@@ -13,6 +13,8 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
 use PHPUnit\Framework\TestCase;
 use Saritasa\Dto;
+use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
+use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
 use Saritasa\LaravelTools\Enums\PropertiesVisibilityTypes;
@@ -131,6 +133,8 @@ class DtoFactoryTest extends TestCase
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(new PhpDocSingleLinePropertyDescriptionBuilder());
         $variableDescriptionBuilder = new PhpDocVariableDescriptionBuilder();
+        $getterGenerator = new GetterGenerator();
+        $setterGenerator = new SetterGenerator();
         /** @var SchemaReader $schemaReader */
         $schemaReader = \Mockery::mock(SchemaReader::class)
             ->expects('getTableDetails')
@@ -142,7 +146,9 @@ class DtoFactoryTest extends TestCase
             $templateWriter,
             $phpTypeMapper,
             $classDescriptionBuilder,
-            $variableDescriptionBuilder
+            $variableDescriptionBuilder,
+            $getterGenerator,
+            $setterGenerator
         );
     }
 

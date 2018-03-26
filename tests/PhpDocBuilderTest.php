@@ -134,13 +134,13 @@ class PhpDocBuilderTest extends TestCase
         $this->assertEquals($expectedPhpDoc, $classPhpDoc);
 
         // Test with indent
-        $classPhpDoc = $this->phpDocVariableDescriptionBuilder->render($classProperty, '    ');
+        $classPhpDoc = $this->phpDocVariableDescriptionBuilder->render($classProperty);
 
-        $expectedPhpDoc = "    /**\n" .
-            "     * Some description.\n" .
-            "     *\n" .
-            "     * @var string|null\n" .
-            "     */";
+        $expectedPhpDoc = "/**\n" .
+            " * Some description.\n" .
+            " *\n" .
+            " * @var string|null\n" .
+            " */";
         $this->assertEquals($expectedPhpDoc, $classPhpDoc);
     }
 }
