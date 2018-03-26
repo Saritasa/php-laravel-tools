@@ -36,10 +36,10 @@ class SetterGenerator
         $setterFunctionName = 'set' . ucfirst($attributeName);
 
         return <<<template
- public function {$setterFunctionName}({$attributeType} \${$attributeName}): void
- {
-     \$this->{$attributeName} = \${$attributeName};
- }
+public function {$setterFunctionName}({$attributeType} \${$attributeName}): void
+{
+    \$this->{$attributeName} = \${$attributeName};
+}
 template;
     }
 

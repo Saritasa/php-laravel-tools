@@ -36,10 +36,10 @@ class GetterGenerator
         $getterFunctionName = 'get' . ucfirst($attributeName);
 
         return <<<template
- public function {$getterFunctionName}(): {$attributeType}
- {
-     return \$this->{$attributeName};
- }
+public function {$getterFunctionName}(): {$attributeType}
+{
+    return \$this->{$attributeName};
+}
 template;
     }
 
