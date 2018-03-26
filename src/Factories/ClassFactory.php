@@ -95,6 +95,26 @@ abstract class ClassFactory
     }
 
     /**
+     * Apply indent for each line in given array.
+     *
+     * @param string $codeBlock Code block in which need to prepend each line with indent
+     * @param int $indentSize Indent size that should be placed before each line
+     *
+     * @return string
+     */
+    protected function applyIndent(string $codeBlock, int $indentSize = 1): string
+    {
+        $indent = $this->getIndent($indentSize);
+        $linesWithIndent = [];
+        $lines = explode("\n", $codeBlock);
+        foreach ($lines as $line) {
+            $linesWithIndent[] = rtrim($indent . $line);
+        }
+
+        return implode("\n", $linesWithIndent);
+    }
+
+    /**
      * Extract and replace fully-qualified class names from placeholder.
      *
      * @param string $placeholder Placeholder to extract class names from
