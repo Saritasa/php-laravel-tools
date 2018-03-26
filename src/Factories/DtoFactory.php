@@ -5,6 +5,8 @@ namespace Saritasa\LaravelTools\Factories;
 use Exception;
 use Illuminate\Support\Str;
 use RuntimeException;
+use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
+use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
@@ -58,6 +60,20 @@ class DtoFactory extends ModelBasedClassFactory
     private $variableDescriptionBuilder;
 
     /**
+     * Allows to generate getter function declaration.
+     *
+     * @var GetterGenerator
+     */
+    private $getterGenerator;
+
+    /**
+     * Allows to generate setter function declaration.
+     *
+     * @var SetterGenerator
+     */
+    private $setterGenerator;
+
+    /**
      * DTO class builder. Allows to create Dto class for model.
      * This DTO class will contain model's attributes validation based on model's table structure.
      *
@@ -66,18 +82,24 @@ class DtoFactory extends ModelBasedClassFactory
      * @param IPhpTypeMapper $phpTypeMapper Storage type to PHP scalar type mapper
      * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Allows to build PHPDoc class description
      * @param PhpDocVariableDescriptionBuilder $variableDescriptionBuilder Allows to build PHPDoc for properties
+     * @param GetterGenerator $getterGenerator Allows to generate getter function declaration
+     * @param SetterGenerator $setterGenerator Allows to generate setter function declaration
      */
     public function __construct(
         SchemaReader $schemaReader,
         TemplateWriter $templateWriter,
         IPhpTypeMapper $phpTypeMapper,
         PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder,
-        PhpDocVariableDescriptionBuilder $variableDescriptionBuilder
+        PhpDocVariableDescriptionBuilder $variableDescriptionBuilder,
+        GetterGenerator $getterGenerator,
+        SetterGenerator $setterGenerator
     ) {
         parent::__construct($templateWriter, $schemaReader);
         $this->phpTypeMapper = $phpTypeMapper;
         $this->phpDocClassDescriptionBuilder = $phpDocClassDescriptionBuilder;
         $this->variableDescriptionBuilder = $variableDescriptionBuilder;
+        $this->getterGenerator = $getterGenerator;
+        $this->setterGenerator = $setterGenerator;
     }
 
     /**
@@ -158,6 +180,8 @@ class DtoFactory extends ModelBasedClassFactory
     private function getPropertiesBlock(): string
     {
         $classProperties = [];
+        $getters = [];
+        $setters = [];
         foreach ($this->columns as $column) {
             $classProperty = new ClassPropertyObject([
                 ClassPropertyObject::NAME => $column->getName(),
@@ -167,12 +191,24 @@ class DtoFactory extends ModelBasedClassFactory
                 ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
             ]);
 
-            $classProperties[] = $this->variableDescriptionBuilder->render($classProperty, $this->getIndent());
-            $classProperties[] = $this->getIndent() . "{$this->config->propertiesVisibility} \${$classProperty->name};";
+            $classProperties[] = $this->variableDescriptionBuilder->render($classProperty);
+            $classProperties[] = "{$this->config->propertiesVisibility} \${$classProperty->name};";
             $classProperties[] = '';
-        }
 
-        return rtrim(implode("\n", $classProperties));
+            if ($this->config->withGetters) {
+                $getters[] = $this->getterGenerator->render($classProperty->name, $classProperty->type);
+                $getters[] = '';
+            }
+            if ($this->config->withSetters) {
+                $setters[] = $this->setterGenerator->render($classProperty->name, $classProperty->type);
+                $setters[] = '';
+            }
+        }
+        $classPropertiesLines = array_merge($classProperties, $getters, $setters);
+
+        $classPropertiesLines = $this->applyIndent(implode("\n", $classPropertiesLines));
+
+        return rtrim($classPropertiesLines);
     }
 
     /**
