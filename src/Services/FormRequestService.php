@@ -65,13 +65,13 @@ class FormRequestService
      */
     public function generateFormRequest(string $modelClassName, string $formRequestClassName): string
     {
-        $formRequestFactoryConfiguration = $this->getFactoryConfiguration($modelClassName, $formRequestClassName);
+        $formRequestFactoryConfiguration = $this->getDefaultConfiguration($modelClassName, $formRequestClassName);
 
         return $this->formRequestFactory->configure($formRequestFactoryConfiguration)->build();
     }
 
     /**
-     * Builds form request factory configuration.
+     * Returns default configuration for request factory.
      *
      * @param string $modelClassName Target model class name
      * @param string $formRequestClassName Result form request file name
@@ -79,11 +79,10 @@ class FormRequestService
      * @return FormRequestFactoryConfig
      * @throws RuntimeException
      */
-    private function getFactoryConfiguration(
+    private function getDefaultConfiguration(
         string $modelClassName,
         string $formRequestClassName
     ): FormRequestFactoryConfig {
-
         return new FormRequestFactoryConfig([
             FormRequestFactoryConfig::NAMESPACE => $this->getFormRequestsNamespace(),
             FormRequestFactoryConfig::PARENT_CLASS_NAME => $this->getFormRequestParentClassName(),

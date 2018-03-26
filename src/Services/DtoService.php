@@ -66,13 +66,13 @@ class DtoService
      */
     public function generateDto(string $modelClassName, string $dtoClassName): string
     {
-        $dtoFactoryConfiguration = $this->getFactoryConfiguration($modelClassName, $dtoClassName);
+        $dtoFactoryConfiguration = $this->getDefaultConfiguration($modelClassName, $dtoClassName);
 
         return $this->dtoFactory->configure($dtoFactoryConfiguration)->build();
     }
 
     /**
-     * Builds DTO factory configuration.
+     * Returns default configuration for DTO factory.
      *
      * @param string $modelClassName Target model class name
      * @param string $dtoClassName Result DTO file name
@@ -81,11 +81,10 @@ class DtoService
      * @throws RuntimeException
      * @throws \Saritasa\Exceptions\InvalidEnumValueException
      */
-    private function getFactoryConfiguration(
+    private function getDefaultConfiguration(
         string $modelClassName,
         string $dtoClassName
     ): DtoFactoryConfig {
-
         return new DtoFactoryConfig([
             DtoFactoryConfig::NAMESPACE => $this->getDtosNamespace(),
             DtoFactoryConfig::PARENT_CLASS_NAME => $this->getDtoParentClassName(),
