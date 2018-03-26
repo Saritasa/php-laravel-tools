@@ -59,7 +59,7 @@ template;
  *
  * @param {$attributeType} \${$attributeName} New attribute value
  *
- * @returns void
+ * @return void
  */
 template;
     }

@@ -57,7 +57,7 @@ template;
 /**
  * Get {$attributeName} attribute value.
  *
- * @returns {$attributeType}
+ * @return {$attributeType}
  */
 template;
     }
