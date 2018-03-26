@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools\Tests;
 use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
+use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
 /**
  * Test Code generators block rendering function.
@@ -28,8 +29,8 @@ class CodeGeneratorsTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->getterGenerator = new GetterGenerator();
-        $this->setterGenerator = new SetterGenerator();
+        $this->getterGenerator = new GetterGenerator(new PhpToPhpDocTypeMapper());
+        $this->setterGenerator = new SetterGenerator(new PhpToPhpDocTypeMapper());
     }
 
     /**

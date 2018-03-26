@@ -2,11 +2,30 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators;
 
+use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
+
 /**
  * Getter Generator class. Allows to generate getter function declaration for given attribute and type.
  */
 class GetterGenerator
 {
+    /**
+     * Php scalar type to PhpDoc scalar type mapper.
+     *
+     * @var PhpToPhpDocTypeMapper
+     */
+    private $phpToPhpDocTypeMapper;
+
+    /**
+     * Getter Generator class. Allows to generate getter function declaration for given attribute and type.
+     *
+     * @param PhpToPhpDocTypeMapper $phpToPhpDocTypeMapper Php scalar type to PhpDoc scalar type mapper
+     */
+    public function __construct(PhpToPhpDocTypeMapper $phpToPhpDocTypeMapper)
+    {
+        $this->phpToPhpDocTypeMapper = $phpToPhpDocTypeMapper;
+    }
+
     /**
      * Allows to generate getter function declaration for given attribute and type.
      *
@@ -17,8 +36,10 @@ class GetterGenerator
      */
     public function render(string $attributeName, string $attributeType): string
     {
+        $phpDocType = $this->phpToPhpDocTypeMapper->getPhpDocType($attributeType);
+
         return implode("\n", [
-            $this->getDescription($attributeName, $attributeType),
+            $this->getDescription($attributeName, $phpDocType),
             $this->getDeclaration($attributeName, $attributeType),
         ]);
     }

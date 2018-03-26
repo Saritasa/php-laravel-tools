@@ -5,12 +5,12 @@ namespace Saritasa\LaravelTools\Enums;
 use Saritasa\Enum;
 
 /**
- * Available Php scalar types.
+ * Available PhpDoc scalar types.
  */
-class PhpScalarTypes extends Enum
+class PhpDocScalarTypes extends Enum
 {
-    const BOOLEAN = 'bool';
-    const INTEGER = 'int';
+    const BOOLEAN = 'boolean';
+    const INTEGER = 'integer';
     const FLOAT = 'float';
     const STRING = 'string';
 }

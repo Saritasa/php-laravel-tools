@@ -20,6 +20,7 @@ use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
 use Saritasa\LaravelTools\Enums\PropertiesVisibilityTypes;
 use Saritasa\LaravelTools\Factories\DtoFactory;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
+use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\PhpDoc\PhpDocVariableDescriptionBuilder;
@@ -137,10 +138,14 @@ class DtoFactoryTest extends TestCase
          */
         $phpTypeMapper = new DbalToPhpTypeMapper();
         $templateWriter = new TemplateWriter(app(Filesystem::class));
-        $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(new PhpDocSingleLinePropertyDescriptionBuilder());
-        $variableDescriptionBuilder = new PhpDocVariableDescriptionBuilder();
-        $getterGenerator = new GetterGenerator();
-        $setterGenerator = new SetterGenerator();
+        $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(
+            new PhpDocSingleLinePropertyDescriptionBuilder(
+                new PhpToPhpDocTypeMapper()
+            )
+        );
+        $variableDescriptionBuilder = new PhpDocVariableDescriptionBuilder(new PhpToPhpDocTypeMapper());
+        $getterGenerator = new GetterGenerator(new PhpToPhpDocTypeMapper());
+        $setterGenerator = new SetterGenerator(new PhpToPhpDocTypeMapper());
         /** @var SchemaReader $schemaReader */
         $schemaReader = \Mockery::mock(SchemaReader::class)
             ->expects('getTableDetails')

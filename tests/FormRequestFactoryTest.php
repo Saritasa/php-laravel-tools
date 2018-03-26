@@ -19,6 +19,7 @@ use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
 use Saritasa\LaravelTools\Mappings\DbalToLaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
+use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
@@ -136,7 +137,11 @@ class FormRequestFactoryTest extends TestCase
         $ruleBuilder = new RuleBuilder(new StringValidationRulesDictionary(), new DbalToLaravelValidationTypeMapper());
         $phpTypeMapper = new DbalToPhpTypeMapper();
         $templateWriter = new TemplateWriter(app(Filesystem::class));
-        $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(new PhpDocSingleLinePropertyDescriptionBuilder());
+        $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(
+            new PhpDocSingleLinePropertyDescriptionBuilder(
+                new PhpToPhpDocTypeMapper()
+            )
+        );
         /** @var SchemaReader $schemaReader */
         $schemaReader = \Mockery::mock(SchemaReader::class)
             ->expects('getTableDetails')

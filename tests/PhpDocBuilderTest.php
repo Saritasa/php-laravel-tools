@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools\Tests;
 use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
+use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\PhpDoc\PhpDocVariableDescriptionBuilder;
@@ -26,9 +27,9 @@ class PhpDocBuilderTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->phpDocPropertyBuilder = new PhpDocSingleLinePropertyDescriptionBuilder();
+        $this->phpDocPropertyBuilder = new PhpDocSingleLinePropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
         $this->phpDocClassDescriptionBuilder = new PhpDocClassDescriptionBuilder($this->phpDocPropertyBuilder);
-        $this->phpDocVariableDescriptionBuilder = new PhpDocVariableDescriptionBuilder();
+        $this->phpDocVariableDescriptionBuilder = new PhpDocVariableDescriptionBuilder(new PhpToPhpDocTypeMapper());
     }
 
     /**

@@ -4,12 +4,30 @@ namespace Saritasa\LaravelTools\PhpDoc;
 
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
+use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
 /**
  * PhpDoc property line builder. Allows to generate PhpDoc property line with variable type and description.
  */
 class PhpDocSingleLinePropertyDescriptionBuilder
 {
+    /**
+     * Php scalar type to PhpDoc scalar type mapper.
+     *
+     * @var PhpToPhpDocTypeMapper
+     */
+    private $phpToPhpDocTypeMapper;
+
+    /**
+     * PhpDoc property line builder. Allows to generate PhpDoc property line with variable type and description.
+     *
+     * @param PhpToPhpDocTypeMapper $phpToPhpDocTypeMapper Php scalar type to PhpDoc scalar type mapper
+     */
+    public function __construct(PhpToPhpDocTypeMapper $phpToPhpDocTypeMapper)
+    {
+        $this->phpToPhpDocTypeMapper = $phpToPhpDocTypeMapper;
+    }
+
     /**
      * Return PhpDoc property line description.
      *
@@ -35,9 +53,11 @@ class PhpDocSingleLinePropertyDescriptionBuilder
                 break;
         }
 
+        $phpDocType = $this->phpToPhpDocTypeMapper->getPhpDocType($classProperty->type);
+
         return rtrim(
             " * @property{$accessModifier} " .
-            "{$classProperty->type}{$nullableType} \${$classProperty->name} " .
+            "{$phpDocType}{$nullableType} \${$classProperty->name} " .
             "{$classProperty->description}"
         );
     }
