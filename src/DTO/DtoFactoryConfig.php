@@ -16,9 +16,8 @@ class DtoFactoryConfig extends Dto
     const RESULT_FILENAME = 'resultFilename';
     const TEMPLATE_FILENAME = 'templateFilename';
     const EXCLUDED_ATTRIBUTES = 'excludedAttributes';
-    const PROPERTIES_VISIBILITY = 'propertiesVisibility';
-    const WITH_GETTERS = 'withGetters';
-    const WITH_SETTERS = 'withSetters';
+    const IMMUTABLE = 'immutable';
+    const STRICT_TYPES = 'strictTypes';
 
     /**
      * Namespace of new DTO.
@@ -70,23 +69,16 @@ class DtoFactoryConfig extends Dto
     public $excludedAttributes = [];
 
     /**
-     * Generated DTO properties
-     *
-     * @var
-     */
-    public $propertiesVisibility;
-
-    /**
-     * Determines is DTO should be generated with typehinted getters.
+     * Is generated DTO should be immutable.
      *
      * @var bool
      */
-    public $withGetters = false;
+    public $immutable = false;
 
     /**
-     * Determines is DTO should be generated with typehinted setters.
+     * Is DTO should control getters and setters attribute types.
      *
      * @var bool
      */
-    public $withSetters = false;
+    public $strictTypes = false;
 }

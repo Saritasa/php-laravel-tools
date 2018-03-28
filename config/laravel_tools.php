@@ -45,14 +45,20 @@ return [
         // Path where DTOs are located
         'path' => app_path('Models/Dto'),
 
-        // Visibility type of properties in generated DTO. Should be 'public', 'protected' or 'private'
-        'properties_visibility' => \Saritasa\LaravelTools\Enums\PropertiesVisibilityTypes::PROTECTED,
-
         // DTO classes namespace
         'namespace' => 'App\Models\Dto',
 
         // DTO parent class FQN
         'parent' => \Saritasa\Dto::class,
+
+        // Immutable DTO parent class FQN in case you need immutable DTO
+        'immutable_parent' => \Saritasa\Dto::class,
+
+        // Strict-typed DTO parent class FQN in case you need DTO with strong attribute types
+        'strict_type_parent' => \Saritasa\Dto::class,
+
+        // Strict-typed DTO parent class FQN in case you need immutable DTO with strong attribute types
+        'immutable_strict_type_parent' => \Saritasa\Dto::class,
 
         // DTO class template. If template name is just a string than template from package will be taken.
         // If path passed then file by this path will be taken
@@ -60,8 +66,6 @@ return [
 
         // Attributes that should not be taken into account
         'except' => [
-            'created_at',
-            'updated_at',
             'deleted_at',
         ],
     ],

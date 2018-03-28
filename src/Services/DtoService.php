@@ -2,10 +2,11 @@
 
 namespace Saritasa\LaravelTools\Services;
 
+use Exception;
 use Illuminate\Config\Repository;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use RuntimeException;
 use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
-use Saritasa\LaravelTools\Enums\PropertiesVisibilityTypes;
 use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
 use Saritasa\LaravelTools\Factories\DtoFactory;
 
@@ -58,15 +59,18 @@ class DtoService
      * @param string $modelClassName Model class name to which need to generate DTO
      * @param null|string $dtoClassName Result DTO class name. When not passed
      * then will be automatically generated according to model class name
+     * @param DtoFactoryConfig $initialFactoryConfig Initial configuration
      *
      * @return string Result DTO file name
-     * @throws RuntimeException When DTO factory not correctly configured
-     * @throws \Exception
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException When template file not found
+     * @throws Exception
+     * @throws FileNotFoundException When template file not found
      */
-    public function generateDto(string $modelClassName, string $dtoClassName): string
-    {
-        $dtoFactoryConfiguration = $this->getDefaultConfiguration($modelClassName, $dtoClassName);
+    public function generateDto(
+        string $modelClassName,
+        string $dtoClassName,
+        DtoFactoryConfig $initialFactoryConfig
+    ): string {
+        $dtoFactoryConfiguration = $this->getConfiguration($modelClassName, $dtoClassName, $initialFactoryConfig);
 
         return $this->dtoFactory->configure($dtoFactoryConfiguration)->build();
     }
@@ -76,24 +80,25 @@ class DtoService
      *
      * @param string $modelClassName Target model class name
      * @param string $dtoClassName Result DTO file name
+     * @param DtoFactoryConfig $initialFactoryConfig Initial configuration
      *
      * @return DtoFactoryConfig
-     * @throws RuntimeException
-     * @throws \Saritasa\Exceptions\InvalidEnumValueException
      */
-    private function getDefaultConfiguration(
+    private function getConfiguration(
         string $modelClassName,
-        string $dtoClassName
+        string $dtoClassName,
+        DtoFactoryConfig $initialFactoryConfig
     ): DtoFactoryConfig {
         return new DtoFactoryConfig([
             DtoFactoryConfig::NAMESPACE => $this->getDtosNamespace(),
-            DtoFactoryConfig::PARENT_CLASS_NAME => $this->getDtoParentClassName(),
             DtoFactoryConfig::CLASS_NAME => $dtoClassName,
             DtoFactoryConfig::MODEL_CLASS_NAME => $this->getModelFullClassName($modelClassName),
             DtoFactoryConfig::RESULT_FILENAME => $this->getResultFileName($dtoClassName),
             DtoFactoryConfig::EXCLUDED_ATTRIBUTES => $this->getIgnoredAttributes(),
             DtoFactoryConfig::TEMPLATE_FILENAME => $this->getTemplateFileName(),
-            DtoFactoryConfig::PROPERTIES_VISIBILITY => $this->getDtoPropertiesVisibilityType(),
+            DtoFactoryConfig::PARENT_CLASS_NAME => $initialFactoryConfig->parentClassName,
+            DtoFactoryConfig::IMMUTABLE => $initialFactoryConfig->immutable,
+            DtoFactoryConfig::STRICT_TYPES => $initialFactoryConfig->strictTypes,
         ]);
     }
 
@@ -112,39 +117,6 @@ class DtoService
         }
 
         return $namespace;
-    }
-
-    /**
-     * Returns DTO parent class name.
-     *
-     * @return string
-     * @throws RuntimeException When DTO parent is empty
-     */
-    private function getDtoParentClassName(): string
-    {
-        $parentClassName = $this->configRepository->get('laravel_tools.dto.parent');
-
-        if (!$parentClassName) {
-            throw new RuntimeException('DTO parent class name not configured');
-        }
-
-        return $parentClassName;
-    }
-
-    /**
-     * Returns DTO properties visibility type.
-     *
-     * @return string
-     * @throws \Saritasa\Exceptions\InvalidEnumValueException
-     */
-    private function getDtoPropertiesVisibilityType(): string
-    {
-        $visibilityType = $this->configRepository->get(
-            'laravel_tools.dto.properties_visibility',
-            PropertiesVisibilityTypes::PROTECTED
-        );
-
-        return (new PropertiesVisibilityTypes($visibilityType))->getValue();
     }
 
     /**

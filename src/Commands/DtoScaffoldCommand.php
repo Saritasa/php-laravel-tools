@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
 use Saritasa\LaravelTools\Services\DtoService;
 
 /**
@@ -62,9 +63,44 @@ class DtoScaffoldCommand extends Command
             $dtoClassName = $this->ask('Please, enter new DTO class name', $suggestedClassName);
         }
 
-        $resultFileName = $this->dtoService->generateDto($modelClassName, $dtoClassName);
+        $dtoFactoryConfig = $this->getPreConfig();
+
+        $resultFileName = $this->dtoService->generateDto($modelClassName, $dtoClassName, $dtoFactoryConfig);
 
         $this->info("Check out generated file [{$resultFileName}]");
+    }
+
+    /**
+     * Get user preferences for new DTO.
+     *
+     * @return DtoFactoryConfig
+     */
+    private function getPreConfig(): DtoFactoryConfig
+    {
+        $dtoParent = config('laravel_tools.dto.parent');
+
+        $immutable = $this->confirm('Immutable? Should new DTO be immutable?');
+        if ($immutable) {
+            $dtoParent = config('laravel_tools.dto.immutable_parent');
+            $this->info('JFYI: Immutable DTO will be declared with protected properties.');
+        }
+
+        $strict = $this->confirm('Strict types? Should new DTO be declared with typehinted getters and setters?');
+        if ($strict) {
+            $dtoParent = config('laravel_tools.dto.strict_type_parent');
+            $this->info('JFYI: Strict types can be done only with protected properties.');
+        }
+
+        if ($strict && $immutable) {
+            $dtoParent = config('laravel_tools.dto.immutable_strict_type_parent');
+            $this->info('JFYI: Immutable strict-typed DTO can be declared only with protected properties and setters');
+        }
+
+        return new DtoFactoryConfig([
+            DtoFactoryConfig::PARENT_CLASS_NAME => $dtoParent,
+            DtoFactoryConfig::IMMUTABLE => $immutable,
+            DtoFactoryConfig::STRICT_TYPES => $strict,
+        ]);
     }
 
     /**

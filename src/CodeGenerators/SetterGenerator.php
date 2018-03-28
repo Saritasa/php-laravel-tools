@@ -31,16 +31,17 @@ class SetterGenerator
      *
      * @param string $attributeName Attribute name for which need to generate setter
      * @param string $attributeType Attribute type to typehint value
+     * @param string $visibilityType Function visibility type. Public or protected, for example
      *
      * @return string
      */
-    public function render(string $attributeName, string $attributeType): string
+    public function render(string $attributeName, string $attributeType, string $visibilityType = 'public'): string
     {
         $phpDocType = $this->phpToPhpDocTypeMapper->getPhpDocType($attributeType);
 
         return implode("\n", [
             $this->getDescription($attributeName, $phpDocType),
-            $this->getDeclaration($attributeName, $attributeType),
+            $this->getDeclaration($attributeName, $attributeType, $visibilityType),
         ]);
     }
 
@@ -49,15 +50,16 @@ class SetterGenerator
      *
      * @param string $attributeName Attribute name for which need to generate setter
      * @param string $attributeType Attribute type to typehint value
+     * @param string $visibilityType Function visibility type. Public or protected, for example
      *
      * @return string
      */
-    protected function getDeclaration(string $attributeName, string $attributeType): string
+    protected function getDeclaration(string $attributeName, string $attributeType, string $visibilityType): string
     {
         $setterFunctionName = 'set' . ucfirst($attributeName);
 
         return <<<template
-public function {$setterFunctionName}({$attributeType} \${$attributeName}): void
+{$visibilityType} function {$setterFunctionName}({$attributeType} \${$attributeName}): void
 {
     \$this->{$attributeName} = \${$attributeName};
 }

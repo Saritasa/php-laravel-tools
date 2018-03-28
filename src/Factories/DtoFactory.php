@@ -138,14 +138,20 @@ class DtoFactory extends ModelBasedClassFactory
     {
         $classProperties = [];
 
-        if ($this->config->propertiesVisibility !== PropertiesVisibilityTypes::PUBLIC) {
+        if ($this->config->immutable || $this->config->strictTypes) {
+            $propertiesAccessType = PhpDocPropertyAccessTypes::READ_AND_WRITE;
+
+            if ($this->config->immutable) {
+                $propertiesAccessType = PhpDocPropertyAccessTypes::READ;
+            }
+
             foreach ($this->columns as $column) {
                 $classProperties[] = new ClassPropertyObject([
                     ClassPropertyObject::NAME => $column->getName(),
                     ClassPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
                     ClassPropertyObject::NULLABLE => !$column->getNotnull(),
                     ClassPropertyObject::DESCRIPTION => $column->getComment(),
-                    ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+                    ClassPropertyObject::ACCESS_TYPE => $propertiesAccessType,
                 ]);
             }
         }
@@ -172,7 +178,7 @@ class DtoFactory extends ModelBasedClassFactory
     }
 
     /**
-     * Format DTO constants that are available attributes names.
+     * Format DTO constants that are represents available attributes names.
      *
      * @return string
      * @throws RuntimeException
@@ -183,24 +189,39 @@ class DtoFactory extends ModelBasedClassFactory
         $getters = [];
         $setters = [];
         foreach ($this->columns as $column) {
+            $propertiesAccessType = PhpDocPropertyAccessTypes::READ_AND_WRITE;
+
+            if ($this->config->immutable) {
+                $propertiesAccessType = PhpDocPropertyAccessTypes::READ;
+            }
             $classProperty = new ClassPropertyObject([
                 ClassPropertyObject::NAME => $column->getName(),
                 ClassPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
                 ClassPropertyObject::NULLABLE => !$column->getNotnull(),
                 ClassPropertyObject::DESCRIPTION => $column->getComment(),
-                ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+                ClassPropertyObject::ACCESS_TYPE => $propertiesAccessType,
             ]);
 
+            $propertyVisibility = ($this->config->immutable || $this->config->strictTypes)
+                ? PropertiesVisibilityTypes::PROTECTED
+                : PropertiesVisibilityTypes::PUBLIC;
+
             $classProperties[] = $this->variableDescriptionBuilder->render($classProperty);
-            $classProperties[] = "{$this->config->propertiesVisibility} \${$classProperty->name};";
+            $classProperties[] = "{$propertyVisibility} \${$classProperty->name};";
             $classProperties[] = '';
 
-            if ($this->config->withGetters) {
+            if ($this->config->strictTypes) {
                 $getters[] = $this->getterGenerator->render($classProperty->name, $classProperty->type);
                 $getters[] = '';
-            }
-            if ($this->config->withSetters) {
-                $setters[] = $this->setterGenerator->render($classProperty->name, $classProperty->type);
+
+                $setterVisibility = $this->config->immutable
+                    ? PropertiesVisibilityTypes::PROTECTED
+                    : PropertiesVisibilityTypes::PUBLIC;
+                $setters[] = $this->setterGenerator->render(
+                    $classProperty->name,
+                    $classProperty->type,
+                    $setterVisibility
+                );
                 $setters[] = '';
             }
         }
