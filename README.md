@@ -182,7 +182,7 @@ class BidRequest extends FormRequest
 
 ### Generated DTO example
 
-DTO with public properties:
+General DTO ()with public properties):
 
 ```php
 <?php
@@ -192,14 +192,13 @@ namespace App\Models\Dto;
 use Saritasa\Dto;
 
 /**
- * BidData DTO.
+ * GeneralCategoryData DTO.
  */
-class BidData extends Dto
+class GeneralCategoryData extends Dto
 {
     const ID = 'id';
-    const USER_ID = 'user_id';
-    const PROPOSAL_UPLOADED_AT = 'proposal_uploaded_at';
-    // ... and other constants with properties names
+    const NAME = 'name';
+    const ICON = 'icon';
 
     /**
      * .
@@ -209,24 +208,23 @@ class BidData extends Dto
     public $id;
 
     /**
-     * User who created bid.
+     * Category name: electrical, plumbing etc..
      *
-     * @var integer
+     * @var string
      */
-    public $user_id;
+    public $name;
 
     /**
-     * Proposal uploaded date.
+     * Category thumbnail.
      *
      * @var string|null
      */
-    public $proposal_uploaded_at;
-
-    // ... and other properties
+    public $icon;
 }
+
 ```
 
-DTO with protected properties:
+Immutable DTO (with protected properties):
 
 ```php
 <?php
@@ -236,18 +234,17 @@ namespace App\Models\Dto;
 use Saritasa\Dto;
 
 /**
- * BidData DTO.
+ * ImmutableCategoryData DTO.
  *
  * @property-read integer $id
- * @property-read integer $user_id User who created bid
- * @property-read string|null $proposal_uploaded_at Proposal uploaded date
+ * @property-read string $name Category name: electrical, plumbing etc.
+ * @property-read string|null $icon Category thumbnail
  */
-class BidData extends Dto
+class ImmutableCategoryData extends Dto
 {
     const ID = 'id';
-    const USER_ID = 'user_id';
-    const PROPOSAL_UPLOADED_AT = 'proposal_uploaded_at';
-    // ... and other constants with properties names
+    const NAME = 'name';
+    const ICON = 'icon';
 
     /**
      * .
@@ -257,25 +254,245 @@ class BidData extends Dto
     protected $id;
 
     /**
-     * User who created bid.
+     * Category name: electrical, plumbing etc..
      *
-     * @var integer
+     * @var string
      */
-    protected $user_id;
+    protected $name;
 
     /**
-     * Proposal uploaded date.
+     * Category thumbnail.
      *
      * @var string|null
      */
-    protected $proposal_uploaded_at;
-
-    // ... and other properties
+    protected $icon;
 }
 
 ```
 
+Strict-typed DTO (with typehinted getters and setters and protected properties as a result):
 
+```php
+<?php
+
+namespace App\Models\Dto;
+
+use Saritasa\Dto;
+
+/**
+ * StrictTypedCategoryData DTO.
+ *
+ * @property integer $id
+ * @property string $name Category name: electrical, plumbing etc.
+ * @property string|null $icon Category thumbnail
+ */
+class StrictTypedCategoryData extends Dto
+{
+    const ID = 'id';
+    const NAME = 'name';
+    const ICON = 'icon';
+
+    /**
+     * .
+     *
+     * @var integer
+     */
+    protected $id;
+
+    /**
+     * Category name: electrical, plumbing etc..
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * Category thumbnail.
+     *
+     * @var string|null
+     */
+    protected $icon;
+
+    /**
+     * Get id attribute value.
+     *
+     * @return integer
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * Get name attribute value.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get icon attribute value.
+     *
+     * @return string
+     */
+    public function getIcon(): string
+    {
+        return $this->icon;
+    }
+
+    /**
+     * Set id attribute value.
+     *
+     * @param integer $id New attribute value
+     *
+     * @return void
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * Set name attribute value.
+     *
+     * @param string $name New attribute value
+     *
+     * @return void
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Set icon attribute value.
+     *
+     * @param string $icon New attribute value
+     *
+     * @return void
+     */
+    public function setIcon(string $icon): void
+    {
+        $this->icon = $icon;
+    }
+}
+
+```
+
+Immutable strict typed DTO (typehinted getters and setters and as a result protected properties. Setters are also protected):
+
+```php
+<?php
+
+namespace App\Models\Dto;
+
+use Saritasa\Dto;
+
+/**
+ * StrictTypedImmutableCategoryData DTO.
+ *
+ * @property-read integer $id
+ * @property-read string $name Category name: electrical, plumbing etc.
+ * @property-read string|null $icon Category thumbnail
+ */
+class StrictTypedImmutableCategoryData extends Dto
+{
+    const ID = 'id';
+    const NAME = 'name';
+    const ICON = 'icon';
+
+    /**
+     * .
+     *
+     * @var integer
+     */
+    protected $id;
+
+    /**
+     * Category name: electrical, plumbing etc..
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * Category thumbnail.
+     *
+     * @var string|null
+     */
+    protected $icon;
+
+    /**
+     * Get id attribute value.
+     *
+     * @return integer
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * Get name attribute value.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get icon attribute value.
+     *
+     * @return string
+     */
+    public function getIcon(): string
+    {
+        return $this->icon;
+    }
+
+    /**
+     * Set id attribute value.
+     *
+     * @param integer $id New attribute value
+     *
+     * @return void
+     */
+    protected function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * Set name attribute value.
+     *
+     * @param string $name New attribute value
+     *
+     * @return void
+     */
+    protected function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Set icon attribute value.
+     *
+     * @param string $icon New attribute value
+     *
+     * @return void
+     */
+    protected function setIcon(string $icon): void
+    {
+        $this->icon = $icon;
+    }
+}
+
+```
 
 ## Known issues
 + [Enum DB type is casted as String via custom doctrine mapping](https://github.com/Saritasa/php-laravel-tools/issues/3)
@@ -284,9 +501,7 @@ class BidData extends Dto
 ## What's next?
 What need to improve:
 1. Declare only necessary packages in composer.json instead of entire laravel
-2. Allow to generate typehinted getters and setters for DTO
-3. Allow to decide public or protected visiblity type from artisan command
-4. Allow to decide need or not generate getters and setters for dto from artisan command 
+2. Recognize nullables in getters and setters
 
 ## Contributing
 See [CONTRIBUTING](CONTRIBUTING.md) and [Code of Conduct](CONDUCT.md),

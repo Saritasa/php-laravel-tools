@@ -1,5 +1,9 @@
 # Changes History
 
+1.1.0
+-----
++ Add feature to create immutable and\or strict-typed DTO
+
 1.0.0
 -----
 + Add model-based DTO generation command
