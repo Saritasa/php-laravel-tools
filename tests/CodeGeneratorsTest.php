@@ -57,6 +57,24 @@ EXPECTED;
         $actual = $this->setterGenerator->render('first_name', 'string');
 
         $this->assertEquals($expected, $actual);
+
+        $expected = <<<EXPECTED
+/**
+ * Set first_name attribute value.
+ *
+ * @param string|null \$first_name New attribute value
+ *
+ * @return void
+ */
+public function setFirst_name(?string \$first_name): void
+{
+    \$this->first_name = \$first_name;
+}
+EXPECTED;
+
+        $actual = $this->setterGenerator->render('first_name', 'string', 'public', true);
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -79,6 +97,24 @@ public function getFirst_name(): string
 EXPECTED;
 
         $actual = $this->getterGenerator->render('first_name', 'string');
+
+        $this->assertEquals($expected, $actual);
+
+        // Test with nullable
+
+        $expected = <<<EXPECTED
+/**
+ * Get first_name attribute value.
+ *
+ * @return string|null
+ */
+public function getFirst_name(): ?string
+{
+    return \$this->first_name;
+}
+EXPECTED;
+
+        $actual = $this->getterGenerator->render('first_name', 'string', 'public', true);
 
         $this->assertEquals($expected, $actual);
     }

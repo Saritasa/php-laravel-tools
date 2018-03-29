@@ -211,7 +211,12 @@ class DtoFactory extends ModelBasedClassFactory
             $classProperties[] = '';
 
             if ($this->config->strictTypes) {
-                $getters[] = $this->getterGenerator->render($classProperty->name, $classProperty->type);
+                $getters[] = $this->getterGenerator->render(
+                    $classProperty->name,
+                    $classProperty->type,
+                    PropertiesVisibilityTypes::PUBLIC,
+                    $classProperty->nullable
+                );
                 $getters[] = '';
 
                 $setterVisibility = $this->config->immutable
@@ -220,7 +225,8 @@ class DtoFactory extends ModelBasedClassFactory
                 $setters[] = $this->setterGenerator->render(
                     $classProperty->name,
                     $classProperty->type,
-                    $setterVisibility
+                    $setterVisibility,
+                    $classProperty->nullable
                 );
                 $setters[] = '';
             }

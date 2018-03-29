@@ -308,7 +308,7 @@ class DtoFactoryTest extends TestCase
                 $this->getExpectedStrictTypedDto(),
             ],
             'Immutable strict typed DTO' => [
-                $this->getDtoFactoryConfig(['name', 'birth_date'], true, true),
+                $this->getDtoFactoryConfig(['birth_date'], true, true),
                 $this->getExpectedStrictTypedImmutableDto(),
             ],
         ];
@@ -546,10 +546,12 @@ use Saritasa\Dto;
  * TestDto DTO.
  *
  * @property-read integer \$id
+ * @property-read string|null \$name
  */
 class TestDto extends Dto
 {
     const ID = 'id';
+    const NAME = 'name';
 
     /**
      * .
@@ -557,6 +559,13 @@ class TestDto extends Dto
      * @var integer
      */
     protected \$id;
+
+    /**
+     * .
+     *
+     * @var string|null
+     */
+    protected \$name;
 
     /**
      * Get id attribute value.
@@ -569,6 +578,16 @@ class TestDto extends Dto
     }
 
     /**
+     * Get name attribute value.
+     *
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return \$this->name;
+    }
+
+    /**
      * Set id attribute value.
      *
      * @param integer \$id New attribute value
@@ -578,6 +597,18 @@ class TestDto extends Dto
     protected function setId(int \$id): void
     {
         \$this->id = \$id;
+    }
+
+    /**
+     * Set name attribute value.
+     *
+     * @param string|null \$name New attribute value
+     *
+     * @return void
+     */
+    protected function setName(?string \$name): void
+    {
+        \$this->name = \$name;
     }
 }
 

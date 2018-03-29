@@ -32,16 +32,21 @@ class GetterGenerator
      * @param string $attributeName Attribute name for which need to generate getter
      * @param string $attributeType Attribute type to typehint getter
      * @param string $visibilityType Function visibility type. Public or protected, for example
+     * @param bool $nullable Determines is returned value can be NULL
      *
      * @return string
      */
-    public function render(string $attributeName, string $attributeType, string $visibilityType = 'public'): string
-    {
+    public function render(
+        string $attributeName,
+        string $attributeType,
+        string $visibilityType = 'public',
+        bool $nullable = false
+    ): string {
         $phpDocType = $this->phpToPhpDocTypeMapper->getPhpDocType($attributeType);
 
         return implode("\n", [
-            $this->getDescription($attributeName, $phpDocType),
-            $this->getDeclaration($attributeName, $attributeType, $visibilityType),
+            $this->getDescription($attributeName, $phpDocType, $nullable),
+            $this->getDeclaration($attributeName, $attributeType, $visibilityType, $nullable),
         ]);
     }
 
@@ -51,12 +56,19 @@ class GetterGenerator
      * @param string $attributeName Attribute name for which need to generate getter
      * @param string $attributeType Attribute type to typehint getter
      * @param string $visibilityType Function visibility type. Public or protected, for example
+     * @param bool $nullable Determines is returned value can be NULL
      *
      * @return string
      */
-    protected function getDeclaration(string $attributeName, string $attributeType, string $visibilityType): string
-    {
+    protected function getDeclaration(
+        string $attributeName,
+        string $attributeType,
+        string $visibilityType,
+        bool $nullable = false
+    ): string {
         $getterFunctionName = 'get' . ucfirst($attributeName);
+
+        $attributeType = ($nullable ? '?' : '') . $attributeType;
 
         return <<<template
 {$visibilityType} function {$getterFunctionName}(): {$attributeType}
@@ -71,11 +83,14 @@ template;
      *
      * @param string $attributeName Attribute name for which need to generate getter
      * @param string $attributeType Attribute type to typehint getter
+     * @param bool $nullable Determines is returned value can be NULL
      *
      * @return string
      */
-    protected function getDescription(string $attributeName, string $attributeType): string
+    protected function getDescription(string $attributeName, string $attributeType, bool $nullable = false): string
     {
+        $attributeType .= $nullable ? '|null' : '';
+
         return <<<template
 /**
  * Get {$attributeName} attribute value.

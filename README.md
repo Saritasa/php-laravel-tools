@@ -336,9 +336,9 @@ class StrictTypedCategoryData extends Dto
     /**
      * Get icon attribute value.
      *
-     * @return string
+     * @return string|null
      */
-    public function getIcon(): string
+    public function getIcon(): ?string
     {
         return $this->icon;
     }
@@ -370,15 +370,16 @@ class StrictTypedCategoryData extends Dto
     /**
      * Set icon attribute value.
      *
-     * @param string $icon New attribute value
+     * @param string|null $icon New attribute value
      *
      * @return void
      */
-    public function setIcon(string $icon): void
+    public function setIcon(?string $icon): void
     {
         $this->icon = $icon;
     }
 }
+
 
 ```
 
@@ -448,9 +449,9 @@ class StrictTypedImmutableCategoryData extends Dto
     /**
      * Get icon attribute value.
      *
-     * @return string
+     * @return string|null
      */
-    public function getIcon(): string
+    public function getIcon(): ?string
     {
         return $this->icon;
     }
@@ -482,11 +483,11 @@ class StrictTypedImmutableCategoryData extends Dto
     /**
      * Set icon attribute value.
      *
-     * @param string $icon New attribute value
+     * @param string|null $icon New attribute value
      *
      * @return void
      */
-    protected function setIcon(string $icon): void
+    protected function setIcon(?string $icon): void
     {
         $this->icon = $icon;
     }
@@ -501,7 +502,6 @@ class StrictTypedImmutableCategoryData extends Dto
 ## What's next?
 What need to improve:
 1. Declare only necessary packages in composer.json instead of entire laravel
-2. Recognize nullables in getters and setters
 
 ## Contributing
 See [CONTRIBUTING](CONTRIBUTING.md) and [Code of Conduct](CONDUCT.md),
