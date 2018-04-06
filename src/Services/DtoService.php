@@ -59,7 +59,7 @@ class DtoService
      * @param string $modelClassName Model class name to which need to generate DTO
      * @param null|string $dtoClassName Result DTO class name. When not passed
      * then will be automatically generated according to model class name
-     * @param DtoFactoryConfig $initialFactoryConfig Initial configuration
+     * @param DtoFactoryConfig $initialFactoryConfig Initial configuration from the user
      *
      * @return string Result DTO file name
      * @throws Exception
