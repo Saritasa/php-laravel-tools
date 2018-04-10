@@ -1,5 +1,10 @@
 # Changes History
 
+1.2.0
+-----
++ Allow to avoid generating DTO constants with attribute names
++ Removed user interaction to configure immutable and strict typed DTO. Moved to command options and config.
+
 1.1.0
 -----
 + Add feature to create immutable and\or strict-typed DTO

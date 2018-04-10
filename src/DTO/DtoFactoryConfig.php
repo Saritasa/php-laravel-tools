@@ -18,6 +18,7 @@ class DtoFactoryConfig extends Dto
     const EXCLUDED_ATTRIBUTES = 'excludedAttributes';
     const IMMUTABLE = 'immutable';
     const STRICT_TYPES = 'strictTypes';
+    const WITH_CONSTANTS = 'withConstants';
 
     /**
      * Namespace of new DTO.
@@ -66,19 +67,26 @@ class DtoFactoryConfig extends Dto
      *
      * @var array
      */
-    public $excludedAttributes = [];
+    public $excludedAttributes;
 
     /**
      * Is generated DTO should be immutable.
      *
      * @var bool
      */
-    public $immutable = false;
+    public $immutable;
 
     /**
      * Is DTO should control getters and setters attribute types.
      *
      * @var bool
      */
-    public $strictTypes = false;
+    public $strictTypes;
+
+    /**
+     * Whether constants block with attributes names should be generated.
+     *
+     * @var bool
+     */
+    public $withConstants;
 }

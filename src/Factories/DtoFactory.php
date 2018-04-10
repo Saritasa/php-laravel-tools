@@ -114,7 +114,9 @@ class DtoFactory extends ModelBasedClassFactory
             static::PLACEHOLDER_DTO_CLASS_NAME => $this->config->className,
             static::PLACEHOLDER_DTO_PARENT => '\\' . $this->config->parentClassName,
             static::PLACEHOLDER_CLASS_PHP_DOC => $this->getClassDocBlock(),
-            static::PLACEHOLDER_DTO_CONSTANTS => $this->getConstantsBlock(),
+            static::PLACEHOLDER_DTO_CONSTANTS => $this->config->withConstants
+                ? $this->getConstantsBlock()."\n\n"
+                : '',
             static::PLACEHOLDER_DTO_PROPERTIES => $this->getPropertiesBlock(),
         ];
 

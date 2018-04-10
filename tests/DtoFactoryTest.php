@@ -75,13 +75,15 @@ class DtoFactoryTest extends TestCase
      * @param array $excludedAttributes Array with attributes of model that should be removed from DTO
      * @param bool $immutable Is DTO should be immutable
      * @param bool $strictTypes Is DTO should be with strict typed getters and setters
+     * @param bool $withConstants Whether constants block with attributes names should be generated
      *
      * @return DtoFactoryConfig
      */
     private function getDtoFactoryConfig(
         array $excludedAttributes = [],
         bool $immutable = false,
-        bool $strictTypes = false
+        bool $strictTypes = false,
+        bool $withConstants = true
     ): DtoFactoryConfig {
         return new DtoFactoryConfig([
             DtoFactoryConfig::NAMESPACE => 'App\\Models\\Dto',
@@ -93,6 +95,7 @@ class DtoFactoryTest extends TestCase
             DtoFactoryConfig::EXCLUDED_ATTRIBUTES => $excludedAttributes,
             DtoFactoryConfig::IMMUTABLE => $immutable,
             DtoFactoryConfig::STRICT_TYPES => $strictTypes,
+            DtoFactoryConfig::WITH_CONSTANTS => $withConstants,
         ]);
     }
 
@@ -311,6 +314,10 @@ class DtoFactoryTest extends TestCase
                 $this->getDtoFactoryConfig(['birth_date'], true, true),
                 $this->getExpectedStrictTypedImmutableDto(),
             ],
+            'DTO without constants' => [
+                $this->getDtoFactoryConfig([], false, false, false),
+                $this->getExpectedDtoContentWithoutConstants(),
+            ],
         ];
     }
 
@@ -331,9 +338,7 @@ namespace {{namespace}};
 {{classPhpDoc}}
 class {{dtoClassName}} extends {{dtoParent}}
 {
-{{constants}}
-
-{{properties}}
+{{constants}}{{properties}}
 }
 
 templateContent;
@@ -410,6 +415,50 @@ class TestDto extends Dto
 {
     const NAME = 'name';
     const BIRTH_DATE = 'birth_date';
+
+    /**
+     * .
+     *
+     * @var string|null
+     */
+    public \$name;
+
+    /**
+     * The date when user was born.
+     *
+     * @var string
+     */
+    public \$birth_date;
+}
+
+templateContent;
+    }
+
+    /**
+     * Returns template that should be generated without constants.
+     *
+     * @return string
+     */
+    private function getExpectedDtoContentWithoutConstants(): string
+    {
+        return <<<templateContent
+<?php
+
+namespace App\Models\Dto;
+
+use Saritasa\Dto;
+
+/**
+ * TestDto DTO.
+ */
+class TestDto extends Dto
+{
+    /**
+     * .
+     *
+     * @var integer
+     */
+    public \$id;
 
     /**
      * .

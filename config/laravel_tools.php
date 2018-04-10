@@ -42,8 +42,17 @@ return [
     ],
 
     'dto' => [
+        // Whether constants block with attributes names should be generated
+        'with_constants' => false,
+
         // Path where DTOs are located
         'path' => app_path('Models/Dto'),
+
+        // Whether generated DTO be with protected properties or not
+        'immutable' => false,
+
+        // Whether generated DTO be with typehinted getters and setters
+        'strict' => false,
 
         // DTO classes namespace
         'namespace' => 'App\Models\Dto',

@@ -7,7 +7,5 @@ namespace {{namespace}};
 {{classPhpDoc}}
 class {{dtoClassName}} extends {{dtoParent}}
 {
-{{constants}}
-
-{{properties}}
+{{constants}}{{properties}}
 }

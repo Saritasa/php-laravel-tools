@@ -89,6 +89,35 @@ class DtoService
         string $dtoClassName,
         DtoFactoryConfig $initialFactoryConfig
     ): DtoFactoryConfig {
+        $strict = is_null($initialFactoryConfig->strictTypes)
+            ? $this->strictTypes()
+            : $initialFactoryConfig->strictTypes;
+
+        $immutable = is_null($initialFactoryConfig->immutable)
+            ? $this->immutable()
+            : $initialFactoryConfig->immutable;
+
+        // Choose parent for DTO
+        switch (true) {
+            case $strict && $immutable:
+                $dtoParentClassConfig = 'laravel_tools.dto.immutable_strict_type_parent';
+                break;
+            case $immutable:
+                $dtoParentClassConfig = 'laravel_tools.dto.immutable_parent';
+                break;
+            case $strict;
+                $dtoParentClassConfig = 'laravel_tools.dto.strict_type_parent';
+                break;
+            default:
+                $dtoParentClassConfig = 'laravel_tools.dto.parent';
+        }
+
+        $dtoParent = $this->configRepository->get($dtoParentClassConfig);
+
+        $withConstants = is_null($initialFactoryConfig->withConstants)
+            ? $this->isConstantsNeed()
+            : $initialFactoryConfig->withConstants;
+
         return new DtoFactoryConfig([
             DtoFactoryConfig::NAMESPACE => $this->getDtosNamespace(),
             DtoFactoryConfig::CLASS_NAME => $dtoClassName,
@@ -96,9 +125,10 @@ class DtoService
             DtoFactoryConfig::RESULT_FILENAME => $this->getResultFileName($dtoClassName),
             DtoFactoryConfig::EXCLUDED_ATTRIBUTES => $this->getIgnoredAttributes(),
             DtoFactoryConfig::TEMPLATE_FILENAME => $this->getTemplateFileName(),
-            DtoFactoryConfig::PARENT_CLASS_NAME => $initialFactoryConfig->parentClassName,
-            DtoFactoryConfig::IMMUTABLE => $initialFactoryConfig->immutable,
-            DtoFactoryConfig::STRICT_TYPES => $initialFactoryConfig->strictTypes,
+            DtoFactoryConfig::PARENT_CLASS_NAME => $dtoParent,
+            DtoFactoryConfig::IMMUTABLE => $immutable,
+            DtoFactoryConfig::STRICT_TYPES => $strict,
+            DtoFactoryConfig::WITH_CONSTANTS => $withConstants,
         ]);
     }
 
@@ -177,5 +207,35 @@ class DtoService
         );
 
         return $this->templatesManager->getTemplatePath($templateFileName);
+    }
+
+    /**
+     * Whether constants generation is necessary.
+     *
+     * @return boolean
+     */
+    private function isConstantsNeed(): bool
+    {
+        return (bool)$this->configRepository->get('laravel_tools.dto.with_constants');
+    }
+
+    /**
+     * Whether DTO should be immutable.
+     *
+     * @return boolean
+     */
+    private function immutable(): bool
+    {
+        return (bool)$this->configRepository->get('laravel_tools.dto.immutable');
+    }
+
+    /**
+     * Whether DTO should be strict typed.
+     *
+     * @return boolean
+     */
+    private function strictTypes(): bool
+    {
+        return (bool)$this->configRepository->get('laravel_tools.dto.strict');
     }
 }

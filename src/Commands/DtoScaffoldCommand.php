@@ -20,14 +20,17 @@ class DtoScaffoldCommand extends Command
      */
     protected $signature = 'make:dto
                             {model : The name of the model}
-                            {dto? : The name of new DTO to scaffold}';
+                            {dto? : The name of new DTO to scaffold}
+                            {--I|immutable : New DTO should be immutable. When not passed config value will be taken}
+                            {--S|strict : New DTO should be with strict typed getters and setters. When not passed config value will be taken}
+                            {--C|constants : New DTO should contain constants with attributes names. When not passed config value will be taken}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create DTO for model';
+    protected $description = 'Create DTO for model attributes';
 
     /**
      * DTO scaffold service.
@@ -56,12 +59,7 @@ class DtoScaffoldCommand extends Command
     public function handle()
     {
         $modelClassName = $this->getModelClass();
-        $dtoClassName = $this->getDtoClassName();
-
-        if (!$dtoClassName) {
-            $suggestedClassName = $this->generateDtoClassName($modelClassName);
-            $dtoClassName = $this->ask('Please, enter new DTO class name', $suggestedClassName);
-        }
+        $dtoClassName = $this->getDtoClassName($modelClassName);
 
         $dtoFactoryConfig = $this->getPreConfig();
 
@@ -77,54 +75,39 @@ class DtoScaffoldCommand extends Command
      */
     private function getPreConfig(): DtoFactoryConfig
     {
-        $dtoParent = config('laravel_tools.dto.parent');
+        // Check for constants preference
+        $withConstants = $this->option('constants') ?? null;
 
-        $immutable = $this->confirm('Immutable? Should new DTO be immutable?');
-        if ($immutable) {
-            $dtoParent = config('laravel_tools.dto.immutable_parent');
-            $this->info('JFYI: Immutable DTO will be declared with protected properties.');
-        }
+        // Check for immutable DTO preferences
+        $immutable = boolval($this->option('immutable')) ?? null;
 
-        $strict = $this->confirm('Strict types? Should new DTO be declared with typehinted getters and setters?');
-        if ($strict) {
-            $dtoParent = config('laravel_tools.dto.strict_type_parent');
-            $this->info('JFYI: Strict types can be done only with protected properties.');
-        }
-
-        if ($strict && $immutable) {
-            $dtoParent = config('laravel_tools.dto.immutable_strict_type_parent');
-            $this->info('JFYI: Immutable strict-typed DTO can be declared only with protected properties and setters');
-        }
+        // Check for strict type preferences
+        $strict = boolval($this->option('strict')) ?? null;
 
         return new DtoFactoryConfig([
-            DtoFactoryConfig::PARENT_CLASS_NAME => $dtoParent,
             DtoFactoryConfig::IMMUTABLE => $immutable,
             DtoFactoryConfig::STRICT_TYPES => $strict,
+            DtoFactoryConfig::WITH_CONSTANTS => $withConstants,
         ]);
     }
 
     /**
      * Get DTO class name.
      *
-     * @return string
-     */
-    protected function getDtoClassName(): ?string
-    {
-        return $this->argument('dto');
-    }
-
-    /**
-     * Generate DTO class name from model class name.
-     *
-     * @param string $modelClassName Model class name to generate DTO for
+     * @param string $modelClassName Target model class name that will be used to generate DTO class name
      *
      * @return string
      */
-    protected function generateDtoClassName(string $modelClassName)
+    protected function getDtoClassName(string $modelClassName): ?string
     {
-        $dtoClassName = $modelClassName . 'Data';
+        $dtoClassName = $this->argument('dto');
 
-        return Str::studly($dtoClassName);
+        if (!$dtoClassName) {
+            $suggestedClassName = Str::studly($modelClassName . 'Data');
+            $dtoClassName = $this->ask('Please, enter new DTO class name', $suggestedClassName);
+        }
+
+        return $dtoClassName;
     }
 
     /**
