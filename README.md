@@ -182,7 +182,7 @@ class BidRequest extends FormRequest
 
 ### Generated DTO example
 
-General DTO ()with public properties):
+General DTO (with public properties):
 
 ```php
 <?php
