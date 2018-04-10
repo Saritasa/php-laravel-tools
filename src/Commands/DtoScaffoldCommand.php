@@ -2,8 +2,9 @@
 
 namespace Saritasa\LaravelTools\Commands;
 
-use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Str;
 use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
 use Saritasa\LaravelTools\Services\DtoService;
@@ -19,11 +20,11 @@ class DtoScaffoldCommand extends Command
      * @var string
      */
     protected $signature = 'make:dto
-                            {model : The name of the model}
+                            {model? : The name of the model. When not passed then DTO for all models will be generated}
                             {dto? : The name of new DTO to scaffold}
-                            {--I|immutable : New DTO should be immutable. When not passed config value will be taken}
-                            {--S|strict : New DTO should be with strict typed getters and setters. When not passed config value will be taken}
-                            {--C|constants : New DTO should contain constants with attributes names. When not passed config value will be taken}';
+                            {--I|immutable : New DTO should be immutable. Config value used when not passed}
+                            {--S|strict : New DTO should be strict typed. Config value used when not passed}
+                            {--C|constants : Add constants with attributes names. Config value used when not passed}';
 
     /**
      * The console command description.
@@ -40,33 +41,79 @@ class DtoScaffoldCommand extends Command
     private $dtoService;
 
     /**
+     * Configurations storage.
+     *
+     * @var Repository
+     */
+    private $configRepository;
+
+    /**
      * Console command to generate new Dto based on model's attributes.
      *
      * @param DtoService $dtoService DTO scaffold service
+     * @param Repository $configRepository Configurations storage
      */
-    public function __construct(DtoService $dtoService)
+    public function __construct(DtoService $dtoService, Repository $configRepository)
     {
         parent::__construct();
 
         $this->dtoService = $dtoService;
+        $this->configRepository = $configRepository;
     }
 
     /**
-     * Execute the console command.
+     * Build DTO for given model class name.
      *
-     * @throws Exception
+     * @param string $modelClassName Model class name with attributes to take
+     * @param string $dtoClassName Reslt DTO class name
+     *
+     * @return void
+     * @throws FileNotFoundException
      */
-    public function handle()
+    private function buildDTOForModel(string $modelClassName, string $dtoClassName): void
     {
-        $modelClassName = $this->getModelClass();
-        $dtoClassName = $this->getDtoClassName($modelClassName);
-
         $dtoFactoryConfig = $this->getPreConfig();
 
         $resultFileName = $this->dtoService->generateDto($modelClassName, $dtoClassName, $dtoFactoryConfig);
 
         $this->info("Check out generated file [{$resultFileName}]");
     }
+
+    /**
+     * Execute the console command.
+     *
+     * @throws FileNotFoundException
+     */
+    public function handle(): void
+    {
+        $modelClassName = $this->getModelClass();
+
+        if ($modelClassName) {
+            $dtoClassName = $this->getDtoClassName() ?? $this->suggestDtoClassName($modelClassName);
+            $this->buildDTOForModel($modelClassName, $dtoClassName);
+
+            return;
+        }
+
+        if (!$this->confirm('No model class provided. DTOs for all models will be generated')) {
+            $this->warn('Please, specify model class name');
+
+            return;
+        }
+
+        $modelsPath = $this->configRepository->get('laravel_tools.models.path');
+        $modelsFiles = scandir($modelsPath);
+        foreach ($modelsFiles as $modelFile) {
+            $modelPath = $modelsPath . DIRECTORY_SEPARATOR . $modelFile;
+            if (is_file($modelPath) && !is_dir($modelPath)) {
+                $modelClass = basename($modelFile, '.php');
+                $dtoClass = $this->suggestDtoClassName($modelClass);
+
+                $this->buildDTOForModel($modelClass, $dtoClass);
+            }
+        }
+    }
+
 
     /**
      * Get user preferences for new DTO.
@@ -91,32 +138,36 @@ class DtoScaffoldCommand extends Command
         ]);
     }
 
+
+    /**
+     * Get model class name to which need to build DTO.
+     *
+     * @return string|null
+     */
+    protected function getModelClass(): ?string
+    {
+        return $this->argument('model');
+    }
+
     /**
      * Get DTO class name.
+     *
+     * @return string|null
+     */
+    protected function getDtoClassName(): ?string
+    {
+        return $this->argument('dto');
+    }
+
+    /**
+     * Suggest DTO class name by model class name.
      *
      * @param string $modelClassName Target model class name that will be used to generate DTO class name
      *
      * @return string
      */
-    protected function getDtoClassName(string $modelClassName): ?string
+    protected function suggestDtoClassName(string $modelClassName): string
     {
-        $dtoClassName = $this->argument('dto');
-
-        if (!$dtoClassName) {
-            $suggestedClassName = Str::studly($modelClassName . 'Data');
-            $dtoClassName = $this->ask('Please, enter new DTO class name', $suggestedClassName);
-        }
-
-        return $dtoClassName;
-    }
-
-    /**
-     * Get model class name to which need to build DTO.
-     *
-     * @return string
-     */
-    protected function getModelClass(): string
-    {
-        return $this->argument('model');
+        return Str::studly($modelClassName . 'Data');
     }
 }

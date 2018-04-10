@@ -1,4 +1,7 @@
 # Changes History
+1.3.0
+-----
+Allow to generate DTOs for all models by one command
 
 1.2.0
 -----

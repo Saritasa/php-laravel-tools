@@ -105,7 +105,7 @@ class DtoService
             case $immutable:
                 $dtoParentClassConfig = 'laravel_tools.dto.immutable_parent';
                 break;
-            case $strict;
+            case $strict:
                 $dtoParentClassConfig = 'laravel_tools.dto.strict_type_parent';
                 break;
             default:
