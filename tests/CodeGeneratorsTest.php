@@ -48,7 +48,7 @@ class CodeGeneratorsTest extends TestCase
  *
  * @return void
  */
-public function setFirst_name(string \$first_name): void
+public function setFirstName(string \$first_name): void
 {
     \$this->first_name = \$first_name;
 }
@@ -66,7 +66,7 @@ EXPECTED;
  *
  * @return void
  */
-public function setFirst_name(?string \$first_name): void
+public function setFirstName(?string \$first_name): void
 {
     \$this->first_name = \$first_name;
 }
@@ -90,7 +90,7 @@ EXPECTED;
  *
  * @return string
  */
-public function getFirst_name(): string
+public function getFirstName(): string
 {
     return \$this->first_name;
 }
@@ -108,7 +108,7 @@ EXPECTED;
  *
  * @return string|null
  */
-public function getFirst_name(): ?string
+public function getFirstName(): ?string
 {
     return \$this->first_name;
 }

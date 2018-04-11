@@ -66,7 +66,7 @@ class SetterGenerator
         string $visibilityType,
         bool $nullable = false
     ): string {
-        $setterFunctionName = 'set' . ucfirst($attributeName);
+        $setterFunctionName = 'set' . studly_case($attributeName);
 
         $attributeType = ($nullable ? '?' : '') . $attributeType;
 

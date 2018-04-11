@@ -66,7 +66,7 @@ class GetterGenerator
         string $visibilityType,
         bool $nullable = false
     ): string {
-        $getterFunctionName = 'get' . ucfirst($attributeName);
+        $getterFunctionName = 'get' . studly_case($attributeName);
 
         $attributeType = ($nullable ? '?' : '') . $attributeType;
 

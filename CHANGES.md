@@ -1,4 +1,8 @@
 # Changes History
+1.4.0
+-----
+Getters and setters uses camelCase for function names
+
 1.3.0
 -----
 Allow to generate DTOs for all models by one command
