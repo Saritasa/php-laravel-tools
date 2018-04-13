@@ -61,7 +61,7 @@ class DbalToPhpTypeMapper implements IPhpTypeMapper
     {
         $phpType = $this->typeMappings[strtolower($type)] ?? null;
 
-        if (is_null($phpType)) {
+        if (!$phpType) {
             throw new RuntimeException("PHP scalar type mapping for DBAL type [{$type}] is not supported");
         }
 
