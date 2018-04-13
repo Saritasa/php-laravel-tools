@@ -78,4 +78,10 @@ return [
             'deleted_at',
         ],
     ],
+
+    // Code style configuration
+    'code_style' => [
+        // Code indent that should be used for padding
+        'indent' => '    ',
+    ],
 ];
