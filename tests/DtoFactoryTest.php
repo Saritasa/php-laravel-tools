@@ -188,6 +188,7 @@ class DtoFactoryTest extends TestCase
 
         $this->assertEquals($dtoFactoryConfig->resultFilename, $resultFileName);
         $this->assertEquals($expectedDtoContent, $resultFile);
+        unlink($resultFileName);
     }
 
     /**

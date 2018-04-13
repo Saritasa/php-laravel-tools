@@ -183,6 +183,7 @@ class FormRequestFactoryTest extends TestCase
 
         $this->assertEquals($formRequestFactoryConfig->resultFilename, $resultFileName);
         $this->assertEquals($expectedFormRequestContent, $resultFile);
+        unlink($resultFileName);
     }
 
     /**
