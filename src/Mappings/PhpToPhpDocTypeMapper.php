@@ -2,7 +2,6 @@
 
 namespace Saritasa\LaravelTools\Mappings;
 
-use RuntimeException;
 use Saritasa\LaravelTools\Enums\PhpDocScalarTypes;
 use Saritasa\LaravelTools\Enums\PhpScalarTypes;
 
@@ -29,16 +28,9 @@ class PhpToPhpDocTypeMapper
      * @param string $type Php type name
      *
      * @return string
-     * @throws RuntimeException
      */
     public function getPhpDocType(string $type): string
     {
-        $phpType = $this->typeMappings[strtolower($type)] ?? null;
-
-        if (is_null($phpType)) {
-            return $type;
-        }
-
-        return $phpType;
+        return $this->typeMappings[strtolower($type)] ?? $type;
     }
 }
