@@ -65,7 +65,7 @@ class DtoScaffoldCommand extends Command
      * Build DTO for given model class name.
      *
      * @param string $modelClassName Model class name with attributes to take
-     * @param string $dtoClassName Reslt DTO class name
+     * @param string $dtoClassName Result DTO class name
      *
      * @return void
      * @throws FileNotFoundException

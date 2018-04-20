@@ -5,7 +5,7 @@ namespace Saritasa\LaravelTools\Services;
 use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use RuntimeException;
+use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
 use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
 use Saritasa\LaravelTools\Factories\DtoFactory;
@@ -83,6 +83,7 @@ class DtoService
      * @param DtoFactoryConfig $initialFactoryConfig Initial configuration
      *
      * @return DtoFactoryConfig
+     * @throws ConfigurationException
      */
     private function getConfiguration(
         string $modelClassName,
@@ -119,7 +120,7 @@ class DtoService
             : $initialFactoryConfig->withConstants;
 
         return new DtoFactoryConfig([
-            DtoFactoryConfig::NAMESPACE => $this->getDtosNamespace(),
+            DtoFactoryConfig::NAMESPACE => $this->getDtoClassesNamespace(),
             DtoFactoryConfig::CLASS_NAME => $dtoClassName,
             DtoFactoryConfig::MODEL_CLASS_NAME => $this->getModelFullClassName($modelClassName),
             DtoFactoryConfig::RESULT_FILENAME => $this->getResultFileName($dtoClassName),
@@ -136,14 +137,14 @@ class DtoService
      * Returns DTO target namespace.
      *
      * @return string
-     * @throws RuntimeException When DTO namespace is empty
+     * @throws ConfigurationException When DTO namespace is empty
      */
-    private function getDtosNamespace(): string
+    private function getDtoClassesNamespace(): string
     {
         $namespace = $this->configRepository->get('laravel_tools.dto.namespace');
 
         if (!$namespace) {
-            throw new RuntimeException('DTO namespace not configured');
+            throw new ConfigurationException('DTO namespace not configured');
         }
 
         return $namespace;
@@ -172,23 +173,23 @@ class DtoService
      */
     private function getResultFileName(string $dtoName): string
     {
-        $dtosPath = $this->configRepository->get('laravel_tools.dto.path');
+        $dtoFilesPath = $this->configRepository->get('laravel_tools.dto.path');
 
-        return rtrim($dtosPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $dtoName . '.php';
+        return rtrim($dtoFilesPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $dtoName . '.php';
     }
 
     /**
      * Returns model attributes names that should be ignored by factory builder.
      *
      * @return array
-     * @throws RuntimeException When ignored attributes configuration is not an array
+     * @throws ConfigurationException When ignored attributes configuration is not an array
      */
     private function getIgnoredAttributes(): array
     {
         $ignoredAttributes = $this->configRepository->get('laravel_tools.dto.except');
 
         if (!is_array($ignoredAttributes)) {
-            throw new RuntimeException('DTO ignored attributes configuration is invalid');
+            throw new ConfigurationException('DTO ignored attributes configuration is invalid');
         }
 
         return $ignoredAttributes;
