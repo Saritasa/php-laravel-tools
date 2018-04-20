@@ -3,7 +3,7 @@
 namespace Saritasa\LaravelTools\Factories;
 
 use Exception;
-use RuntimeException;
+use Saritasa\Exceptions\NotImplementedException;
 use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
@@ -111,7 +111,7 @@ class FormRequestFactory extends ModelBasedClassFactory
      * Format form request class PHPDoc properties like "@property-read {type} $variable".
      *
      * @return string
-     * @throws RuntimeException
+     * @throws NotImplementedException
      */
     private function getClassDocBlock(): string
     {

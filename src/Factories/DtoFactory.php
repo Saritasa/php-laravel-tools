@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools\Factories;
 use Exception;
 use Illuminate\Support\Str;
 use RuntimeException;
+use Saritasa\Exceptions\NotImplementedException;
 use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
@@ -137,7 +138,7 @@ class DtoFactory extends ModelBasedClassFactory
      * Format DTO class PHPDoc properties like "@property-read {type} $variable".
      *
      * @return string
-     * @throws RuntimeException
+     * @throws NotImplementedException
      */
     private function getClassDocBlock(): string
     {
@@ -186,7 +187,7 @@ class DtoFactory extends ModelBasedClassFactory
      * Format DTO constants that are represents available attributes names.
      *
      * @return string
-     * @throws RuntimeException
+     * @throws NotImplementedException
      */
     private function getPropertiesBlock(): string
     {

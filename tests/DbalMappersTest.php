@@ -4,7 +4,7 @@ namespace Saritasa\LaravelTools\Tests;
 
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
+use Saritasa\Exceptions\NotImplementedException;
 use Saritasa\LaravelTools\Mappings\DbalToLaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
 
@@ -30,6 +30,7 @@ class DbalMappersTest extends TestCase
      * Test that DBAL type to php scalar mappings work.
      *
      * @return void
+     * @throws NotImplementedException
      */
     public function testDbalToPhpTypeMappings()
     {
@@ -42,10 +43,11 @@ class DbalMappersTest extends TestCase
      * Test that DBAL type to php scalar mappings doesn't work with unsupported types.
      *
      * @return void
+     * @throws NotImplementedException
      */
     public function testWrongDbalToPhpTypeMappings()
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(NotImplementedException::class);
 
         $this->dbalToPhpTypeMapper->getPhpType('some_not_existing_type');
     }

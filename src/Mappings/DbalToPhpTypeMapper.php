@@ -3,7 +3,7 @@
 namespace Saritasa\LaravelTools\Mappings;
 
 use Doctrine\DBAL\Types\Type;
-use RuntimeException;
+use Saritasa\Exceptions\NotImplementedException;
 use Saritasa\LaravelTools\Enums\PhpScalarTypes;
 
 /**
@@ -55,14 +55,14 @@ class DbalToPhpTypeMapper implements IPhpTypeMapper
      * @param string $type DBAL type name
      *
      * @return string
-     * @throws RuntimeException
+     * @throws NotImplementedException
      */
     public function getPhpType(string $type): string
     {
         $phpType = $this->typeMappings[strtolower($type)] ?? null;
 
         if (is_null($phpType)) {
-            throw new RuntimeException("PHP scalar type mapping for DBAL type [{$type}] is not supported");
+            throw new NotImplementedException("PHP scalar type mapping for DBAL type [{$type}] is not supported");
         }
 
         return $phpType;

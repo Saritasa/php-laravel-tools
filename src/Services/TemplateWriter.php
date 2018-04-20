@@ -2,8 +2,10 @@
 
 namespace Saritasa\LaravelTools\Services;
 
+use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
+use UnexpectedValueException;
 
 /**
  * Scaffold templates writer. Takes template, fills placeholders and writes result file.
@@ -48,9 +50,9 @@ class TemplateWriter
             throw new FileNotFoundException("Template file [{$templateName}] not found");
         }
 
-        $templateContent = $this->filesystem->get($templateName);
+        $content = $this->filesystem->get($templateName);
 
-        $this->setTemplateContent($templateContent);
+        $this->setTemplateContent($content);
 
         return $this;
     }
@@ -62,26 +64,26 @@ class TemplateWriter
      * and value is placeholder's content
      *
      * @return TemplateWriter
-     * @throws \Exception
+     * @throws Exception
      */
     public function fill(array $placeholders): self
     {
-        $templateContent = $this->getTemplateContent();
+        $content = $this->getTemplateContent();
 
         foreach ($placeholders as $placeholder => $value) {
             $replacementsCount = 0;
 
-            $templateContent = str_replace(
+            $content = str_replace(
                 "{{{$placeholder}}}",
                 $value,
-                $templateContent,
+                $content,
                 $replacementsCount
             );
 
-            $this->setTemplateContent($templateContent);
+            $this->setTemplateContent($content);
 
             if ($replacementsCount == 0) {
-                throw new \Exception("Placeholder {{{$placeholder}}} not found in template");
+                throw new UnexpectedValueException("Placeholder {{{$placeholder}}} not found in template");
             }
         }
 
@@ -96,7 +98,7 @@ class TemplateWriter
     public function getTemplateContent(): string
     {
         if (!$this->templateContent) {
-            throw new \UnexpectedValueException('Template content is empty. Did You take() any template?');
+            throw new UnexpectedValueException('Template content is empty. Did You take() any template?');
         }
 
         return $this->templateContent;
@@ -136,7 +138,7 @@ class TemplateWriter
         $placeholders = false;
         if (preg_match_all('/\{\{([^{}]*)\}\}/', $this->getTemplateContent(), $placeholders)) {
             $notFilledPlaceholders = implode(', ', $placeholders[1]);
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 "Template placeholder(s) [{$notFilledPlaceholders}] not filled. Did You fill() placeholders?"
             );
         }

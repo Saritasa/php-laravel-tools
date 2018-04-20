@@ -2,7 +2,7 @@
 
 namespace Saritasa\LaravelTools\Mappings;
 
-use RuntimeException;
+use Saritasa\Exceptions\NotImplementedException;
 
 /**
  * Storage-specific type to PHP scalar type mapper.
@@ -15,7 +15,7 @@ interface IPhpTypeMapper
      * @param string $type storage type name
      *
      * @return string
-     * @throws RuntimeException
+     * @throws NotImplementedException
      */
     public function getPhpType(string $type): string;
 }
