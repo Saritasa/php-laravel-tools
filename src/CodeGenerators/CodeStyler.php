@@ -39,14 +39,17 @@ class CodeStyler
      */
     public function indentLine(string $codeLine, bool $ignoreExistingIndent = false, int $indentSize = 1): string
     {
-        $result = $codeLine;
-        if ($ignoreExistingIndent) {
-            $result = ltrim($result);
+        if (empty(trim($codeLine))) {
+            return $codeLine;
         }
 
-        $indent = str_repeat($this->indent, $indentSize);
+        if ($ignoreExistingIndent) {
+            $codeLine = ltrim($codeLine);
+        }
 
-        return "{$indent}{$result}";
+        $additionalIndent = str_repeat($this->indent, $indentSize);
+
+        return "{$additionalIndent}{$codeLine}";
     }
 
     /**

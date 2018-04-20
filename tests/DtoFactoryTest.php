@@ -13,6 +13,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
 use PHPUnit\Framework\TestCase;
 use Saritasa\Dto;
+use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
@@ -135,6 +136,7 @@ class DtoFactoryTest extends TestCase
         /**
          *  Real and mocked dependencies.
          */
+        $codeStyler = new CodeStyler(new Repository());
         $phpTypeMapper = new DbalToPhpTypeMapper();
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(
@@ -154,6 +156,7 @@ class DtoFactoryTest extends TestCase
         return new DtoFactory(
             $schemaReader,
             $templateWriter,
+            $codeStyler,
             $phpTypeMapper,
             $classDescriptionBuilder,
             $variableDescriptionBuilder,

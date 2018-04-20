@@ -40,6 +40,14 @@ class CodeStylerTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testEmptyStringIndenting(): void
+    {
+        $string = '';
+        $expected = '';
+        $actual = $this->codeStyler->indentLine($string);
+        $this->assertEquals($expected, $actual, 'Code styler should not apply indent to empty lines');
+    }
+
     public function lineIndentTestSet(): array
     {
         return [
@@ -73,8 +81,18 @@ class CodeStylerTest extends TestCase
         return [
             'one indent' => ["\$x = \$y;\n\$a = \$b;", false, 1, "    \$x = \$y;\n    \$a = \$b;"],
             'three indents' => ["\$x = \$y;\n\$a = \$b;", false, 3, "            \$x = \$y;\n            \$a = \$b;"],
-            'ignored indents with two indents' => ["    \$x = \$y;\n    \$a = \$b;", true, 2, "        \$x = \$y;\n        \$a = \$b;"],
-            'one additional indent' => ["    \$x = \$y;\n    \$a = \$b;", false, 1, "        \$x = \$y;\n        \$a = \$b;"],
+            'ignored indents with two indents' => [
+                "    \$x = \$y;\n    \$a = \$b;",
+                true,
+                2,
+                "        \$x = \$y;\n        \$a = \$b;",
+            ],
+            'one additional indent' => [
+                "    \$x = \$y;\n    \$a = \$b;",
+                false,
+                1,
+                "        \$x = \$y;\n        \$a = \$b;",
+            ],
         ];
     }
 }
