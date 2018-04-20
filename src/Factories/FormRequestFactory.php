@@ -4,6 +4,7 @@ namespace Saritasa\LaravelTools\Factories;
 
 use Exception;
 use RuntimeException;
+use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
@@ -62,6 +63,7 @@ class FormRequestFactory extends ModelBasedClassFactory
      *
      * @param SchemaReader $schemaReader Database table information reader
      * @param TemplateWriter $templateWriter Templates files writer
+     * @param CodeStyler $codeStyler Code style utility. Allows to format code according to settings
      * @param RuleBuilder $ruleBuilder Column rule builder
      * @param IPhpTypeMapper $phpTypeMapper Storage type to PHP scalar type mapper
      * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Allows to build PHPDoc class description
@@ -69,11 +71,12 @@ class FormRequestFactory extends ModelBasedClassFactory
     public function __construct(
         SchemaReader $schemaReader,
         TemplateWriter $templateWriter,
+        CodeStyler $codeStyler,
         RuleBuilder $ruleBuilder,
         IPhpTypeMapper $phpTypeMapper,
         PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder
     ) {
-        parent::__construct($templateWriter, $schemaReader);
+        parent::__construct($templateWriter, $schemaReader, $codeStyler);
         $this->ruleBuilder = $ruleBuilder;
         $this->phpTypeMapper = $phpTypeMapper;
         $this->phpDocClassDescriptionBuilder = $phpDocClassDescriptionBuilder;
@@ -137,11 +140,9 @@ class FormRequestFactory extends ModelBasedClassFactory
      */
     private function formatRules(array $rules): string
     {
-        $indent = $this->getIndent(static::RULES_INDENTS);
+        $formattedRules = implode(",\n", $rules);
 
-        $formattedRules = implode(",\n{$indent}", $rules);
-
-        return trim($formattedRules);
+        return trim($this->codeStyler->indentBlock($formattedRules, false, static::RULES_INDENTS));
     }
 
     /**

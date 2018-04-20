@@ -8,8 +8,8 @@ use Doctrine\DBAL\Schema\Table;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
-use RuntimeException;
-use Saritasa\Dto;
+use Saritasa\Exceptions\ConfigurationException;
+use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\ModelBasedClassFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
@@ -59,11 +59,12 @@ abstract class ModelBasedClassFactory extends ClassFactory
      * Factory to scaffold some new class based on template.
      *
      * @param TemplateWriter $templateWriter Templates files writer
+     * @param CodeStyler $codeStyler Code style utility. Allows to format code according to settings
      * @param SchemaReader $schemaReader Database table information reader
      */
-    public function __construct(TemplateWriter $templateWriter, SchemaReader $schemaReader)
+    public function __construct(TemplateWriter $templateWriter, SchemaReader $schemaReader, CodeStyler $codeStyler)
     {
-        parent::__construct($templateWriter);
+        parent::__construct($templateWriter, $codeStyler);
 
         $this->schemaReader = $schemaReader;
     }
@@ -104,7 +105,7 @@ abstract class ModelBasedClassFactory extends ClassFactory
         foreach ($this->table->getForeignKeys() as $foreignKey) {
             $localColumn = $foreignKey->getLocalColumns()[0];
             $this->foreignKeys[$localColumn] = $foreignKey;
-        };
+        }
 
         $this->columns = [];
         foreach ($this->table->getColumns() as $column) {
@@ -133,21 +134,17 @@ abstract class ModelBasedClassFactory extends ClassFactory
     }
 
     /**
-     * Configure factory.
+     * Validate factory configuration.
      *
-     * @param ModelBasedClassFactoryConfig|Dto $config Generated class configuration
-     *
-     * @throws RuntimeException When factory's configuration doesn't contain model class name
-     * @throws UnexpectedValueException When passed model class is not a Model class instance
-     *
-     * @return static
+     * @return void
+     * @throws ConfigurationException
      */
-    public function configure($config)
+    protected function validateConfig(): void
     {
-        $this->config = $config;
+        parent::validateConfig();
 
         if (!$this->config->modelClassName) {
-            throw new RuntimeException('Model class not configured');
+            throw new ConfigurationException('Model class not configured');
         }
 
         if (!is_a($this->config->modelClassName, Model::class, true)) {
@@ -155,7 +152,5 @@ abstract class ModelBasedClassFactory extends ClassFactory
                 "Class [{$this->config->modelClassName}] is not a valid Model class name"
             );
         }
-
-        return $this;
     }
 }

@@ -4,17 +4,14 @@ namespace Saritasa\LaravelTools\Factories;
 
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Saritasa\Dto;
 use Saritasa\LaravelTools\DTO\ClassFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
 /**
  * Factory to scaffold some new class based on template.
  */
-abstract class ClassFactory
+abstract class ClassFactory extends TemplateBasedFactory
 {
-    protected const INDENT_SIZE = 4;
-
     /**
      * Templates files writer.
      *
@@ -37,16 +34,6 @@ abstract class ClassFactory
     protected $usedClasses = [];
 
     /**
-     * Factory to scaffold some new class based on template.
-     *
-     * @param TemplateWriter $templateWriter Templates files writer
-     */
-    public function __construct(TemplateWriter $templateWriter)
-    {
-        $this->templateWriter = $templateWriter;
-    }
-
-    /**
      * Build and write new class file.
      *
      * @return string Result file name
@@ -63,55 +50,6 @@ abstract class ClassFactory
             ->write($this->config->resultFilename);
 
         return $this->config->resultFilename;
-    }
-
-    /**
-     * Configure factory to build new class.
-     *
-     * @param ClassFactoryConfig|Dto $config Class configuration
-     *
-     * @return static
-     */
-    abstract public function configure($config);
-
-    /**
-     * Returns template's placeholders values.
-     *
-     * @return array
-     * @throws Exception
-     */
-    abstract protected function getPlaceHoldersValues(): array;
-
-    /**
-     * Returns indent for given size.
-     *
-     * @param int $size Necessary indent size
-     *
-     * @return string
-     */
-    protected function getIndent(int $size = 1): string
-    {
-        return str_repeat(' ', static::INDENT_SIZE * $size);
-    }
-
-    /**
-     * Apply indent for each line in given array.
-     *
-     * @param string $codeBlock Code block in which need to prepend each line with indent
-     * @param int $indentSize Indent size that should be placed before each line
-     *
-     * @return string
-     */
-    protected function applyIndent(string $codeBlock, int $indentSize = 1): string
-    {
-        $indent = $this->getIndent($indentSize);
-        $linesWithIndent = [];
-        $lines = explode("\n", $codeBlock);
-        foreach ($lines as $line) {
-            $linesWithIndent[] = rtrim($indent . $line);
-        }
-
-        return implode("\n", $linesWithIndent);
     }
 
     /**
