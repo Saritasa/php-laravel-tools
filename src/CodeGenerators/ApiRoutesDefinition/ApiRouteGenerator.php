@@ -33,10 +33,10 @@ class ApiRouteGenerator
      */
     protected function getDescription(ApiRouteObject $routeData): ?string
     {
-        $description = trim($routeData->description);
+        $description = ucfirst(trim($routeData->description));
         if (!$description) {
             return null;
-        };
+        }
 
         return "// {$description}";
     }
@@ -52,6 +52,6 @@ class ApiRouteGenerator
     {
         $method = strtolower($routeData->method);
 
-        return "\$api->{$method}('{$routeData->path}', '')->name('');";
+        return "\$api->{$method}('{$routeData->url}', '')->name('');";
     }
 }

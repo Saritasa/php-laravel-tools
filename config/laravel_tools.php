@@ -1,6 +1,7 @@
 <?php
 
 return [
+    // Application models configuration
     'models' => [
         // Path where models located
         'path' => app_path('Models'),
@@ -12,6 +13,7 @@ return [
         'suggest_attribute_names_constants' => true,
     ],
 
+    // Form requests configuration
     'form_requests' => [
         // Path where form requests located
         'path' => app_path('Http/Requests'),
@@ -35,12 +37,14 @@ return [
         'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::FORM_REQUEST_TEMPLATE,
     ],
 
+    // Validation rules configuration
     'rules' => [
         // Validation rules dictionary
         'dictionary' => \Saritasa\LaravelTools\Rules\StringValidationRulesDictionary::class,
         // 'dictionary' => \Saritasa\LaravelTools\Rules\FluentValidationRulesDictionary::class
     ],
 
+    // Data Transfer Objects configuration
     'dto' => [
         // Whether constants block with attributes names should be generated
         'with_constants' => false,
@@ -83,5 +87,28 @@ return [
     'code_style' => [
         // Code indent that should be used for padding
         'indent' => '    ',
+    ],
+
+    // Swagger configuration
+    'swagger' => [
+        // Swagger file location
+        'path' => 'Artifacts/API/swagger.yaml',
+    ],
+
+    // Api routes configuration
+    'api_routes' => [
+        // Template of the api.php file that will be generated
+        'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::API_ROUTES_TEMPLATE,
+
+        // API controllers namespace
+        'controllers_namespace' => 'App\Http\Controllers\Api',
+
+        // Route middleware for security schemes
+        'security_schemes_middlewares' => [
+            'AuthToken' => 'jwt.auth',
+        ],
+
+        // Result file location. File will be overwritten
+        'result_file_name' => 'routes/api.php',
     ],
 ];

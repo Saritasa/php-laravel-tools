@@ -16,7 +16,9 @@
         "doctrine/dbal": "^2.6",
         "laravel/framework": "^5.4",
         "saritasa/php-common": "^1.1",
-        "saritasa/transformers": "^1.0"
+        "saritasa/transformers": "^1.0",
+        "symfony/yaml": "^4.0",
+        "wakeonweb/swagger": "dev-master"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",
@@ -35,6 +37,7 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
+    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"

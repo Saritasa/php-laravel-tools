@@ -18,4 +18,9 @@ class ScaffoldTemplates extends Enum
      * DTO class template.
      */
     const DTO_TEMPLATE = 'ModelDtoTemplate';
+
+    /**
+     * API routes template.
+     */
+    const API_ROUTES_TEMPLATE = 'ApiRoutesTemplate';
 }

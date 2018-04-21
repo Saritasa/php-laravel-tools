@@ -61,9 +61,9 @@ class ApiRoutesGroupGenerator
         $indentedGroupContent = $this->codeStyler->indentBlock($groupContent);
 
         return <<<GROUP
-\$api->group({$groupOptions}, function(Router \$api) {
+\$api->group({$groupOptions}, function (Router \$api) {
 {$indentedGroupContent}
-}
+});
 GROUP;
     }
 
