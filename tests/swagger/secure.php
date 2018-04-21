@@ -19,6 +19,7 @@ $api = app(Router::class);
 $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api'], function (Router $api) {
     $api->get('/pets', '')->name('');
     $api->get('/pets/{id}', '')->name('');
+
     // Routes under Auth token security
     $api->group(['middleware' => ['jwt.auth']], function (Router $api) {
         $api->post('/pets', '')->name('');
