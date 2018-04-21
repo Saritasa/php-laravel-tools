@@ -29,7 +29,7 @@ class RouteGeneratorsTest extends TestCase
         $route = new ApiRouteObject([
             ApiRouteObject::DESCRIPTION => $description,
             ApiRouteObject::METHOD => $method,
-            ApiRouteObject::PATH => $path,
+            ApiRouteObject::URL => $path,
         ]);
 
         $actual = $routeGenerator->render($route);
@@ -86,26 +86,26 @@ class RouteGeneratorsTest extends TestCase
                 "\$api->get('/users', '');",
                 [],
                 '',
-                "\$api->group([], function(Router \$api) {\n    \$api->get('/users', '');\n}",
+                "\$api->group([], function (Router \$api) {\n    \$api->get('/users', '');\n});",
             ],
             'with description' => [
                 "\$api->get('/users', '');",
                 [],
                 'Users routes group',
-                "// Users routes group\n\$api->group([], function(Router \$api) {\n    \$api->get('/users', '');\n}",
+                "// Users routes group\n\$api->group([], function (Router \$api) {\n    \$api->get('/users', '');\n});",
             ],
             'with few lines' => [
                 "\$api->get('/users', '');\n\$api->get('/users/{id}', '');",
                 [],
                 '',
-                "\$api->group([], function(Router \$api) {\n    \$api->get('/users', '');\n    \$api->get('/users/{id}', '');\n}",
+                "\$api->group([], function (Router \$api) {\n    \$api->get('/users', '');\n    \$api->get('/users/{id}', '');\n});",
             ],
 
             'with middleware' => [
                 "\$api->get('/users', '');",
                 ['api.auth', 'bindings'],
                 '',
-                "\$api->group(['middleware' => ['api.auth', 'bindings']], function(Router \$api) {\n    \$api->get('/users', '');\n}",
+                "\$api->group(['middleware' => ['api.auth', 'bindings']], function (Router \$api) {\n    \$api->get('/users', '');\n});",
             ],
         ];
     }
