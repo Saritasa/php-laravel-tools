@@ -34,25 +34,6 @@ abstract class ClassFactory extends TemplateBasedFactory
     protected $usedClasses = [];
 
     /**
-     * Build and write new class file.
-     *
-     * @return string Result file name
-     * @throws Exception
-     * @throws FileNotFoundException
-     */
-    public function build(): string
-    {
-        $filledPlaceholders = $this->getPlaceHoldersValues();
-
-        $this->templateWriter
-            ->take($this->config->templateFilename)
-            ->fill($filledPlaceholders)
-            ->write($this->config->resultFilename);
-
-        return $this->config->resultFilename;
-    }
-
-    /**
      * Extract and replace fully-qualified class names from placeholder.
      *
      * @param string $placeholder Placeholder to extract class names from

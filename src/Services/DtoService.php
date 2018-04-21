@@ -54,7 +54,7 @@ class DtoService
     }
 
     /**
-     * Generates new DTO class
+     * Generates new DTO class.
      *
      * @param string $modelClassName Model class name to which need to generate DTO
      * @param null|string $dtoClassName Result DTO class name. When not passed
@@ -70,9 +70,9 @@ class DtoService
         string $dtoClassName,
         DtoFactoryConfig $initialFactoryConfig
     ): string {
-        $dtoFactoryConfiguration = $this->getConfiguration($modelClassName, $dtoClassName, $initialFactoryConfig);
+        $factoryConfig = $this->getConfiguration($modelClassName, $dtoClassName, $initialFactoryConfig);
 
-        return $this->dtoFactory->configure($dtoFactoryConfiguration)->build();
+        return $this->dtoFactory->configure($factoryConfig)->build();
     }
 
     /**

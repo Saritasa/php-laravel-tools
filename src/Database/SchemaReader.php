@@ -3,6 +3,7 @@
 namespace Saritasa\LaravelTools\Database;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
@@ -31,7 +32,7 @@ class SchemaReader
      *
      * @param Connection $connection Connection to retrieve information from
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function __construct(Connection $connection)
     {

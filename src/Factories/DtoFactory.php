@@ -25,13 +25,13 @@ use Saritasa\LaravelTools\Services\TemplateWriter;
  */
 class DtoFactory extends ModelBasedClassFactory
 {
-    const PLACEHOLDER_NAMESPACE = 'namespace';
-    const PLACEHOLDER_IMPORTS = 'imports';
-    const PLACEHOLDER_DTO_CLASS_NAME = 'dtoClassName';
-    const PLACEHOLDER_CLASS_PHP_DOC = 'classPhpDoc';
-    const PLACEHOLDER_DTO_CONSTANTS = 'constants';
-    const PLACEHOLDER_DTO_PROPERTIES = 'properties';
-    const PLACEHOLDER_DTO_PARENT = 'dtoParent';
+    protected const PLACEHOLDER_NAMESPACE = 'namespace';
+    protected const PLACEHOLDER_IMPORTS = 'imports';
+    protected const PLACEHOLDER_DTO_CLASS_NAME = 'dtoClassName';
+    protected const PLACEHOLDER_CLASS_PHP_DOC = 'classPhpDoc';
+    protected const PLACEHOLDER_DTO_CONSTANTS = 'constants';
+    protected const PLACEHOLDER_DTO_PROPERTIES = 'properties';
+    protected const PLACEHOLDER_DTO_PARENT = 'dtoParent';
 
     /**
      * DTO builder configuration.

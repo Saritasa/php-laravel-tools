@@ -2,7 +2,9 @@
 
 namespace Saritasa\LaravelTools\Services;
 
+use Exception;
 use Illuminate\Config\Repository;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
@@ -52,7 +54,7 @@ class FormRequestService
     }
 
     /**
-     * Generates new Form Request class
+     * Generates new Form Request class.
      *
      * @param string $modelClassName Model class name to which need to generate request
      * @param null|string $formRequestClassName Result form request class name. When not passed
@@ -60,14 +62,14 @@ class FormRequestService
      *
      * @return string Result form request file name
      * @throws ConfigurationException When form request factory not correctly configured
-     * @throws \Exception
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException When template file not found
+     * @throws Exception
+     * @throws FileNotFoundException When template file not found
      */
     public function generateFormRequest(string $modelClassName, string $formRequestClassName): string
     {
-        $formRequestFactoryConfiguration = $this->getDefaultConfiguration($modelClassName, $formRequestClassName);
+        $factoryConfig = $this->getDefaultConfiguration($modelClassName, $formRequestClassName);
 
-        return $this->formRequestFactory->configure($formRequestFactoryConfiguration)->build();
+        return $this->formRequestFactory->configure($factoryConfig)->build();
     }
 
     /**

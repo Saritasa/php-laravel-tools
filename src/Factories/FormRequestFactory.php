@@ -20,12 +20,12 @@ use Saritasa\LaravelTools\Services\TemplateWriter;
  */
 class FormRequestFactory extends ModelBasedClassFactory
 {
-    const PLACEHOLDER_NAMESPACE = 'namespace';
-    const PLACEHOLDER_IMPORTS = 'imports';
-    const PLACEHOLDER_FORM_REQUEST_CLASS_NAME = 'formRequestClassName';
-    const PLACEHOLDER_CLASS_PHP_DOC = 'classPhpDoc';
-    const PLACEHOLDER_FORM_REQUEST_PARENT = 'formRequestParent';
-    const PLACEHOLDER_RULES = 'rules';
+    protected const PLACEHOLDER_NAMESPACE = 'namespace';
+    protected const PLACEHOLDER_IMPORTS = 'imports';
+    protected const PLACEHOLDER_FORM_REQUEST_CLASS_NAME = 'formRequestClassName';
+    protected const PLACEHOLDER_CLASS_PHP_DOC = 'classPhpDoc';
+    protected const PLACEHOLDER_FORM_REQUEST_PARENT = 'formRequestParent';
+    protected const PLACEHOLDER_RULES = 'rules';
 
     private const RULES_INDENTS = 3;
 
