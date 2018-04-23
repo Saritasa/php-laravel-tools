@@ -10,7 +10,7 @@ use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 /**
  * Test Code generators block rendering function.
  */
-class CodeGeneratorsTest extends TestCase
+class GettersSettersGeneratorsTest extends TestCase
 {
     /**
      * Generator of getter-function declaration.
