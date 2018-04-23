@@ -3,6 +3,7 @@
 namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
+use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 
 /**
  * Api routes group generator. Allows to generate api routes group declaration.
@@ -17,13 +18,22 @@ class ApiRoutesGroupGenerator
     private $codeFormatter;
 
     /**
+     * Php comments generator. Allows to comment lines and blocks of text.
+     *
+     * @var CommentsGenerator
+     */
+    private $commentsGenerator;
+
+    /**
      * Api routes group generator. Allows to generate api routes group declaration.
      *
      * @param CodeFormatter $codeFormatter Generated code formatter helper. Allows to apply indent to code
+     * @param CommentsGenerator $commentsGenerator Php comments generator. Allows to comment lines and blocks of text
      */
-    public function __construct(CodeFormatter $codeFormatter)
+    public function __construct(CodeFormatter $codeFormatter, CommentsGenerator $commentsGenerator)
     {
         $this->codeFormatter = $codeFormatter;
+        $this->commentsGenerator = $commentsGenerator;
     }
 
     /**
@@ -82,6 +92,6 @@ GROUP;
             return null;
         }
 
-        return "// {$formattedDescription}";
+        return$this->commentsGenerator->line($formattedDescription);
     }
 }

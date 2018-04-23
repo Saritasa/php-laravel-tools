@@ -41,6 +41,14 @@ class CommentsGeneratorTest extends TestCase
     {
         $expected = <<<BLOCK
 /**
+ * Simple line
+ */
+BLOCK;
+        $actual = $this->commentsGenerator->block("Simple line");
+        $this->assertEquals($expected, $actual);
+
+        $expected = <<<BLOCK
+/**
  * Simple
  * multi
  * line
@@ -65,6 +73,14 @@ BLOCK;
 
     public function testAlternativeBlock():void
     {
+        $expected = <<<BLOCK
+/////////////////
+// Simple line //
+/////////////////
+BLOCK;
+        $actual = $this->commentsGenerator->alternativeBlock("Simple line");
+        $this->assertEquals($expected, $actual);
+
         $expected = <<<BLOCK
 ////////////
 // Simple //

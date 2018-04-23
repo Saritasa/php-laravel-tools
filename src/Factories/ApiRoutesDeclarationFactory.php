@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
+use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 use Saritasa\LaravelTools\DTO\ApiRouteObject;
 use Saritasa\LaravelTools\DTO\ApiRoutesFactoryConfig;
 use Saritasa\LaravelTools\Enums\HttpMethods;
@@ -53,10 +54,18 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
     private $swaggerReader;
 
     /**
+     * Php comments generator. Allows to comment lines and blocks of text.
+     *
+     * @var CommentsGenerator
+     */
+    private $commentsGenerator;
+
+    /**
      * Api routes factory. Allows to build api routes definition according to swagger specification.
      *
      * @param TemplateWriter $templateWriter Templates files writer
      * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
+     * @param CommentsGenerator $commentsGenerator Php comments generator. Allows to comment lines and blocks of text
      * @param SwaggerReader $swaggerReader Swagger specification file reader
      * @param ApiRouteGenerator $apiRouteGenerator Api route generator. Allows to build route declaration with
      *     description according to route details
@@ -66,6 +75,7 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
     public function __construct(
         TemplateWriter $templateWriter,
         CodeFormatter $codeFormatter,
+        CommentsGenerator $commentsGenerator,
         SwaggerReader $swaggerReader,
         ApiRouteGenerator $apiRouteGenerator,
         ApiRoutesGroupGenerator $apiRoutesGroupGenerator
@@ -74,6 +84,7 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
         $this->apiRouteGenerator = $apiRouteGenerator;
         $this->apiRoutesGroupGenerator = $apiRoutesGroupGenerator;
         $this->swaggerReader = $swaggerReader;
+        $this->commentsGenerator = $commentsGenerator;
     }
 
     /**
@@ -148,9 +159,8 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
             foreach ($routesByGroup as $group => $groupRoutes) {
                 if ($group) {
                     $groupDescription = str_replace('_', ' ', ucfirst(strtolower(Str::snake($group)))) . ' routes.';
-                    $groupDescriptionDelimiter = str_repeat('/', strlen($groupDescription) + 6);
-                    $schemeRoutesDefinitions[] =
-                        "$groupDescriptionDelimiter\n// {$groupDescription} //\n$groupDescriptionDelimiter\n";
+                    $schemeRoutesDefinitions[] = $this->commentsGenerator->alternativeBlock($groupDescription);
+                    $schemeRoutesDefinitions[] = '';
                 }
                 foreach ($groupRoutes as $route) {
                     $schemeRoutesDefinitions[] = $this->apiRouteGenerator->render($route);
