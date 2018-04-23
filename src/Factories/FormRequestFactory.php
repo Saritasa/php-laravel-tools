@@ -4,7 +4,7 @@ namespace Saritasa\LaravelTools\Factories;
 
 use Exception;
 use Saritasa\Exceptions\NotImplementedException;
-use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
@@ -63,7 +63,7 @@ class FormRequestFactory extends ModelBasedClassFactory
      *
      * @param SchemaReader $schemaReader Database table information reader
      * @param TemplateWriter $templateWriter Templates files writer
-     * @param CodeStyler $codeStyler Code style utility. Allows to format code according to settings
+     * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      * @param RuleBuilder $ruleBuilder Column rule builder
      * @param IPhpTypeMapper $phpTypeMapper Storage type to PHP scalar type mapper
      * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Allows to build PHPDoc class description
@@ -71,12 +71,12 @@ class FormRequestFactory extends ModelBasedClassFactory
     public function __construct(
         SchemaReader $schemaReader,
         TemplateWriter $templateWriter,
-        CodeStyler $codeStyler,
+        CodeFormatter $codeFormatter,
         RuleBuilder $ruleBuilder,
         IPhpTypeMapper $phpTypeMapper,
         PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder
     ) {
-        parent::__construct($templateWriter, $schemaReader, $codeStyler);
+        parent::__construct($templateWriter, $schemaReader, $codeFormatter);
         $this->ruleBuilder = $ruleBuilder;
         $this->phpTypeMapper = $phpTypeMapper;
         $this->phpDocClassDescriptionBuilder = $phpDocClassDescriptionBuilder;
@@ -142,7 +142,7 @@ class FormRequestFactory extends ModelBasedClassFactory
     {
         $formattedRules = implode(",\n", $rules);
 
-        return trim($this->codeStyler->indentBlock($formattedRules, false, static::RULES_INDENTS));
+        return trim($this->codeFormatter->indentBlock($formattedRules, false, static::RULES_INDENTS));
     }
 
     /**

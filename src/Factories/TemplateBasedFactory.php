@@ -5,7 +5,7 @@ namespace Saritasa\LaravelTools\Factories;
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\Exceptions\ConfigurationException;
-use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\DTO\ClassFactoryConfig;
 use Saritasa\LaravelTools\DTO\TemplateBasedFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
@@ -32,20 +32,20 @@ abstract class TemplateBasedFactory
     /**
      * Code style utility. Allows to format code according to settings.
      *
-     * @var CodeStyler
+     * @var CodeFormatter
      */
-    protected $codeStyler;
+    protected $codeFormatter;
 
     /**
      * Factory to scaffold some new class based on template.
      *
      * @param TemplateWriter $templateWriter Templates files writer
-     * @param CodeStyler $codeStyler Code style utility. Allows to format code according to settings
+     * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      */
-    public function __construct(TemplateWriter $templateWriter, CodeStyler $codeStyler)
+    public function __construct(TemplateWriter $templateWriter, CodeFormatter $codeFormatter)
     {
         $this->templateWriter = $templateWriter;
-        $this->codeStyler = $codeStyler;
+        $this->codeFormatter = $codeFormatter;
     }
 
     /**

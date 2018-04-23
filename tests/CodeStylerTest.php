@@ -4,22 +4,22 @@ namespace Saritasa\LaravelTools\Tests;
 
 use Illuminate\Config\Repository;
 use PHPUnit\Framework\TestCase;
-use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 
-class CodeStylerTest extends TestCase
+class CodeFormatterTest extends TestCase
 {
     /**
-     * Configured code styler that will be tested.
+     * Configured code formatter that will be tested.
      *
-     * @var CodeStyler
+     * @var CodeFormatter
      */
-    private $codeStyler;
+    private $codeFormatter;
 
     public function setUp()
     {
         parent::setUp();
         $configsRepository = new Repository(['laravel_tools.code_style.indent' => '    ']);
-        $this->codeStyler = new CodeStyler($configsRepository);
+        $this->codeFormatter = new CodeFormatter($configsRepository);
     }
 
     /**
@@ -35,7 +35,7 @@ class CodeStylerTest extends TestCase
      */
     public function testLineIndent(string $line, bool $ignoreExisting, int $indentSize, string $expected): void
     {
-        $actual = $this->codeStyler->indentLine($line, $ignoreExisting, $indentSize);
+        $actual = $this->codeFormatter->indentLine($line, $ignoreExisting, $indentSize);
 
         $this->assertEquals($expected, $actual);
     }
@@ -44,8 +44,8 @@ class CodeStylerTest extends TestCase
     {
         $string = '';
         $expected = '';
-        $actual = $this->codeStyler->indentLine($string);
-        $this->assertEquals($expected, $actual, 'Code styler should not apply indent to empty lines');
+        $actual = $this->codeFormatter->indentLine($string);
+        $this->assertEquals($expected, $actual, 'Code formatter should not apply indent to empty lines');
     }
 
     public function lineIndentTestSet(): array
@@ -71,7 +71,7 @@ class CodeStylerTest extends TestCase
      */
     public function testBlockIndent(string $block, bool $ignoreExisting, int $indentSize, string $expected): void
     {
-        $actual = $this->codeStyler->indentBlock($block, $ignoreExisting, $indentSize);
+        $actual = $this->codeFormatter->indentBlock($block, $ignoreExisting, $indentSize);
 
         $this->assertEquals($expected, $actual);
     }

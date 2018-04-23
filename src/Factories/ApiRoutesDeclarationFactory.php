@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
-use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\DTO\ApiRouteObject;
 use Saritasa\LaravelTools\DTO\ApiRoutesFactoryConfig;
 use Saritasa\LaravelTools\Enums\HttpMethods;
@@ -56,7 +56,7 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
      * Api routes factory. Allows to build api routes definition according to swagger specification.
      *
      * @param TemplateWriter $templateWriter Templates files writer
-     * @param CodeStyler $codeStyler Code style utility. Allows to format code according to settings
+     * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      * @param SwaggerReader $swaggerReader Swagger specification file reader
      * @param ApiRouteGenerator $apiRouteGenerator Api route generator. Allows to build route declaration with
      *     description according to route details
@@ -65,12 +65,12 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
      */
     public function __construct(
         TemplateWriter $templateWriter,
-        CodeStyler $codeStyler,
+        CodeFormatter $codeFormatter,
         SwaggerReader $swaggerReader,
         ApiRouteGenerator $apiRouteGenerator,
         ApiRoutesGroupGenerator $apiRoutesGroupGenerator
     ) {
-        parent::__construct($templateWriter, $codeStyler);
+        parent::__construct($templateWriter, $codeFormatter);
         $this->apiRouteGenerator = $apiRouteGenerator;
         $this->apiRoutesGroupGenerator = $apiRoutesGroupGenerator;
         $this->swaggerReader = $swaggerReader;
@@ -147,10 +147,10 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
             $routesByGroup = Collection::make($schemeRoutes)->groupBy(ApiRouteObject::GROUP);
             foreach ($routesByGroup as $group => $groupRoutes) {
                 if ($group) {
-                    $groupDescription = str_replace('_', ' ', ucfirst(strtolower(Str::snake($group)))).' routes.';
-                    $groupDescriptionPrepender=str_repeat('/', strlen($groupDescription)+6);
+                    $groupDescription = str_replace('_', ' ', ucfirst(strtolower(Str::snake($group)))) . ' routes.';
+                    $groupDescriptionDelimiter = str_repeat('/', strlen($groupDescription) + 6);
                     $schemeRoutesDefinitions[] =
-                        "$groupDescriptionPrepender\n// {$groupDescription} //\n$groupDescriptionPrepender\n";
+                        "$groupDescriptionDelimiter\n// {$groupDescription} //\n$groupDescriptionDelimiter\n";
                 }
                 foreach ($groupRoutes as $route) {
                     $schemeRoutesDefinitions[] = $this->apiRouteGenerator->render($route);
@@ -163,7 +163,7 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
             if (!$groupMiddleware) {
                 $routeDefinitions[] = $schemeRoutesDefinitionsBlock;
             } else {
-                $routeDefinitions[]='';
+                $routeDefinitions[] = '';
                 $humanReadableToken = str_replace('_', ' ', ucfirst(strtolower(Str::snake($securityScheme))));
                 $securityRoutesDescription = "Routes under {$humanReadableToken} security";
                 $routeDefinitions[] = $this->apiRoutesGroupGenerator
@@ -186,7 +186,7 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
 
         return [
             static::PLACEHOLDER_CONTROLLERS_NAMESPACE => $this->config->controllersNamespace,
-            static::PLACEHOLDER_API_ROUTES_DEFINITIONS => $this->codeStyler
+            static::PLACEHOLDER_API_ROUTES_DEFINITIONS => $this->codeFormatter
                 ->indentBlock(implode("\n", $routesDefinitions)),
         ];
     }

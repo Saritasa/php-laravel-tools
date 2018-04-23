@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Saritasa\Exceptions\NotImplementedException;
-use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
@@ -81,7 +81,7 @@ class DtoFactory extends ModelBasedClassFactory
      *
      * @param SchemaReader $schemaReader Database table information reader
      * @param TemplateWriter $templateWriter Templates files writer
-     * @param CodeStyler $codeStyler Code style utility. Allows to format code according to settings
+     * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      * @param IPhpTypeMapper $phpTypeMapper Storage type to PHP scalar type mapper
      * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Allows to build PHPDoc class description
      * @param PhpDocVariableDescriptionBuilder $variableDescriptionBuilder Allows to build PHPDoc for properties
@@ -91,14 +91,14 @@ class DtoFactory extends ModelBasedClassFactory
     public function __construct(
         SchemaReader $schemaReader,
         TemplateWriter $templateWriter,
-        CodeStyler $codeStyler,
+        CodeFormatter $codeFormatter,
         IPhpTypeMapper $phpTypeMapper,
         PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder,
         PhpDocVariableDescriptionBuilder $variableDescriptionBuilder,
         GetterGenerator $getterGenerator,
         SetterGenerator $setterGenerator
     ) {
-        parent::__construct($templateWriter, $schemaReader, $codeStyler);
+        parent::__construct($templateWriter, $schemaReader, $codeFormatter);
         $this->phpTypeMapper = $phpTypeMapper;
         $this->phpDocClassDescriptionBuilder = $phpDocClassDescriptionBuilder;
         $this->variableDescriptionBuilder = $variableDescriptionBuilder;
@@ -180,7 +180,7 @@ class DtoFactory extends ModelBasedClassFactory
             $classConstants[] = $this->formatConstantDeclaration($column->getName());
         }
 
-        return $this->codeStyler->indentBlock(implode("\n", $classConstants));
+        return $this->codeFormatter->indentBlock(implode("\n", $classConstants));
     }
 
     /**
@@ -239,7 +239,7 @@ class DtoFactory extends ModelBasedClassFactory
         }
         $classPropertiesLines = array_merge($classProperties, $getters, $setters);
 
-        $classPropertiesLines = $this->codeStyler->indentBlock(implode("\n", $classPropertiesLines));
+        $classPropertiesLines = $this->codeFormatter->indentBlock(implode("\n", $classPropertiesLines));
 
         return rtrim($classPropertiesLines);
     }

@@ -9,7 +9,7 @@ use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Saritasa\Exceptions\ConfigurationException;
-use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\ModelBasedClassFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
@@ -59,12 +59,15 @@ abstract class ModelBasedClassFactory extends ClassFactory
      * Factory to scaffold some new class based on template.
      *
      * @param TemplateWriter $templateWriter Templates files writer
-     * @param CodeStyler $codeStyler Code style utility. Allows to format code according to settings
+     * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      * @param SchemaReader $schemaReader Database table information reader
      */
-    public function __construct(TemplateWriter $templateWriter, SchemaReader $schemaReader, CodeStyler $codeStyler)
-    {
-        parent::__construct($templateWriter, $codeStyler);
+    public function __construct(
+        TemplateWriter $templateWriter,
+        SchemaReader $schemaReader,
+        CodeFormatter $codeFormatter
+    ) {
+        parent::__construct($templateWriter, $codeFormatter);
 
         $this->schemaReader = $schemaReader;
     }

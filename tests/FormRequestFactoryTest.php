@@ -14,7 +14,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
 use PHPUnit\Framework\TestCase;
-use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
@@ -135,7 +135,7 @@ class FormRequestFactoryTest extends TestCase
         /**
          *  Real and mocked dependencies.
          */
-        $codeStyler = new CodeStyler(new Repository());
+        $codeFormatter = new CodeFormatter(new Repository());
         $ruleBuilder = new RuleBuilder(new StringValidationRulesDictionary(), new DbalToLaravelValidationTypeMapper());
         $phpTypeMapper = new DbalToPhpTypeMapper();
         $templateWriter = new TemplateWriter(app(Filesystem::class));
@@ -153,7 +153,7 @@ class FormRequestFactoryTest extends TestCase
         return new FormRequestFactory(
             $schemaReader,
             $templateWriter,
-            $codeStyler,
+            $codeFormatter,
             $ruleBuilder,
             $phpTypeMapper,
             $classDescriptionBuilder

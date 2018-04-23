@@ -2,8 +2,6 @@
 
 namespace Saritasa\LaravelTools\Factories;
 
-use Exception;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\LaravelTools\DTO\ClassFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 

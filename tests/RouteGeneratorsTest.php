@@ -6,7 +6,7 @@ use Illuminate\Config\Repository;
 use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
-use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\DTO\ApiRouteObject;
 use Saritasa\LaravelTools\Enums\HttpMethods;
 
@@ -72,8 +72,8 @@ class RouteGeneratorsTest extends TestCase
         string $expected
     ): void {
         $configsRepository = new Repository(['laravel_tools.code_style.indent' => '    ']);
-        $codeStyler = new CodeStyler($configsRepository);
-        $routeGroupGenerator = new ApiRoutesGroupGenerator($codeStyler);
+        $codeFormatter = new CodeFormatter($configsRepository);
+        $routeGroupGenerator = new ApiRoutesGroupGenerator($codeFormatter);
 
         $actual = $routeGroupGenerator->render($groupContent, $middleware, $description);
         $this->assertEquals($expected, $actual);

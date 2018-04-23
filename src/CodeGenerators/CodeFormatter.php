@@ -8,7 +8,7 @@ use Illuminate\Config\Repository;
  * Code style utility. Allows to format code according to settings.
  * Can apply valid indent to code line or code block.
  */
-class CodeStyler
+class CodeFormatter
 {
     /**
      * Default code indent.

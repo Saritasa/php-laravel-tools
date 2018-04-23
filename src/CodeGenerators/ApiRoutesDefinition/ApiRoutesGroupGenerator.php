@@ -2,7 +2,7 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 
-use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 
 /**
  * Api routes group generator. Allows to generate api routes group declaration.
@@ -10,20 +10,20 @@ use Saritasa\LaravelTools\CodeGenerators\CodeStyler;
 class ApiRoutesGroupGenerator
 {
     /**
-     * Generated code styler helper. Allows to apply indent to code.
+     * Generated code formatter helper. Allows to apply indent to code.
      *
-     * @var CodeStyler
+     * @var CodeFormatter
      */
-    private $codeStyler;
+    private $codeFormatter;
 
     /**
      * Api routes group generator. Allows to generate api routes group declaration.
      *
-     * @param CodeStyler $codeStyler Generated code styler helper. Allows to apply indent to code
+     * @param CodeFormatter $codeFormatter Generated code formatter helper. Allows to apply indent to code
      */
-    public function __construct(CodeStyler $codeStyler)
+    public function __construct(CodeFormatter $codeFormatter)
     {
-        $this->codeStyler = $codeStyler;
+        $this->codeFormatter = $codeFormatter;
     }
 
     /**
@@ -58,7 +58,7 @@ class ApiRoutesGroupGenerator
             $groupOptions = '[\'middleware\' => [\'' . implode('\', \'', $middleware) . '\']]';
         }
 
-        $indentedGroupContent = $this->codeStyler->indentBlock($groupContent);
+        $indentedGroupContent = $this->codeFormatter->indentBlock($groupContent);
 
         return <<<GROUP
 \$api->group({$groupOptions}, function (Router \$api) {
