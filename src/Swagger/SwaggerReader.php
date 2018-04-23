@@ -2,8 +2,12 @@
 
 namespace Saritasa\LaravelTools\Swagger;
 
+use Saritasa\LaravelTools\DTO\ApiRouteObject;
+use Saritasa\LaravelTools\Enums\HttpMethods;
+use Throwable;
 use WakeOnWeb\Component\Swagger\Loader\JsonLoader;
 use WakeOnWeb\Component\Swagger\Loader\YamlLoader;
+use WakeOnWeb\Component\Swagger\Specification\PathItem;
 use WakeOnWeb\Component\Swagger\Specification\Swagger;
 use WakeOnWeb\Component\Swagger\SwaggerFactory;
 
@@ -12,6 +16,8 @@ use WakeOnWeb\Component\Swagger\SwaggerFactory;
  */
 class SwaggerReader
 {
+    private static $specificationsCache = [];
+
     /**
      * Swagger file processor.
      *
@@ -36,12 +42,89 @@ class SwaggerReader
     /**
      * Returns swagger file specification.
      *
-     * @param string $path Path where
+     * @param string $sourceFile Path to file with swagger specification
      *
      * @return Swagger
      */
-    public function getSpecification(string $path): Swagger
+    public function getSpecification(string $sourceFile): Swagger
     {
-        return $this->swaggerFactory->buildFrom($path);
+        if (!isset(static::$specificationsCache[$sourceFile])) {
+            static::$specificationsCache[$sourceFile] = $this->swaggerFactory->buildFrom($sourceFile);
+        }
+
+        return static::$specificationsCache[$sourceFile];
+    }
+
+    /**
+     * Parse swagger path specification.
+     *
+     * @param PathItem $path Path to parse
+     * @param string $url Url that is used for passed endpoints paths
+     * @param array $supportedSecuritySchemes $this->parsePathSpecification($path, $url, $supportedSecuritySchemes)
+     *
+     * @return ApiRouteObject[]
+     */
+    protected function parsePathSpecification(PathItem $path, string $url, array $supportedSecuritySchemes): array
+    {
+        $apiRouteObjects = [];
+        foreach (HttpMethods::getConstants() as $method) {
+            $operation = $path->getOperationFor($method);
+
+            if (!$operation) {
+                continue;
+            }
+
+            /**
+             * Due to swagger library restrictions we can't get all security schemes, only can iterate
+             * and check is schema exists or catch "Undefined offset" error.
+             */
+            $securitySchemes = [];
+            $securityRequirements = $operation->getSecurity();
+            foreach ($securityRequirements as $requirement) {
+                foreach ($supportedSecuritySchemes as $scheme) {
+                    try {
+                        $requirement->getScheme($scheme);
+                    } catch (Throwable $e) {
+                        continue;
+                    }
+
+                    $securitySchemes[] = $scheme;
+                }
+            }
+
+            $routesGroup = $operation->getTags()[0] ?? null;
+
+            $apiRouteObjects[] = new ApiRouteObject([
+                ApiRouteObject::GROUP => $routesGroup,
+                ApiRouteObject::METHOD => $method,
+                ApiRouteObject::URL => $url,
+                // Now only one security scheme per route supported
+                ApiRouteObject::SECURITY_SCHEME => $securitySchemes[0] ?? null,
+                ApiRouteObject::DESCRIPTION => $operation->getSummary() ?? $operation->getDescription(),
+            ]);
+        }
+
+        return $apiRouteObjects;
+    }
+
+    /**
+     * Get api specifications from swagger source.
+     *
+     * @param string $sourceFile Path to file with swagger specification
+     * @param string[] $supportedSecuritySchemes Security schemes that are supported, for example AuthToken
+     *
+     * @return ApiRouteObject[]
+     */
+    public function getApiPaths(string $sourceFile, array $supportedSecuritySchemes): array
+    {
+        $swagger = $this->getSpecification($sourceFile);
+        $paths = $swagger->getPaths()->getPaths();
+        $apiRouteObjects = [];
+        foreach ($paths as $url => $path) {
+            $pathRouteObjects = $this->parsePathSpecification($path, $url, $supportedSecuritySchemes);
+            $apiRouteObjects = array_merge($apiRouteObjects, $pathRouteObjects);
+        }
+
+        return $apiRouteObjects;
     }
 }

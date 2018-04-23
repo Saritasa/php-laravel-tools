@@ -39,7 +39,7 @@ class CodeFormatter
      */
     public function indentLine(string $codeLine, bool $ignoreExistingIndent = false, int $indentSize = 1): string
     {
-        if (empty(trim($codeLine))) {
+        if (!$codeLine) {
             return $codeLine;
         }
 
@@ -64,11 +64,35 @@ class CodeFormatter
     public function indentBlock(string $codeBlock, bool $ignoreExistingIndent = false, int $indentSize = 1): string
     {
         $results = [];
-        $codeLines = explode("\n", $codeBlock);
+        $codeLines = $this->blockToLines($codeBlock);
         foreach ($codeLines as $codeLine) {
             $results[] = $this->indentLine($codeLine, $ignoreExistingIndent, $indentSize);
         }
 
-        return implode("\n", $results);
+        return $this->linesToBlock($results);
+    }
+
+    /**
+     * Concatenates list of lines into new-line separated block of text.
+     *
+     * @param string[] $lines List of lines to concatenate
+     *
+     * @return string
+     */
+    public function linesToBlock(array $lines): string
+    {
+        return implode("\n", $lines);
+    }
+
+    /**
+     * Divides new-line separated block of text into list of lines
+     *
+     * @param string $block Block to separate
+     *
+     * @return array
+     */
+    public function blockToLines(string $block): array
+    {
+        return explode("\n", $block);
     }
 }
