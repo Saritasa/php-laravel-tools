@@ -133,7 +133,7 @@ class FormRequestFactoryTest extends TestCase
     private function getFormRequestFactory(Table $table): FormRequestFactory
     {
         /**
-         *  Real and mocked dependencies.
+         * Real and mocked dependencies.
          */
         $codeFormatter = new CodeFormatter(new Repository());
         $ruleBuilder = new RuleBuilder(new StringValidationRulesDictionary(), new DbalToLaravelValidationTypeMapper());

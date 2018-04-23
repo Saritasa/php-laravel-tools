@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools\Tests;
 use Illuminate\Config\Repository;
 use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
@@ -110,5 +111,50 @@ class RouteGeneratorsTest extends TestCase
                 "\$api->group(['middleware' => ['api.auth', 'bindings']], function (Router \$api) {\n    \$api->get('/users', '');\n});",
             ],
         ];
+    }
+
+    public function testRoutesBlockGenerator(): void
+    {
+        $routesBlockGenerator = new ApiRoutesBlockGenerator(
+            new CodeFormatter(new Repository()),
+            new CommentsGenerator(),
+            new ApiRouteGenerator()
+        );
+
+        $routes = [
+            new ApiRouteObject([
+                ApiRouteObject::DESCRIPTION => 'Get users',
+                ApiRouteObject::METHOD => 'GET',
+                ApiRouteObject::URL => 'users',
+            ]),
+            new ApiRouteObject([
+                ApiRouteObject::DESCRIPTION => 'Get user',
+                ApiRouteObject::METHOD => 'GET',
+                ApiRouteObject::URL => 'users/{id}',
+            ]),
+        ];
+        $expected = <<<'EXPECTED'
+// Get users
+$api->get('users', '')->name('');
+// Get user
+$api->get('users/{id}', '')->name('');
+EXPECTED;
+
+        $actual = $routesBlockGenerator->render($routes);
+        $this->assertEquals($expected, $actual);
+
+        $expectedWithDescription = <<<'EXPECTED'
+////////////////////////////
+// User management routes //
+////////////////////////////
+
+// Get users
+$api->get('users', '')->name('');
+// Get user
+$api->get('users/{id}', '')->name('');
+EXPECTED;
+
+        $actual = $routesBlockGenerator->render($routes, 'User management routes');
+        $this->assertEquals($expectedWithDescription, $actual);
     }
 }

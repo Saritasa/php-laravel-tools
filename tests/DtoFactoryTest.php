@@ -134,7 +134,7 @@ class DtoFactoryTest extends TestCase
     private function getDtoFactory(Table $table): DtoFactory
     {
         /**
-         *  Real and mocked dependencies.
+         * Real and mocked dependencies.
          */
         $codeFormatter = new CodeFormatter(new Repository());
         $phpTypeMapper = new DbalToPhpTypeMapper();

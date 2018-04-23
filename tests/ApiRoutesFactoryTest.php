@@ -8,6 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 use PHPUnit\Framework\TestCase;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
@@ -60,7 +61,7 @@ class ApiRoutesFactoryTest extends TestCase
     private function getFactory(): ApiRoutesDeclarationFactory
     {
         /**
-         *  Real and mocked dependencies.
+         * Real and mocked dependencies.
          */
         $codeFormatter = new CodeFormatter(new Repository());
         $templateWriter = new TemplateWriter(app(Filesystem::class));
@@ -68,14 +69,15 @@ class ApiRoutesFactoryTest extends TestCase
         $swaggerReader = new SwaggerReader(new SwaggerFactory(), new YamlLoader(), new JsonLoader());
         $apiRouteGenerator = new ApiRouteGenerator();
         $apiRoutesGroupGenerator = new ApiRoutesGroupGenerator($codeFormatter, $commentsGenerator);
+        $apiRoutesBlockGenerator = new ApiRoutesBlockGenerator($codeFormatter, $commentsGenerator, $apiRouteGenerator);
 
         return new ApiRoutesDeclarationFactory(
             $templateWriter,
             $codeFormatter,
             $commentsGenerator,
             $swaggerReader,
-            $apiRouteGenerator,
-            $apiRoutesGroupGenerator
+            $apiRoutesGroupGenerator,
+            $apiRoutesBlockGenerator
         );
     }
 
