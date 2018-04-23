@@ -6,9 +6,9 @@ use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\DTO\ClassPropertyObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
-use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
-use Saritasa\LaravelTools\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
-use Saritasa\LaravelTools\PhpDoc\PhpDocVariableDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocVariableDescriptionBuilder;
 
 /**
  * Test PhpDoc block rendering function.

@@ -15,8 +15,8 @@ use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Enums\PropertiesVisibilityTypes;
 use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
-use Saritasa\LaravelTools\PhpDoc\PhpDocClassDescriptionBuilder;
-use Saritasa\LaravelTools\PhpDoc\PhpDocVariableDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocVariableDescriptionBuilder;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
 /**

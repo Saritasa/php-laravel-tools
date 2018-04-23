@@ -127,7 +127,7 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
     }
 
     /**
-     *
+     * Returns api routes definitions lines.
      *
      * @return array
      */
