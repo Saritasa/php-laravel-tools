@@ -117,10 +117,19 @@ class ApiRoutesImplementationGuesser
         if ($route->operationId) {
             $methodName = $route->operationId;
         } else {
+            $methodName = strtolower($route->method);
+            $resourceRegexp = '/([a-zA-Z]*)\/\{id\}/';
+            $matches = [];
+            $url = $route->url;
+            if (preg_match($resourceRegexp, $route->url, $matches)) {
+                $resource = $matches[1];
+                $methodName .= '_' . Str::singular($resource);
+                $url = str_replace($matches[0], '', $url);
+            }
             $parametersRegexp = '/(\{[^\}.]*\})/';
-            $url = preg_replace($parametersRegexp, '', $route->url);
+            $url = preg_replace($parametersRegexp, '', $url);
             $url = str_replace('/', '_', $url);
-            $methodName = strtolower($route->method) . Str::studly($url);
+            $methodName .= Str::studly($url);
         }
 
         return Str::camel($methodName);
