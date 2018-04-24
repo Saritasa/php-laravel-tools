@@ -2,14 +2,13 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
-use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
-use PHPUnit\Framework\TestCase;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 use Saritasa\LaravelTools\DTO\ApiRoutesFactoryConfig;
@@ -20,7 +19,7 @@ use WakeOnWeb\Component\Swagger\Loader\JsonLoader;
 use WakeOnWeb\Component\Swagger\Loader\YamlLoader;
 use WakeOnWeb\Component\Swagger\SwaggerFactory;
 
-class ApiRoutesFactoryTest extends TestCase
+class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
 {
     private $resultFileName = 'apiFactoryUnitTestsResult.php';
 
@@ -43,7 +42,7 @@ class ApiRoutesFactoryTest extends TestCase
     {
         return new ApiRoutesFactoryConfig([
             ApiRoutesFactoryConfig::SECURITY_SCHEMES_MIDDLEWARES => [
-                'Wrong' => '/*//TODO*/',
+                'NotExistingInSwaggerScheme' => 'token.auth',
                 'AuthToken' => 'jwt.auth',
             ],
             ApiRoutesFactoryConfig::SWAGGER_FILE => __DIR__ . "/swagger/{$swaggerExample}.yaml",
@@ -63,11 +62,11 @@ class ApiRoutesFactoryTest extends TestCase
         /**
          * Real and mocked dependencies.
          */
-        $codeFormatter = new CodeFormatter(new Repository());
+        $codeFormatter = new CodeFormatter($this->getConfigRepository());
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $commentsGenerator = new CommentsGenerator();
         $swaggerReader = new SwaggerReader(new SwaggerFactory(), new YamlLoader(), new JsonLoader());
-        $apiRouteGenerator = new ApiRouteGenerator();
+        $apiRouteGenerator = new ApiRouteGenerator(new ApiRoutesImplementationGuesser($this->getConfigRepository()));
         $apiRoutesGroupGenerator = new ApiRoutesGroupGenerator($codeFormatter, $commentsGenerator);
         $apiRoutesBlockGenerator = new ApiRoutesBlockGenerator($codeFormatter, $commentsGenerator, $apiRouteGenerator);
 

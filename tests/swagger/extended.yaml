@@ -22,6 +22,8 @@ produces:
 paths:
   /pets:
     get:
+      tags:
+        - Pets
       operationId: findPets
       parameters:
         - name: tags
@@ -50,6 +52,8 @@ paths:
           schema:
             $ref: '#/definitions/Error'
     post:
+      tags:
+        - Pets
       operationId: addPet
       parameters:
         - name: pet
@@ -69,6 +73,8 @@ paths:
             $ref: '#/definitions/Error'
   /pets/{id}:
     get:
+      tags:
+        - Pets
       operationId: find pet by id
       parameters:
         - name: id
@@ -87,6 +93,8 @@ paths:
           schema:
             $ref: '#/definitions/Error'
     delete:
+      tags:
+        - Pets
       operationId: deletePet
       parameters:
         - name: id

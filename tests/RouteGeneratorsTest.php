@@ -2,17 +2,16 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
-use Illuminate\Config\Repository;
-use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
-use Saritasa\LaravelTools\DTO\ApiRouteObject;
+use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\Enums\HttpMethods;
 
-class RouteGeneratorsTest extends TestCase
+class RouteGeneratorsTest extends LaravelToolsTestsHelpers
 {
     /**
      *
@@ -27,9 +26,10 @@ class RouteGeneratorsTest extends TestCase
      */
     public function testRouteGenerator(?string $description, string $method, string $path, string $expected): void
     {
-        $routeGenerator = new ApiRouteGenerator();
+        $routeGenerator = new ApiRouteGenerator(new ApiRoutesImplementationGuesser($this->getConfigRepository()));
         $route = new ApiRouteObject([
             ApiRouteObject::DESCRIPTION => $description,
+            ApiRouteObject::GROUP => 'Users',
             ApiRouteObject::METHOD => $method,
             ApiRouteObject::URL => $path,
         ]);
@@ -45,15 +45,32 @@ class RouteGeneratorsTest extends TestCase
                 'Get list of users',
                 HttpMethods::GET,
                 '/users',
-                "// Get list of users\n\$api->get('/users', '')->name('');",
+                "// Get list of users\n\$api->get('/users', 'UsersApiController@index')->name('users.index');",
+            ],
+            'PUT route' => [
+                'Update user',
+                HttpMethods::PUT,
+                '/users/{id}',
+                "// Update user\n\$api->put('/users/{id}', 'UsersApiController@update')->name('users.update');",
+            ],
+            'GET route with param' => [
+                'Show user',
+                HttpMethods::GET,
+                '/users/{id}',
+                "// Show user\n\$api->get('/users/{id}', 'UsersApiController@show')->name('users.show');",
             ],
             'POST route' => [
                 'Create new user',
                 HttpMethods::POST,
                 '/users',
-                "// Create new user\n\$api->post('/users', '')->name('');",
+                "// Create new user\n\$api->post('/users', 'UsersApiController@store')->name('users.store');",
             ],
-            'Without description' => ['', HttpMethods::GET, '/users', "\$api->get('/users', '')->name('');"],
+            'Without description' => [
+                '',
+                HttpMethods::GET,
+                '/users',
+                "\$api->get('/users', 'UsersApiController@index')->name('users.index');",
+            ],
         ];
     }
 
@@ -73,8 +90,7 @@ class RouteGeneratorsTest extends TestCase
         ?string $description,
         string $expected
     ): void {
-        $configsRepository = new Repository(['laravel_tools.code_style.indent' => '    ']);
-        $codeFormatter = new CodeFormatter($configsRepository);
+        $codeFormatter = new CodeFormatter($this->getConfigRepository());
         $commentsGenerator = new CommentsGenerator();
         $routeGroupGenerator = new ApiRoutesGroupGenerator($codeFormatter, $commentsGenerator);
 
@@ -116,28 +132,30 @@ class RouteGeneratorsTest extends TestCase
     public function testRoutesBlockGenerator(): void
     {
         $routesBlockGenerator = new ApiRoutesBlockGenerator(
-            new CodeFormatter(new Repository()),
+            new CodeFormatter($this->getConfigRepository()),
             new CommentsGenerator(),
-            new ApiRouteGenerator()
+            new ApiRouteGenerator(new ApiRoutesImplementationGuesser($this->getConfigRepository()))
         );
 
         $routes = [
             new ApiRouteObject([
                 ApiRouteObject::DESCRIPTION => 'Get users',
+                ApiRouteObject::GROUP => 'Users',
                 ApiRouteObject::METHOD => 'GET',
-                ApiRouteObject::URL => 'users',
+                ApiRouteObject::URL => '/users',
             ]),
             new ApiRouteObject([
                 ApiRouteObject::DESCRIPTION => 'Get user',
+                ApiRouteObject::GROUP => 'Users',
                 ApiRouteObject::METHOD => 'GET',
-                ApiRouteObject::URL => 'users/{id}',
+                ApiRouteObject::URL => '/users/{id}',
             ]),
         ];
         $expected = <<<'EXPECTED'
 // Get users
-$api->get('users', '')->name('');
+$api->get('/users', 'UsersApiController@index')->name('users.index');
 // Get user
-$api->get('users/{id}', '')->name('');
+$api->get('/users/{id}', 'UsersApiController@show')->name('users.show');
 EXPECTED;
 
         $actual = $routesBlockGenerator->render($routes);
@@ -149,9 +167,9 @@ EXPECTED;
 ////////////////////////////
 
 // Get users
-$api->get('users', '')->name('');
+$api->get('/users', 'UsersApiController@index')->name('users.index');
 // Get user
-$api->get('users/{id}', '')->name('');
+$api->get('/users/{id}', 'UsersApiController@show')->name('users.show');
 EXPECTED;
 
         $actual = $routesBlockGenerator->render($routes, 'User management routes');

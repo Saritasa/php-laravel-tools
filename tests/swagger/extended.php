@@ -17,8 +17,12 @@ use Dingo\Api\Routing\Router;
 $api = app(Router::class);
 
 $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api'], function (Router $api) {
-    $api->get('/pets', '')->name('');
-    $api->post('/pets', '')->name('');
-    $api->get('/pets/{id}', '')->name('');
-    $api->delete('/pets/{id}', '')->name('');
+    //////////////////
+    // Pets routes. //
+    //////////////////
+
+    $api->get('/pets', 'PetsApiController@index')->name('pets.index');
+    $api->post('/pets', 'PetsApiController@store')->name('pets.store');
+    $api->get('/pets/{id}', 'PetsApiController@show')->name('pets.show');
+    $api->delete('/pets/{id}', 'PetsApiController@destroy')->name('pets.destroy');
 });

@@ -17,5 +17,9 @@ use Dingo\Api\Routing\Router;
 $api = app(Router::class);
 
 $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api'], function (Router $api) {
-    $api->get('/pets', '')->name('');
+    //////////////////
+    // Pets routes. //
+    //////////////////
+
+    $api->get('/pets', 'PetsApiController@index')->name('pets.index');
 });

@@ -17,6 +17,8 @@ schemes:
 paths:
   /pets:
     get:
+      tags:
+        - Pets
       produces:
         - "application/json"
       responses:
