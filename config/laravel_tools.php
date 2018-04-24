@@ -108,8 +108,6 @@ return [
 
         // Api controllers parent class FQN
         'parent' => 'Controller',
-        // TODO add configurable bindings
-        // TODO extract IRouteGenerator interface to have ability to generate routes by resource registrar
     ],
 
     // Api routes configuration
@@ -132,7 +130,7 @@ return [
                     'method' => 'index',
                     'name' => '{{resourceName}}.index',
                 ],
-                '{{resourceName}}/{id}' => [
+                '/{{resourceName}}/{id}' => [
                     'method' => 'show',
                     'name' => '{{resourceName}}.show',
                 ],
@@ -177,7 +175,7 @@ return [
                 '/auth' => [
                     'controller' => 'AuthApiController',
                     'method' => 'logout',
-                    'name' => 'api.auth',
+                    'name' => 'auth.logout',
                 ],
             ],
         ],

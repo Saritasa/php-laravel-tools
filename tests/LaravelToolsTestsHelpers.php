@@ -5,7 +5,6 @@ namespace Saritasa\LaravelTools\Tests;
 use Illuminate\Config\Repository;
 use PHPUnit\Framework\TestCase;
 
-// TODO declare classes retrieving from here instead of new in each test class
 abstract class LaravelToolsTestsHelpers extends TestCase
 {
     /**
