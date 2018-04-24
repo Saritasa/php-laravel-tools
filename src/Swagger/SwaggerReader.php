@@ -2,7 +2,7 @@
 
 namespace Saritasa\LaravelTools\Swagger;
 
-use Saritasa\LaravelTools\DTO\ApiRouteObject;
+use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\Enums\HttpMethods;
 use Throwable;
 use WakeOnWeb\Component\Swagger\Loader\JsonLoader;

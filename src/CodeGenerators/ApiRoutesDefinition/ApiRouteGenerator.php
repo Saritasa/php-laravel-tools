@@ -2,13 +2,32 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 
-use Saritasa\LaravelTools\DTO\ApiRouteObject;
+use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 
 /**
  * Api route generator. Allows to build route declaration with description according to route details.
  */
 class ApiRouteGenerator
 {
+    /**
+     * Api route implementation guesser that can guess which controller, method and name should be used for api route
+     * specification.
+     *
+     * @var ApiRoutesImplementationGuesser
+     */
+    private $apiRoutesImplementationGuesser;
+
+    /**
+     * Api route generator. Allows to build route declaration with description according to route details.
+     *
+     * @param ApiRoutesImplementationGuesser $apiRoutesImplementationGuesser Api route implementation guesser that can
+     *     guess which controller, method and name should be used for api route specification.
+     */
+    public function __construct(ApiRoutesImplementationGuesser $apiRoutesImplementationGuesser)
+    {
+        $this->apiRoutesImplementationGuesser = $apiRoutesImplementationGuesser;
+    }
+
     /**
      * Renders api route definition.
      *
@@ -50,8 +69,11 @@ class ApiRouteGenerator
      */
     protected function getDeclaration(ApiRouteObject $routeData): string
     {
+        $routeImplementation = $this->apiRoutesImplementationGuesser->getRouteImplementationDetails($routeData);
         $method = strtolower($routeData->method);
 
-        return "\$api->{$method}('{$routeData->url}', '')->name('');";
+        $routeAction = "{$routeImplementation->controller}@{$routeImplementation->method}";
+
+        return "\$api->{$method}('{$routeData->url}', '{$routeAction}')->name('{$routeImplementation->name}');";
     }
 }

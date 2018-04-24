@@ -4,7 +4,7 @@ namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
-use Saritasa\LaravelTools\DTO\ApiRouteObject;
+use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 
 /**
  * Api routes block generator. Allows to build routes block (not routes group) with description.

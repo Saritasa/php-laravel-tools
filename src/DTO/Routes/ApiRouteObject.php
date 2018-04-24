@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\LaravelTools\DTO;
+namespace Saritasa\LaravelTools\DTO\Routes;
 
 use Saritasa\Dto;
 use Saritasa\LaravelTools\Enums\HttpMethods;
@@ -15,6 +15,7 @@ class ApiRouteObject extends Dto
     const URL = 'url';
     const SECURITY_SCHEME = 'securityScheme';
     const DESCRIPTION = 'description';
+    const OPERATION_ID = 'operationId';
 
     /**
      * To which group this route belongs.
@@ -51,4 +52,11 @@ class ApiRouteObject extends Dto
      * @var string
      */
     public $description;
+
+    /**
+     * Endpoint operation identifier.
+     *
+     * @var string
+     */
+    public $operationId;
 }

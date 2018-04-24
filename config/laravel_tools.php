@@ -95,13 +95,27 @@ return [
         'path' => 'Artifacts/API/swagger.yaml',
     ],
 
+    // Api controllers configuration
+    'api_controllers' => [
+        // The generated controller name suffix
+        'generated_controller_suffix' => 'ApiController',
+
+        // API controllers namespace
+        'namespace' => 'App\Http\Controllers\Api',
+
+        // Path where API controllers are located
+        'path' => app_path('Http/Controllers/Api'),
+
+        // Api controllers parent class FQN
+        'parent' => 'Controller',
+        // TODO add configurable bindings
+        // TODO extract IRouteGenerator interface to have ability to generate routes by resource registrar
+    ],
+
     // Api routes configuration
     'api_routes' => [
         // Template of the api.php file that will be generated
         'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::API_ROUTES_TEMPLATE,
-
-        // API controllers namespace
-        'controllers_namespace' => 'App\Http\Controllers\Api',
 
         // Route middleware for security schemes
         'security_schemes_middlewares' => [
@@ -110,5 +124,62 @@ return [
 
         // Result file location. File will be overwritten
         'result_file_name' => 'routes/api.php',
+
+        // Well-known routes which controller, action and route names should not be guessed and used from config
+        'known_routes' => [
+            'GET' => [
+                '/{{resourceName}}' => [
+                    'method' => 'index',
+                    'name' => '{{resourceName}}.index',
+                ],
+                '{{resourceName}}/{id}' => [
+                    'method' => 'show',
+                    'name' => '{{resourceName}}.show',
+                ],
+            ],
+            'POST' => [
+                '/{{resourceName}}' => [
+                    'method' => 'store',
+                    'name' => '{{resourceName}}.store',
+                ],
+                '/auth' => [
+                    'controller' => 'AuthApiController',
+                    'method' => 'login',
+                    'name' => 'login',
+                ],
+                '/auth/password/reset' => [
+                    'controller' => 'ForgotPasswordApiController',
+                    'method' => 'sendResetLinkEmail',
+                    'name' => 'password.sendResetLink',
+                ],
+            ],
+            'PUT' => [
+                '/{{resourceName}}/{id}' => [
+                    'method' => 'update',
+                    'name' => '{{resourceName}}.update',
+                ],
+                '/auth' => [
+                    'controller' => 'AuthApiController',
+                    'method' => 'refreshToken',
+                    'name' => 'authToken.refresh',
+                ],
+                '/auth/password/reset' => [
+                    'controller' => 'ResetPasswordApiController',
+                    'method' => 'reset',
+                    'name' => 'password.reset',
+                ],
+            ],
+            'DELETE' => [
+                '/{{resourceName}}/{id}' => [
+                    'method' => 'destroy',
+                    'name' => '{{resourceName}}.destroy',
+                ],
+                '/auth' => [
+                    'controller' => 'AuthApiController',
+                    'method' => 'logout',
+                    'name' => 'api.auth',
+                ],
+            ],
+        ],
     ],
 ];

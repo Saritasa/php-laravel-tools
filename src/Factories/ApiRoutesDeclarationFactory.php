@@ -9,8 +9,8 @@ use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGener
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
-use Saritasa\LaravelTools\DTO\ApiRouteObject;
 use Saritasa\LaravelTools\DTO\ApiRoutesFactoryConfig;
+use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 use Saritasa\LaravelTools\Swagger\SwaggerReader;
 
@@ -19,6 +19,7 @@ use Saritasa\LaravelTools\Swagger\SwaggerReader;
  */
 class ApiRoutesDeclarationFactory extends TemplateBasedFactory
 {
+    // Template placeholders
     private const PLACEHOLDER_CONTROLLERS_NAMESPACE = 'controllersNamespace';
     private const PLACEHOLDER_API_ROUTES_DEFINITIONS = 'apiRoutesDefinitions';
 
@@ -84,6 +85,14 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
         $this->commentsGenerator = $commentsGenerator;
     }
 
+    /**
+     * Separates camel-cased string token by words.
+     *
+     * @param string $text String token to separate
+     * @param bool $capitalizedFirstWord Whether first letter of sentence should be capitalized or not
+     *
+     * @return string
+     */
     private function camelCaseToSentence(string $text, bool $capitalizedFirstWord = true): string
     {
         $sentence = str_replace('_', ' ', Str::snake($text));

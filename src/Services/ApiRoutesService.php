@@ -98,7 +98,7 @@ class ApiRoutesService
      */
     private function getApiControllersNamespace(): string
     {
-        return $this->configRepository->get('laravel_tools.api_routes.controllers_namespace');
+        return $this->configRepository->get('laravel_tools.api_controllers.namespace');
     }
 
     /**
