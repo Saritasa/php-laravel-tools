@@ -2,7 +2,7 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators\PhpDoc;
 
-use Saritasa\LaravelTools\DTO\ClassPropertyObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
 /**

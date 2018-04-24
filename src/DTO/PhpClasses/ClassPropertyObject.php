@@ -1,8 +1,9 @@
 <?php
 
-namespace Saritasa\LaravelTools\DTO;
+namespace Saritasa\LaravelTools\DTO\PhpClasses;
 
 use Saritasa\Dto;
+use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 
 /**
@@ -15,6 +16,7 @@ class ClassPropertyObject extends Dto
     const NULLABLE = 'nullable';
     const DESCRIPTION = 'description';
     const ACCESS_TYPE = 'accessType';
+    const VISIBILITY_TYPE = 'visibilityType';
 
     /**
      * Property name.
@@ -38,7 +40,7 @@ class ClassPropertyObject extends Dto
     public $nullable;
 
     /**
-     * Property description
+     * Property description.
      *
      * @var string
      */
@@ -51,4 +53,12 @@ class ClassPropertyObject extends Dto
      * @var string
      */
     public $accessType;
+
+    /**
+     * Property visibility type. Public, protected or private.
+     *
+     * @see ClassMemberVisibilityTypes for available values
+     * @var string
+     */
+    public $visibilityType;
 }

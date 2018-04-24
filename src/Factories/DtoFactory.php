@@ -8,15 +8,15 @@ use RuntimeException;
 use Saritasa\Exceptions\NotImplementedException;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
-use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
-use Saritasa\LaravelTools\Database\SchemaReader;
-use Saritasa\LaravelTools\DTO\ClassPropertyObject;
-use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
-use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
-use Saritasa\LaravelTools\Enums\PropertiesVisibilityTypes;
-use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocVariableDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
+use Saritasa\LaravelTools\Database\SchemaReader;
+use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
+use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
+use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
 /**
@@ -209,8 +209,8 @@ class DtoFactory extends ModelBasedClassFactory
             ]);
 
             $propertyVisibility = ($this->config->immutable || $this->config->strictTypes)
-                ? PropertiesVisibilityTypes::PROTECTED
-                : PropertiesVisibilityTypes::PUBLIC;
+                ? ClassMemberVisibilityTypes::PROTECTED
+                : ClassMemberVisibilityTypes::PUBLIC;
 
             $classProperties[] = $this->variableDescriptionBuilder->render($classProperty);
             $classProperties[] = "{$propertyVisibility} \${$classProperty->name};";
@@ -220,14 +220,14 @@ class DtoFactory extends ModelBasedClassFactory
                 $getters[] = $this->getterGenerator->render(
                     $classProperty->name,
                     $classProperty->type,
-                    PropertiesVisibilityTypes::PUBLIC,
+                    ClassMemberVisibilityTypes::PUBLIC,
                     $classProperty->nullable
                 );
                 $getters[] = '';
 
                 $setterVisibility = $this->config->immutable
-                    ? PropertiesVisibilityTypes::PROTECTED
-                    : PropertiesVisibilityTypes::PUBLIC;
+                    ? ClassMemberVisibilityTypes::PROTECTED
+                    : ClassMemberVisibilityTypes::PUBLIC;
                 $setters[] = $this->setterGenerator->render(
                     $classProperty->name,
                     $classProperty->type,

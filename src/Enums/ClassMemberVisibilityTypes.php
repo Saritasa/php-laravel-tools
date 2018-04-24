@@ -5,9 +5,9 @@ namespace Saritasa\LaravelTools\Enums;
 use Saritasa\Enum;
 
 /**
- * Available class' properties visibility types.
+ * Available class' properties, methods and constants visibility types.
  */
-class PropertiesVisibilityTypes extends Enum
+class ClassMemberVisibilityTypes extends Enum
 {
     const PUBLIC = 'public';
     const PRIVATE = 'private';

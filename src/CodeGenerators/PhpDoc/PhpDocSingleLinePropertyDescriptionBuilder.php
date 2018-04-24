@@ -2,7 +2,7 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators\PhpDoc;
 
-use Saritasa\LaravelTools\DTO\ClassPropertyObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
@@ -31,7 +31,7 @@ class PhpDocSingleLinePropertyDescriptionBuilder
     /**
      * Return PhpDoc property line description.
      *
-     * @param ClassPropertyObject $classProperty Class property details
+     * @param \Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject $classProperty Class property details
      *
      * @return string
      * @see PhpDocPropertyAccessTypes for available propety access types details

@@ -3,12 +3,12 @@
 namespace Saritasa\LaravelTools\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Saritasa\LaravelTools\DTO\ClassPropertyObject;
-use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
-use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocVariableDescriptionBuilder;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
+use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
 /**
  * Test PhpDoc block rendering function.
