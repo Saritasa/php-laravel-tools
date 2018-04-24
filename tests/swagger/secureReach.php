@@ -18,6 +18,13 @@ $api = app(Router::class);
 
 $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api'], function (Router $api) {
     /////////////////////////////
+    // User management routes. //
+    /////////////////////////////
+
+    // Returns all users from the system that the user has access to
+    $api->get('/users', '')->name('');
+
+    /////////////////////////////
     // Pets management routes. //
     /////////////////////////////
 

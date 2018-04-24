@@ -25,6 +25,24 @@ securityDefinitions:
     in: header
     name: Authorization
 paths:
+  /users:
+    get:
+      tags:
+        - UserManagement
+      description: |
+        Returns all users from the system that the user has access to
+      operationId: findUsers
+      responses:
+        "200":
+          description: user response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Pet'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
   /pets:
     get:
       tags:
@@ -125,6 +143,12 @@ paths:
           schema:
             $ref: '#/definitions/Error'
 definitions:
+  User:
+    required:
+      - name
+    properties:
+      name:
+        type: string
   Pet:
     allOf:
       - $ref: '#/definitions/NewPet'
@@ -142,7 +166,7 @@ definitions:
       name:
         type: string
       tag:
-        type: string    
+        type: string
 
   Error:
     required:

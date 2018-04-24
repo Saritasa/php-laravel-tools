@@ -116,15 +116,22 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
             $groupsInsideScheme = Collection::make($schemeRoutes)->groupBy(ApiRouteObject::GROUP)->toArray();
             foreach ($groupsInsideScheme as $group => $groupRoutes) {
                 $groupDescription = $group ? $this->camelCaseToSentence($group) . ' routes.' : null;
+                if ($schemeRoutesDefinitions) {
+                    $schemeRoutesDefinitions[] = '';
+                }
                 $schemeRoutesDefinitions[] = $this->apiRoutesBlockGenerator->render($groupRoutes, $groupDescription);
             }
             // Use appropriate middleware to handle security scheme
             $groupMiddleware = $this->config->securitySchemesMiddlewares[$securityScheme] ?? null;
 
             $schemeRoutesDefinitionsBlock = $this->codeFormatter->linesToBlock($schemeRoutesDefinitions);
+
+            if ($result) {
+                $result[] = '';
+            }
+
             // If group of routes are secure, than need to wrap them into routes group with middleware
             if ($groupMiddleware) {
-                $result[] = '';
                 $humanReadableToken = $this->camelCaseToSentence($securityScheme);
                 $securityRoutesDescription = "Routes under {$humanReadableToken} security";
                 $result[] = $this->apiRoutesGroupGenerator->render(
