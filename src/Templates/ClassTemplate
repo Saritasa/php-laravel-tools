@@ -1,0 +1,11 @@
+<?php
+
+namespace {{namespace}};
+
+{{imports}}
+
+{{classPhpDoc}}
+class {{className}} extends {{parent}}
+{
+{{classContent}}
+}
