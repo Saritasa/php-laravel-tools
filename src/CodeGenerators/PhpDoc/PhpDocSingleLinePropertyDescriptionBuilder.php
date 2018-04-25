@@ -2,7 +2,7 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators\PhpDoc;
 
-use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPhpDocPropertyObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
@@ -31,12 +31,12 @@ class PhpDocSingleLinePropertyDescriptionBuilder
     /**
      * Return PhpDoc property line description.
      *
-     * @param \Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject $classProperty Class property details
+     * @param ClassPhpDocPropertyObject $classProperty Class property details
      *
      * @return string
      * @see PhpDocPropertyAccessTypes for available propety access types details
      */
-    public function render(ClassPropertyObject $classProperty): string
+    public function render(ClassPhpDocPropertyObject $classProperty): string
     {
         $nullableType = $classProperty->nullable
             ? '|null'

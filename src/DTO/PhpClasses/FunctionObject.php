@@ -15,6 +15,7 @@ class FunctionObject extends Dto
     const DESCRIPTION = 'description';
     const PARAMETERS = 'parameters';
     const VISIBILITY_TYPE = 'visibilityType';
+    const CONTENT = 'content';
 
     /**
      * Function name.
@@ -40,7 +41,7 @@ class FunctionObject extends Dto
     /**
      * List of Function parameters.
      *
-     * @var array Key-value pairs where key is parameter name and value is parameter type
+     * @var MethodParameterObject[]
      */
     public $parameters = [];
 
@@ -51,4 +52,11 @@ class FunctionObject extends Dto
      * @var string
      */
     public $visibilityType;
+
+    /**
+     * Function content, if any.
+     *
+     * @var string|null
+     */
+    public $content;
 }

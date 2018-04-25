@@ -16,8 +16,8 @@ use Saritasa\Dto;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassPropertyDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocVariableDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
@@ -144,7 +144,7 @@ class DtoFactoryTest extends TestCase
                 new PhpToPhpDocTypeMapper()
             )
         );
-        $variableDescriptionBuilder = new PhpDocVariableDescriptionBuilder(new PhpToPhpDocTypeMapper());
+        $variableDescriptionBuilder = new PhpDocClassPropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
         $getterGenerator = new GetterGenerator(new PhpToPhpDocTypeMapper());
         $setterGenerator = new SetterGenerator(new PhpToPhpDocTypeMapper());
         /** @var SchemaReader $schemaReader */

@@ -8,7 +8,7 @@ use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig;
-use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPhpDocPropertyObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
@@ -117,12 +117,12 @@ class FormRequestFactory extends ModelBasedClassFactory
     {
         $classProperties = [];
         foreach ($this->columns as $column) {
-            $classProperties[] = new ClassPropertyObject([
-                ClassPropertyObject::NAME => $column->getName(),
-                ClassPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
-                ClassPropertyObject::NULLABLE => !$column->getNotnull(),
-                ClassPropertyObject::DESCRIPTION => $column->getComment(),
-                ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+            $classProperties[] = new ClassPhpDocPropertyObject([
+                ClassPhpDocPropertyObject::NAME => $column->getName(),
+                ClassPhpDocPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
+                ClassPhpDocPropertyObject::NULLABLE => !$column->getNotnull(),
+                ClassPhpDocPropertyObject::DESCRIPTION => $column->getComment(),
+                ClassPhpDocPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
             ]);
         }
 

@@ -2,7 +2,7 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators\PhpDoc;
 
-use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPhpDocPropertyObject;
 
 /**
  * Allows to render php-class description.
@@ -30,7 +30,7 @@ class PhpDocClassDescriptionBuilder
      * Renders class PHPDoc block
      *
      * @param string $classDescription Class description
-     * @param ClassPropertyObject[] $classProperties Class properties
+     * @param ClassPhpDocPropertyObject[] $classProperties Class properties
      *
      * @return string
      */

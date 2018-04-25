@@ -4,9 +4,9 @@ namespace Saritasa\LaravelTools\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassPropertyDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocVariableDescriptionBuilder;
-use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPhpDocPropertyObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
@@ -21,7 +21,7 @@ class PhpDocBuilderTest extends TestCase
     /** @var PhpDocClassDescriptionBuilder */
     private $phpDocClassDescriptionBuilder;
 
-    /** @var PhpDocVariableDescriptionBuilder */
+    /** @var PhpDocClassPropertyDescriptionBuilder */
     private $phpDocVariableDescriptionBuilder;
 
     protected function setUp()
@@ -29,7 +29,7 @@ class PhpDocBuilderTest extends TestCase
         parent::setUp();
         $this->phpDocPropertyBuilder = new PhpDocSingleLinePropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
         $this->phpDocClassDescriptionBuilder = new PhpDocClassDescriptionBuilder($this->phpDocPropertyBuilder);
-        $this->phpDocVariableDescriptionBuilder = new PhpDocVariableDescriptionBuilder(new PhpToPhpDocTypeMapper());
+        $this->phpDocVariableDescriptionBuilder = new PhpDocClassPropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
     }
 
     /**
@@ -39,12 +39,12 @@ class PhpDocBuilderTest extends TestCase
      */
     public function testPropertyRenderFunction()
     {
-        $classProperty = new ClassPropertyObject([
-            ClassPropertyObject::NAME => 'variable',
-            ClassPropertyObject::TYPE => 'string',
-            ClassPropertyObject::NULLABLE => false,
-            ClassPropertyObject::DESCRIPTION => 'Some description',
-            ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+        $classProperty = new ClassPhpDocPropertyObject([
+            ClassPhpDocPropertyObject::NAME => 'variable',
+            ClassPhpDocPropertyObject::TYPE => 'string',
+            ClassPhpDocPropertyObject::NULLABLE => false,
+            ClassPhpDocPropertyObject::DESCRIPTION => 'Some description',
+            ClassPhpDocPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
         ]);
 
         $renderedLine = $this->phpDocPropertyBuilder->render($classProperty);
@@ -71,12 +71,12 @@ class PhpDocBuilderTest extends TestCase
     public function testClassDescriptionRenderFunction()
     {
         // Test with class properties
-        $classProperty = new ClassPropertyObject([
-            ClassPropertyObject::NAME => 'variable',
-            ClassPropertyObject::TYPE => 'string',
-            ClassPropertyObject::NULLABLE => false,
-            ClassPropertyObject::DESCRIPTION => 'Some description',
-            ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+        $classProperty = new ClassPhpDocPropertyObject([
+            ClassPhpDocPropertyObject::NAME => 'variable',
+            ClassPhpDocPropertyObject::TYPE => 'string',
+            ClassPhpDocPropertyObject::NULLABLE => false,
+            ClassPhpDocPropertyObject::DESCRIPTION => 'Some description',
+            ClassPhpDocPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
         ]);
 
         $classDescription = 'Some class';
@@ -106,12 +106,12 @@ class PhpDocBuilderTest extends TestCase
     public function testVariableDescriptionRenderFunction()
     {
         // Tet simple type
-        $classProperty = new ClassPropertyObject([
-            ClassPropertyObject::NAME => 'variable',
-            ClassPropertyObject::TYPE => 'string',
-            ClassPropertyObject::NULLABLE => false,
-            ClassPropertyObject::DESCRIPTION => 'Some description',
-            ClassPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+        $classProperty = new ClassPhpDocPropertyObject([
+            ClassPhpDocPropertyObject::NAME => 'variable',
+            ClassPhpDocPropertyObject::TYPE => 'string',
+            ClassPhpDocPropertyObject::NULLABLE => false,
+            ClassPhpDocPropertyObject::DESCRIPTION => 'Some description',
+            ClassPhpDocPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
         ]);
 
         $classPhpDoc = $this->phpDocVariableDescriptionBuilder->render($classProperty);

@@ -4,8 +4,8 @@ namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 
 use Illuminate\Config\Repository;
 use Illuminate\Support\Str;
-use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
 use Saritasa\LaravelTools\DTO\PhpClasses\FunctionObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\MethodParameterObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteImplementationObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\DTO\Routes\KnownApiRouteObject;
@@ -24,7 +24,7 @@ class ApiRoutesImplementationGuesser
      *
      * @var string
      */
-    private $generatedControllerSuffix;
+    private $controllerNameSuffix;
 
     /**
      * List of known routes parameters details such as controller, controller's method and route name
@@ -43,8 +43,8 @@ class ApiRoutesImplementationGuesser
      */
     public function __construct(Repository $configRepository)
     {
-        $this->generatedControllerSuffix = $configRepository
-            ->get('laravel_tools.api_controllers.generated_controller_suffix');
+        $this->controllerNameSuffix = $configRepository
+            ->get('laravel_tools.api_controllers.name_suffix');
         $this->knownRoutes = $configRepository
             ->get('laravel_tools.api_routes.known_routes', []);
     }
@@ -99,7 +99,7 @@ class ApiRoutesImplementationGuesser
             return $knownRoute->controller;
         }
 
-        return Str::studly($this->guessRouteResourceName($route)) . $this->generatedControllerSuffix;
+        return Str::studly($this->guessRouteResourceName($route)) . $this->controllerNameSuffix;
     }
 
     /**
@@ -184,11 +184,11 @@ class ApiRoutesImplementationGuesser
                 continue;
             }
 
-            $parameters[] = new ClassPropertyObject([
-                ClassPropertyObject::DESCRIPTION => $parameter->description,
-                ClassPropertyObject::NAME => $parameter->name,
-                ClassPropertyObject::TYPE => $parameter->type,
-                ClassPropertyObject::NULLABLE => !$parameter->required,
+            $parameters[] = new MethodParameterObject([
+                MethodParameterObject::DESCRIPTION => $parameter->description,
+                MethodParameterObject::NAME => $parameter->name,
+                MethodParameterObject::TYPE => $parameter->type,
+                MethodParameterObject::NULLABLE => !$parameter->required,
             ]);
         }
 

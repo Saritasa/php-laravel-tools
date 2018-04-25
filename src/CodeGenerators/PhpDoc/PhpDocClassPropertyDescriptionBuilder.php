@@ -8,7 +8,7 @@ use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 /**
  * PhpDoc for variable builder. Allows to generate PhpDoc variable description block.
  */
-class PhpDocVariableDescriptionBuilder
+class PhpDocClassPropertyDescriptionBuilder
 {
     /**
      * Php scalar type to PhpDoc scalar type mapper.

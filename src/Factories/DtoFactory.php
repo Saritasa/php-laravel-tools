@@ -9,11 +9,10 @@ use Saritasa\Exceptions\NotImplementedException;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocVariableDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassPropertyDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
-use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
-use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPhpDocPropertyObject;
 use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
@@ -57,7 +56,7 @@ class DtoFactory extends ModelBasedClassFactory
     /**
      * Allows to build PHPDoc for properties.
      *
-     * @var PhpDocVariableDescriptionBuilder
+     * @var PhpDocClassPropertyDescriptionBuilder
      */
     private $variableDescriptionBuilder;
 
@@ -84,7 +83,7 @@ class DtoFactory extends ModelBasedClassFactory
      * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      * @param IPhpTypeMapper $phpTypeMapper Storage type to PHP scalar type mapper
      * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Allows to build PHPDoc class description
-     * @param PhpDocVariableDescriptionBuilder $variableDescriptionBuilder Allows to build PHPDoc for properties
+     * @param PhpDocClassPropertyDescriptionBuilder $variableDescriptionBuilder Allows to build PHPDoc for properties
      * @param GetterGenerator $getterGenerator Allows to generate getter function declaration
      * @param SetterGenerator $setterGenerator Allows to generate setter function declaration
      */
@@ -94,7 +93,7 @@ class DtoFactory extends ModelBasedClassFactory
         CodeFormatter $codeFormatter,
         IPhpTypeMapper $phpTypeMapper,
         PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder,
-        PhpDocVariableDescriptionBuilder $variableDescriptionBuilder,
+        PhpDocClassPropertyDescriptionBuilder $variableDescriptionBuilder,
         GetterGenerator $getterGenerator,
         SetterGenerator $setterGenerator
     ) {
@@ -152,12 +151,12 @@ class DtoFactory extends ModelBasedClassFactory
             }
 
             foreach ($this->columns as $column) {
-                $classProperties[] = new ClassPropertyObject([
-                    ClassPropertyObject::NAME => $column->getName(),
-                    ClassPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
-                    ClassPropertyObject::NULLABLE => !$column->getNotnull(),
-                    ClassPropertyObject::DESCRIPTION => $column->getComment(),
-                    ClassPropertyObject::ACCESS_TYPE => $propertiesAccessType,
+                $classProperties[] = new ClassPhpDocPropertyObject([
+                    ClassPhpDocPropertyObject::NAME => $column->getName(),
+                    ClassPhpDocPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
+                    ClassPhpDocPropertyObject::NULLABLE => !$column->getNotnull(),
+                    ClassPhpDocPropertyObject::DESCRIPTION => $column->getComment(),
+                    ClassPhpDocPropertyObject::ACCESS_TYPE => $propertiesAccessType,
                 ]);
             }
         }
@@ -200,12 +199,12 @@ class DtoFactory extends ModelBasedClassFactory
             if ($this->config->immutable) {
                 $propertiesAccessType = PhpDocPropertyAccessTypes::READ;
             }
-            $classProperty = new ClassPropertyObject([
-                ClassPropertyObject::NAME => $column->getName(),
-                ClassPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
-                ClassPropertyObject::NULLABLE => !$column->getNotnull(),
-                ClassPropertyObject::DESCRIPTION => $column->getComment(),
-                ClassPropertyObject::ACCESS_TYPE => $propertiesAccessType,
+            $classProperty = new ClassPhpDocPropertyObject([
+                ClassPhpDocPropertyObject::NAME => $column->getName(),
+                ClassPhpDocPropertyObject::TYPE => $this->phpTypeMapper->getPhpType($column->getType()),
+                ClassPhpDocPropertyObject::NULLABLE => !$column->getNotnull(),
+                ClassPhpDocPropertyObject::DESCRIPTION => $column->getComment(),
+                ClassPhpDocPropertyObject::ACCESS_TYPE => $propertiesAccessType,
             ]);
 
             $propertyVisibility = ($this->config->immutable || $this->config->strictTypes)

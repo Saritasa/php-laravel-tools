@@ -23,7 +23,7 @@ abstract class LaravelToolsTestsHelpers extends TestCase
             'laravel_tools' => [
                 'api_controllers' => [
                     // The generated controller name suffix
-                    'generated_controller_suffix' => 'ApiController',
+                    'name_suffix' => 'ApiController',
                 ],
                 'api_routes' => [
                     // Well-known routes which controller, action and route names should not be guessed and used from config
