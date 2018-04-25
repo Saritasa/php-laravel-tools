@@ -7,7 +7,9 @@ use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
+use Saritasa\LaravelTools\CodeGenerators\FunctionGenerator;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocMethodParameterDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\Mappings\SwaggerToPhpTypeMapper;
@@ -105,6 +107,16 @@ abstract class LaravelToolsTestsHelpers extends TestCase
             new PhpToPhpDocTypeMapper(),
             $this->getCommentsGenerator(),
             $this->getCodeFormatter()
+        );
+    }
+
+    protected function getFunctionGenerator(): FunctionGenerator
+    {
+        return new FunctionGenerator(
+            $this->getCodeFormatter(),
+            $this->getCommentsGenerator(),
+            new PhpToPhpDocTypeMapper(),
+            new PhpDocMethodParameterDescriptionBuilder(new PhpToPhpDocTypeMapper())
         );
     }
 }

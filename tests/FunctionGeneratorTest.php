@@ -9,14 +9,9 @@ use Saritasa\LaravelTools\Enums\PhpScalarTypes;
 
 class FunctionGeneratorTest extends LaravelToolsTestsHelpers
 {
-    public function testSetter(): void
+    public function testRender(): void
     {
-        $functionGenerator = new FunctionGenerator(
-            new CodeFormatter($this->getConfigRepository()),
-            new CommentsGenerator(),
-            new PhpToPhpDocTypeMapper(),
-            new PhpDocMethodParameterDescriptionBuilder(new PhpToPhpDocTypeMapper())
-        );
+        $functionGenerator = $this->getFunctionGenerator();
 
         // Simple function
         $functionObject = new FunctionObject([
