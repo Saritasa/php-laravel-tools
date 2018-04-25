@@ -4,6 +4,11 @@ namespace Saritasa\LaravelTools\Tests;
 
 use Illuminate\Config\Repository;
 use PHPUnit\Framework\TestCase;
+use Saritasa\LaravelTools\Mappings\SwaggerToPhpTypeMapper;
+use Saritasa\LaravelTools\Swagger\SwaggerReader;
+use WakeOnWeb\Component\Swagger\Loader\JsonLoader;
+use WakeOnWeb\Component\Swagger\Loader\YamlLoader;
+use WakeOnWeb\Component\Swagger\SwaggerFactory;
 
 abstract class LaravelToolsTestsHelpers extends TestCase
 {
@@ -55,5 +60,15 @@ abstract class LaravelToolsTestsHelpers extends TestCase
                 ],
             ],
         ]);
+    }
+
+    protected function getSwaggerReader(): SwaggerReader
+    {
+        return new SwaggerReader(
+            new SwaggerFactory(),
+            new YamlLoader(),
+            new JsonLoader(),
+            new SwaggerToPhpTypeMapper()
+        );
     }
 }

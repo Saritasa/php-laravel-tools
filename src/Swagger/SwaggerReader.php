@@ -3,10 +3,14 @@
 namespace Saritasa\LaravelTools\Swagger;
 
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
+use Saritasa\LaravelTools\DTO\Routes\ApiRouteParameterObject;
 use Saritasa\LaravelTools\Enums\HttpMethods;
+use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
 use Throwable;
 use WakeOnWeb\Component\Swagger\Loader\JsonLoader;
 use WakeOnWeb\Component\Swagger\Loader\YamlLoader;
+use WakeOnWeb\Component\Swagger\Specification\Operation;
+use WakeOnWeb\Component\Swagger\Specification\Parameter;
 use WakeOnWeb\Component\Swagger\Specification\PathItem;
 use WakeOnWeb\Component\Swagger\Specification\Swagger;
 use WakeOnWeb\Component\Swagger\SwaggerFactory;
@@ -26,17 +30,30 @@ class SwaggerReader
     private $swaggerFactory;
 
     /**
+     * Swagger to php scalar type mapper.
+     *
+     * @var IPhpTypeMapper
+     */
+    private $phpTypeMapper;
+
+    /**
      * Swagger specification file reader. Allows to retrieve API specification.
      *
      * @param SwaggerFactory $swaggerFactory Swagger file processor
      * @param YamlLoader $yamlLoader YAML-files loader
      * @param JsonLoader $jsonLoader JSON-files loader
+     * @param IPhpTypeMapper $phpTypeMapper Swagger to php scalar type mapper
      */
-    public function __construct(SwaggerFactory $swaggerFactory, YamlLoader $yamlLoader, JsonLoader $jsonLoader)
-    {
+    public function __construct(
+        SwaggerFactory $swaggerFactory,
+        YamlLoader $yamlLoader,
+        JsonLoader $jsonLoader,
+        IPhpTypeMapper $phpTypeMapper
+    ) {
         $this->swaggerFactory = $swaggerFactory;
         $this->swaggerFactory->addLoader($yamlLoader);
         $this->swaggerFactory->addLoader($jsonLoader);
+        $this->phpTypeMapper = $phpTypeMapper;
     }
 
     /**
@@ -53,6 +70,33 @@ class SwaggerReader
         }
 
         return static::$specificationsCache[$sourceFile];
+    }
+
+    /**
+     * Returns route parameters details.
+     *
+     * @param Operation $operation Operation to retrieve parameters
+     *
+     * @return ApiRouteParameterObject[]
+     */
+    protected function getRouteParameters(Operation $operation): array
+    {
+        $routeParameters = [];
+        foreach ($operation->getParameters()->getParameters() as $parameter) {
+            $type = null;
+            if ($parameter instanceof Parameter) {
+                $type = $parameter->getType();
+            }
+            $routeParameters[] = new ApiRouteParameterObject([
+                ApiRouteParameterObject::NAME => $parameter->getName(),
+                ApiRouteParameterObject::IN => $parameter->getIn(),
+                ApiRouteParameterObject::DESCRIPTION => $parameter->getDescription(),
+                ApiRouteParameterObject::REQUIRED => $parameter->isRequired(),
+                ApiRouteParameterObject::TYPE => $type,
+            ]);
+        }
+
+        return $routeParameters;
     }
 
     /**
@@ -92,15 +136,18 @@ class SwaggerReader
                 }
             }
 
+            $routeParameters = $this->getRouteParameters($operation);
+
             $routesGroup = $operation->getTags()[0] ?? null;
 
             $apiRouteObjects[] = new ApiRouteObject([
                 ApiRouteObject::GROUP => $routesGroup,
                 ApiRouteObject::METHOD => $method,
                 ApiRouteObject::URL => $url,
+                ApiRouteObject::DESCRIPTION => $operation->getSummary() ?? $operation->getDescription(),
+                ApiRouteObject::PARAMETERS => $routeParameters,
                 // Now only one security scheme per route supported
                 ApiRouteObject::SECURITY_SCHEME => $securitySchemes[0] ?? null,
-                ApiRouteObject::DESCRIPTION => $operation->getSummary() ?? $operation->getDescription(),
             ]);
         }
 

@@ -14,10 +14,6 @@ use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 use Saritasa\LaravelTools\DTO\ApiRoutesFactoryConfig;
 use Saritasa\LaravelTools\Factories\ApiRoutesDeclarationFactory;
 use Saritasa\LaravelTools\Services\TemplateWriter;
-use Saritasa\LaravelTools\Swagger\SwaggerReader;
-use WakeOnWeb\Component\Swagger\Loader\JsonLoader;
-use WakeOnWeb\Component\Swagger\Loader\YamlLoader;
-use WakeOnWeb\Component\Swagger\SwaggerFactory;
 
 class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
 {
@@ -65,7 +61,7 @@ class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
         $codeFormatter = new CodeFormatter($this->getConfigRepository());
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $commentsGenerator = new CommentsGenerator();
-        $swaggerReader = new SwaggerReader(new SwaggerFactory(), new YamlLoader(), new JsonLoader());
+        $swaggerReader = $this->getSwaggerReader();
         $apiRouteGenerator = new ApiRouteGenerator(new ApiRoutesImplementationGuesser($this->getConfigRepository()));
         $apiRoutesGroupGenerator = new ApiRoutesGroupGenerator($codeFormatter, $commentsGenerator);
         $apiRoutesBlockGenerator = new ApiRoutesBlockGenerator($codeFormatter, $commentsGenerator, $apiRouteGenerator);

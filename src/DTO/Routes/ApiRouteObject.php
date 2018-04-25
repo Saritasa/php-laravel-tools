@@ -6,7 +6,7 @@ use Saritasa\Dto;
 use Saritasa\LaravelTools\Enums\HttpMethods;
 
 /**
- * API route parameters details.
+ * API route details.
  */
 class ApiRouteObject extends Dto
 {
@@ -16,6 +16,7 @@ class ApiRouteObject extends Dto
     const SECURITY_SCHEME = 'securityScheme';
     const DESCRIPTION = 'description';
     const OPERATION_ID = 'operationId';
+    const PARAMETERS = 'parameters';
 
     /**
      * To which group this route belongs.
@@ -59,4 +60,11 @@ class ApiRouteObject extends Dto
      * @var string
      */
     public $operationId;
+
+    /**
+     * List of route parameters.
+     *
+     * @var ApiRouteParameterObject[]
+     */
+    public $parameters = [];
 }

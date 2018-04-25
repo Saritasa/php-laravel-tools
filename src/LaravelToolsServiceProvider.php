@@ -10,12 +10,15 @@ use Saritasa\LaravelTools\Commands\DtoScaffoldCommand;
 use Saritasa\LaravelTools\Commands\FormRequestsScaffoldCommand;
 use Saritasa\LaravelTools\Database\DatabaseConnectionManager;
 use Saritasa\LaravelTools\Database\SchemaReader;
+use Saritasa\LaravelTools\Factories\DtoFactory;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
 use Saritasa\LaravelTools\Mappings\DbalToLaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
 use Saritasa\LaravelTools\Mappings\ILaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;
+use Saritasa\LaravelTools\Mappings\SwaggerToPhpTypeMapper;
 use Saritasa\LaravelTools\Rules\IValidationRulesDictionary;
+use Saritasa\LaravelTools\Swagger\SwaggerReader;
 
 class LaravelToolsServiceProvider extends ServiceProvider
 {
@@ -58,7 +61,9 @@ class LaravelToolsServiceProvider extends ServiceProvider
 
             $rulesDictionary = config('laravel_tools.rules.dictionary');
 
-            $this->app->bind(IPhpTypeMapper::class, DbalToPhpTypeMapper::class);
+            $this->app->when(DtoFactory::class)->needs(IPhpTypeMapper::class)->give(DbalToPhpTypeMapper::class);
+            $this->app->when(FormRequestFactory::class)->needs(IPhpTypeMapper::class)->give(DbalToPhpTypeMapper::class);
+            $this->app->when(SwaggerReader::class)->needs(IPhpTypeMapper::class)->give(SwaggerToPhpTypeMapper::class);
 
             $this->app->bind(ILaravelValidationTypeMapper::class, DbalToLaravelValidationTypeMapper::class);
 
