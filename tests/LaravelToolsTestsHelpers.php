@@ -4,6 +4,11 @@ namespace Saritasa\LaravelTools\Tests;
 
 use Illuminate\Config\Repository;
 use PHPUnit\Framework\TestCase;
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
+use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
+use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\Mappings\SwaggerToPhpTypeMapper;
 use Saritasa\LaravelTools\Swagger\SwaggerReader;
 use WakeOnWeb\Component\Swagger\Loader\JsonLoader;
@@ -69,6 +74,17 @@ abstract class LaravelToolsTestsHelpers extends TestCase
             new YamlLoader(),
             new JsonLoader(),
             new SwaggerToPhpTypeMapper()
+        );
+    }
+
+    protected function getPhpDocClassDescriptionBuilder(): PhpDocClassDescriptionBuilder
+    {
+        return new PhpDocClassDescriptionBuilder(
+            new PhpDocSingleLinePropertyDescriptionBuilder(
+                new PhpToPhpDocTypeMapper()
+            ),
+            new CommentsGenerator(),
+            new CodeFormatter($this->getConfigRepository())
         );
     }
 }

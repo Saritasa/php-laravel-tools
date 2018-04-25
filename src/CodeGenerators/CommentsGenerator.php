@@ -37,7 +37,7 @@ class CommentsGenerator
         $result[] = '/**';
         foreach ($lines as $line) {
             $line = trim($line);
-            $result[] = " * {$line}";
+            $result[] = rtrim(" * {$line}");
         }
         $result[] = ' */';
 

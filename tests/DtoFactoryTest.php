@@ -11,13 +11,10 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
-use PHPUnit\Framework\TestCase;
 use Saritasa\Dto;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassPropertyDescriptionBuilder;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
@@ -31,7 +28,7 @@ use Saritasa\LaravelTools\Services\TemplateWriter;
 /**
  * Test DTO factory.
  */
-class DtoFactoryTest extends TestCase
+class DtoFactoryTest extends LaravelToolsTestsHelpers
 {
     /** @var string Name of temporary created template file */
     private $testTemplateFileName = 'UnitTestsDtoFakeTemplate.tmp';
@@ -139,11 +136,7 @@ class DtoFactoryTest extends TestCase
         $codeFormatter = new CodeFormatter(new Repository());
         $phpTypeMapper = new DbalToPhpTypeMapper();
         $templateWriter = new TemplateWriter(app(Filesystem::class));
-        $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(
-            new PhpDocSingleLinePropertyDescriptionBuilder(
-                new PhpToPhpDocTypeMapper()
-            )
-        );
+        $classDescriptionBuilder = $this->getPhpDocClassDescriptionBuilder();
         $variableDescriptionBuilder = new PhpDocClassPropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
         $getterGenerator = new GetterGenerator(new PhpToPhpDocTypeMapper());
         $setterGenerator = new SetterGenerator(new PhpToPhpDocTypeMapper());

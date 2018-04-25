@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\Database\SchemaReader;
-use Saritasa\LaravelTools\DTO\Configs\ModelBasedClassFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 use UnexpectedValueException;
 

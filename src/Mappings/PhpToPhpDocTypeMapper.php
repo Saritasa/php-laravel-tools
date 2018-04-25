@@ -26,12 +26,12 @@ class PhpToPhpDocTypeMapper
     /**
      * Returns PhpDoc type representation of Php scalar type.
      *
-     * @param string $type Php type name
+     * @param string|null $type Php type name
      *
-     * @return string
+     * @return string|null
      * @throws RuntimeException
      */
-    public function getPhpDocType(string $type): string
+    public function getPhpDocType(?string $type): ?string
     {
         $phpType = $this->typeMappings[strtolower($type)] ?? null;
 

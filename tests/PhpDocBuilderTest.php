@@ -2,7 +2,6 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassPropertyDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
@@ -13,7 +12,7 @@ use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 /**
  * Test PhpDoc block rendering function.
  */
-class PhpDocBuilderTest extends TestCase
+class PhpDocBuilderTest extends LaravelToolsTestsHelpers
 {
     /** @var PhpDocSingleLinePropertyDescriptionBuilder */
     private $phpDocPropertyBuilder;
@@ -28,7 +27,7 @@ class PhpDocBuilderTest extends TestCase
     {
         parent::setUp();
         $this->phpDocPropertyBuilder = new PhpDocSingleLinePropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
-        $this->phpDocClassDescriptionBuilder = new PhpDocClassDescriptionBuilder($this->phpDocPropertyBuilder);
+        $this->phpDocClassDescriptionBuilder = $this->getPhpDocClassDescriptionBuilder();
         $this->phpDocVariableDescriptionBuilder = new PhpDocClassPropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
     }
 
@@ -48,19 +47,19 @@ class PhpDocBuilderTest extends TestCase
         ]);
 
         $renderedLine = $this->phpDocPropertyBuilder->render($classProperty);
-        $this->assertEquals(' * @property-read string $variable Some description', $renderedLine);
+        $this->assertEquals('@property-read string $variable Some description', $renderedLine);
 
         $classProperty->accessType = PhpDocPropertyAccessTypes::WRITE;
         $renderedLine = $this->phpDocPropertyBuilder->render($classProperty);
-        $this->assertEquals(' * @property-write string $variable Some description', $renderedLine);
+        $this->assertEquals('@property-write string $variable Some description', $renderedLine);
 
         $classProperty->accessType = PhpDocPropertyAccessTypes::READ_AND_WRITE;
         $renderedLine = $this->phpDocPropertyBuilder->render($classProperty);
-        $this->assertEquals(' * @property string $variable Some description', $renderedLine);
+        $this->assertEquals('@property string $variable Some description', $renderedLine);
 
         $classProperty->nullable = true;
         $renderedLine = $this->phpDocPropertyBuilder->render($classProperty);
-        $this->assertEquals(' * @property string|null $variable Some description', $renderedLine);
+        $this->assertEquals('@property string|null $variable Some description', $renderedLine);
     }
 
     /**

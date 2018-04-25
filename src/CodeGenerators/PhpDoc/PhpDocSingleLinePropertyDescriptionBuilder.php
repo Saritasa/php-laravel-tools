@@ -55,8 +55,7 @@ class PhpDocSingleLinePropertyDescriptionBuilder
 
         $phpDocType = $this->phpToPhpDocTypeMapper->getPhpDocType($classProperty->type);
 
-        return rtrim(
-            " * @property{$accessModifier} " .
+        return "@property{$accessModifier} " . trim(
             "{$phpDocType}{$nullableType} \${$classProperty->name} " .
             "{$classProperty->description}"
         );

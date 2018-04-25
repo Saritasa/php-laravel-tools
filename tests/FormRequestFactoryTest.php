@@ -13,16 +13,12 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
-use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
 use Saritasa\LaravelTools\Mappings\DbalToLaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
-use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 use Saritasa\LaravelTools\Rules\StringValidationRulesDictionary;
 use Saritasa\LaravelTools\Services\FormRequestService;
@@ -32,7 +28,7 @@ use Saritasa\LaravelTools\Services\TemplateWriter;
 /**
  * Test form request factory.
  */
-class FormRequestFactoryTest extends TestCase
+class FormRequestFactoryTest extends LaravelToolsTestsHelpers
 {
     /** @var string Name of temporary created template file */
     private $testTemplateFileName = 'UnitTestsFakeTemplate.tmp';
@@ -139,11 +135,7 @@ class FormRequestFactoryTest extends TestCase
         $ruleBuilder = new RuleBuilder(new StringValidationRulesDictionary(), new DbalToLaravelValidationTypeMapper());
         $phpTypeMapper = new DbalToPhpTypeMapper();
         $templateWriter = new TemplateWriter(app(Filesystem::class));
-        $classDescriptionBuilder = new PhpDocClassDescriptionBuilder(
-            new PhpDocSingleLinePropertyDescriptionBuilder(
-                new PhpToPhpDocTypeMapper()
-            )
-        );
+        $classDescriptionBuilder = $this->getPhpDocClassDescriptionBuilder();
         /** @var SchemaReader $schemaReader */
         $schemaReader = \Mockery::mock(SchemaReader::class)
             ->expects('getTableDetails')
