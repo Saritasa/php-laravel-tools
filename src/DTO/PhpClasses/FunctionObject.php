@@ -49,7 +49,7 @@ class FunctionObject extends Dto
     /**
      * List of Function parameters.
      *
-     * @var MethodParameterObject[]
+     * @var FunctionParameterObject[]
      */
     public $parameters = [];
 

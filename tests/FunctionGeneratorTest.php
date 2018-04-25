@@ -2,15 +2,10 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
-use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
-use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
-use Saritasa\LaravelTools\CodeGenerators\FunctionGenerator;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocMethodParameterDescriptionBuilder;
 use Saritasa\LaravelTools\DTO\PhpClasses\FunctionObject;
-use Saritasa\LaravelTools\DTO\PhpClasses\MethodParameterObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\FunctionParameterObject;
 use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 use Saritasa\LaravelTools\Enums\PhpScalarTypes;
-use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
 class FunctionGeneratorTest extends LaravelToolsTestsHelpers
 {
@@ -126,16 +121,16 @@ EXPECTED;
             FunctionObject::RETURN_TYPE => PhpScalarTypes::INTEGER,
             FunctionObject::CONTENT => 'return $a + $b;',
             FunctionObject::PARAMETERS => [
-                new MethodParameterObject([
-                    MethodParameterObject::DESCRIPTION => 'First number with reach details',
-                    MethodParameterObject::NAME => 'a',
-                    MethodParameterObject::TYPE => PhpScalarTypes::INTEGER,
-                    MethodParameterObject::NULLABLE => true,
-                    MethodParameterObject::DEFAULT => 100,
+                new FunctionParameterObject([
+                    FunctionParameterObject::DESCRIPTION => 'First number with reach details',
+                    FunctionParameterObject::NAME => 'a',
+                    FunctionParameterObject::TYPE => PhpScalarTypes::INTEGER,
+                    FunctionParameterObject::NULLABLE => true,
+                    FunctionParameterObject::DEFAULT => 100,
                 ]),
-                new MethodParameterObject([
-                    MethodParameterObject::DESCRIPTION => 'Simple second parameter',
-                    MethodParameterObject::NAME => 'b',
+                new FunctionParameterObject([
+                    FunctionParameterObject::DESCRIPTION => 'Simple second parameter',
+                    FunctionParameterObject::NAME => 'b',
                 ]),
             ],
         ]);

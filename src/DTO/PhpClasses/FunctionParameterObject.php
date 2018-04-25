@@ -6,7 +6,7 @@ namespace Saritasa\LaravelTools\DTO\PhpClasses;
  * {@inheritdoc}
  * Represents function parameter details.
  */
-class MethodParameterObject extends VariableObject
+class FunctionParameterObject extends VariableObject
 {
     const DEFAULT = 'default';
 

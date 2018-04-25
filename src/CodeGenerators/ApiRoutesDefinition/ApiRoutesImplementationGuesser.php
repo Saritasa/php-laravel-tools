@@ -5,7 +5,7 @@ namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 use Illuminate\Config\Repository;
 use Illuminate\Support\Str;
 use Saritasa\LaravelTools\DTO\PhpClasses\FunctionObject;
-use Saritasa\LaravelTools\DTO\PhpClasses\MethodParameterObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\FunctionParameterObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteImplementationObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\DTO\Routes\KnownApiRouteObject;
@@ -184,11 +184,11 @@ class ApiRoutesImplementationGuesser
                 continue;
             }
 
-            $parameters[] = new MethodParameterObject([
-                MethodParameterObject::DESCRIPTION => $parameter->description,
-                MethodParameterObject::NAME => $parameter->name,
-                MethodParameterObject::TYPE => $parameter->type,
-                MethodParameterObject::NULLABLE => !$parameter->required,
+            $parameters[] = new FunctionParameterObject([
+                FunctionParameterObject::DESCRIPTION => $parameter->description,
+                FunctionParameterObject::NAME => $parameter->name,
+                FunctionParameterObject::TYPE => $parameter->type,
+                FunctionParameterObject::NULLABLE => !$parameter->required,
             ]);
         }
 

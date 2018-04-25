@@ -2,7 +2,7 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators\PhpDoc;
 
-use Saritasa\LaravelTools\DTO\PhpClasses\MethodParameterObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\FunctionParameterObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
@@ -31,12 +31,12 @@ class PhpDocMethodParameterDescriptionBuilder
     /**
      * Return PhpDoc property line description.
      *
-     * @param MethodParameterObject $methodParameter Class property details
+     * @param FunctionParameterObject $methodParameter Class property details
      *
      * @return string
      * @see PhpDocPropertyAccessTypes for available propety access types details
      */
-    public function render(MethodParameterObject $methodParameter): string
+    public function render(FunctionParameterObject $methodParameter): string
     {
         $nullableType = $methodParameter->nullable
             ? '|null'
