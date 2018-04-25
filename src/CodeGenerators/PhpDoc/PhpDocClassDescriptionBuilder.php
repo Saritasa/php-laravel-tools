@@ -59,7 +59,7 @@ class PhpDocClassDescriptionBuilder
      *
      * @return string
      */
-    public function render(string $classDescription, array $classProperties): string
+    public function render(string $classDescription, array $classProperties = []): string
     {
         $result = [];
         $result[] = "{$classDescription}.";

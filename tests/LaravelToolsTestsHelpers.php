@@ -4,6 +4,7 @@ namespace Saritasa\LaravelTools\Tests;
 
 use Illuminate\Config\Repository;
 use PHPUnit\Framework\TestCase;
+use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
@@ -83,8 +84,27 @@ abstract class LaravelToolsTestsHelpers extends TestCase
             new PhpDocSingleLinePropertyDescriptionBuilder(
                 new PhpToPhpDocTypeMapper()
             ),
-            new CommentsGenerator(),
-            new CodeFormatter($this->getConfigRepository())
+            $this->getCommentsGenerator(),
+            $this->getCodeFormatter()
+        );
+    }
+
+    protected function getCommentsGenerator(): CommentsGenerator
+    {
+        return new CommentsGenerator();
+    }
+
+    protected function getCodeFormatter(): CodeFormatter
+    {
+        return new CodeFormatter($this->getConfigRepository());
+    }
+
+    protected function getClassPropertyGenerator(): ClassPropertyGenerator
+    {
+        return new ClassPropertyGenerator(
+            new PhpToPhpDocTypeMapper(),
+            $this->getCommentsGenerator(),
+            $this->getCodeFormatter()
         );
     }
 }

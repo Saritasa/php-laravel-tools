@@ -14,7 +14,6 @@ use Illuminate\Foundation\Auth\User;
 use Saritasa\Dto;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassPropertyDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
@@ -137,7 +136,7 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
         $phpTypeMapper = new DbalToPhpTypeMapper();
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $classDescriptionBuilder = $this->getPhpDocClassDescriptionBuilder();
-        $variableDescriptionBuilder = new PhpDocClassPropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
+        $variableDescriptionBuilder = $this->getClassPropertyGenerator();
         $getterGenerator = new GetterGenerator(new PhpToPhpDocTypeMapper());
         $setterGenerator = new SetterGenerator(new PhpToPhpDocTypeMapper());
         /** @var SchemaReader $schemaReader */

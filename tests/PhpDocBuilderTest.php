@@ -2,10 +2,12 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
+use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassPropertyDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassPhpDocPropertyObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
@@ -20,7 +22,7 @@ class PhpDocBuilderTest extends LaravelToolsTestsHelpers
     /** @var PhpDocClassDescriptionBuilder */
     private $phpDocClassDescriptionBuilder;
 
-    /** @var PhpDocClassPropertyDescriptionBuilder */
+    /** @var ClassPropertyGenerator */
     private $phpDocVariableDescriptionBuilder;
 
     protected function setUp()
@@ -28,7 +30,7 @@ class PhpDocBuilderTest extends LaravelToolsTestsHelpers
         parent::setUp();
         $this->phpDocPropertyBuilder = new PhpDocSingleLinePropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
         $this->phpDocClassDescriptionBuilder = $this->getPhpDocClassDescriptionBuilder();
-        $this->phpDocVariableDescriptionBuilder = new PhpDocClassPropertyDescriptionBuilder(new PhpToPhpDocTypeMapper());
+        $this->phpDocVariableDescriptionBuilder = $this->getClassPropertyGenerator();
     }
 
     /**
@@ -105,12 +107,12 @@ class PhpDocBuilderTest extends LaravelToolsTestsHelpers
     public function testVariableDescriptionRenderFunction()
     {
         // Tet simple type
-        $classProperty = new ClassPhpDocPropertyObject([
-            ClassPhpDocPropertyObject::NAME => 'variable',
-            ClassPhpDocPropertyObject::TYPE => 'string',
-            ClassPhpDocPropertyObject::NULLABLE => false,
-            ClassPhpDocPropertyObject::DESCRIPTION => 'Some description',
-            ClassPhpDocPropertyObject::ACCESS_TYPE => PhpDocPropertyAccessTypes::READ,
+        $classProperty = new ClassPropertyObject([
+            ClassPropertyObject::NAME => 'variable',
+            ClassPropertyObject::TYPE => 'string',
+            ClassPropertyObject::NULLABLE => false,
+            ClassPropertyObject::DESCRIPTION => 'Some description',
+            ClassPropertyObject::VISIBILITY_TYPE => ClassMemberVisibilityTypes::PUBLIC,
         ]);
 
         $classPhpDoc = $this->phpDocVariableDescriptionBuilder->render($classProperty);
@@ -119,7 +121,8 @@ class PhpDocBuilderTest extends LaravelToolsTestsHelpers
             " * Some description.\n" .
             " *\n" .
             " * @var string\n" .
-            " */";
+            " */\n" .
+            "public \$variable;";
         $this->assertEquals($expectedPhpDoc, $classPhpDoc);
 
         // Test with nullable
@@ -130,7 +133,8 @@ class PhpDocBuilderTest extends LaravelToolsTestsHelpers
             " * Some description.\n" .
             " *\n" .
             " * @var string|null\n" .
-            " */";
+            " */\n" .
+            "public \$variable;";
         $this->assertEquals($expectedPhpDoc, $classPhpDoc);
 
         // Test with indent
@@ -140,7 +144,8 @@ class PhpDocBuilderTest extends LaravelToolsTestsHelpers
             " * Some description.\n" .
             " *\n" .
             " * @var string|null\n" .
-            " */";
+            " */\n" .
+            "public \$variable;";
         $this->assertEquals($expectedPhpDoc, $classPhpDoc);
     }
 }
