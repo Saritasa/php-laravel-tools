@@ -62,7 +62,7 @@ class PhpDocClassDescriptionBuilder
     public function render(string $classDescription, array $classProperties = []): string
     {
         $result = [];
-        $result[] = "{$classDescription}.";
+        $result[] = $this->codeFormatter->toSentence($classDescription);
         if ($classProperties) {
             $result[] = '';
         }

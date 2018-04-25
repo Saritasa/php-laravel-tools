@@ -65,7 +65,7 @@ class ClassPropertyGenerator
         $phpDocType = $this->phpToPhpDocTypeMapper->getPhpDocType($classProperty->type);
 
         $description = [];
-        $description[] = "{$classProperty->description}.";
+        $description[] = $this->codeFormatter->toSentence($classProperty->description);
         $description[] = '';
         $description[] = "@var {$phpDocType}{$nullableType}";
 

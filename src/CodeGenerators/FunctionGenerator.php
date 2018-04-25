@@ -89,7 +89,7 @@ class FunctionGenerator
     private function getDescription(FunctionObject $functionObject): string
     {
         $descriptionLines = [];
-        $descriptionLines[] = ucfirst(trim($functionObject->description)) . '.';
+        $descriptionLines[] = $this->codeFormatter->toSentence($functionObject->description);
         if ($functionObject->parameters) {
             $descriptionLines[] = '';
             foreach ($functionObject->parameters as $parameter) {

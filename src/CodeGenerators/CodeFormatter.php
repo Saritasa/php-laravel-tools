@@ -95,4 +95,16 @@ class CodeFormatter
     {
         return explode("\n", $block);
     }
+
+    /**
+     * Format passed sentence.
+     *
+     * @param string|null $sentence Sentence to format
+     *
+     * @return string Sentence with upper cased first word and dot at the end. Just sentence in other words
+     */
+    public function toSentence(?string $sentence): string
+    {
+        return ucfirst(trim(rtrim($sentence, '.'))) . '.';
+    }
 }
