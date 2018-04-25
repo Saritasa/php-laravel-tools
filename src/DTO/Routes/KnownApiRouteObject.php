@@ -10,7 +10,7 @@ use Saritasa\Dto;
 class KnownApiRouteObject extends Dto
 {
     const CONTROLLER = 'controller';
-    const METHOD = 'method';
+    const ACTION = 'action';
     const NAME = 'name';
 
     /**
@@ -21,11 +21,11 @@ class KnownApiRouteObject extends Dto
     public $controller;
 
     /**
-     * Known method name for route.
+     * Known controller's method name for route.
      *
      * @var string|null
      */
-    public $method;
+    public $action;
 
     /**
      * Known route name for route.

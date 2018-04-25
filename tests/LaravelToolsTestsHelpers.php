@@ -25,29 +25,29 @@ abstract class LaravelToolsTestsHelpers extends TestCase
                     'known_routes' => [
                         'GET' => [
                             '/{{resourceName}}' => [
-                                'method' => 'index',
+                                'action' => 'index',
                                 'name' => '{{resourceName}}.index',
                             ],
                             '/{{resourceName}}/{id}' => [
-                                'method' => 'show',
+                                'action' => 'show',
                                 'name' => '{{resourceName}}.show',
                             ],
                         ],
                         'POST' => [
                             '/{{resourceName}}' => [
-                                'method' => 'store',
+                                'action' => 'store',
                                 'name' => '{{resourceName}}.store',
                             ],
                         ],
                         'PUT' => [
                             '/{{resourceName}}/{id}' => [
-                                'method' => 'update',
+                                'action' => 'update',
                                 'name' => '{{resourceName}}.update',
                             ],
                         ],
                         'DELETE' => [
                             '/{{resourceName}}/{id}' => [
-                                'method' => 'destroy',
+                                'action' => 'destroy',
                                 'name' => '{{resourceName}}.destroy',
                             ],
                         ],

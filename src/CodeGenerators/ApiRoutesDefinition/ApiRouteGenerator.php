@@ -72,7 +72,7 @@ class ApiRouteGenerator
         $routeImplementation = $this->apiRoutesImplementationGuesser->getRouteImplementationDetails($routeData);
         $method = strtolower($routeData->method);
 
-        $routeAction = "{$routeImplementation->controller}@{$routeImplementation->method}";
+        $routeAction = "{$routeImplementation->controller}@{$routeImplementation->action}";
 
         return "\$api->{$method}('{$routeData->url}', '{$routeAction}')->name('{$routeImplementation->name}');";
     }

@@ -110,8 +110,8 @@ class ApiRoutesImplementationGuesser
     {
         $knownRoute = $this->getKnownRoute($route);
 
-        if ($knownRoute->method) {
-            return $knownRoute->method;
+        if ($knownRoute->action) {
+            return $knownRoute->action;
         }
 
         if ($route->operationId) {
@@ -167,7 +167,7 @@ class ApiRoutesImplementationGuesser
     {
         return new ApiRouteImplementationObject([
             ApiRouteImplementationObject::CONTROLLER => $this->guessControllerName($route),
-            ApiRouteImplementationObject::METHOD => $this->guessMethodName($route),
+            ApiRouteImplementationObject::ACTION => $this->guessMethodName($route),
             ApiRouteImplementationObject::NAME => $this->guessRouteName($route),
         ]);
     }

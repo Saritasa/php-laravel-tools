@@ -34,12 +34,12 @@ class ApiRouteImplementationGuesserTest extends LaravelToolsTestsHelpers
         $configRepository->set('laravel_tools.api_routes.known_routes.POST', [
             '/auth' => [
                 'controller' => 'AuthApiController',
-                'method' => 'login',
+                'action' => 'login',
                 'name' => 'login',
             ],
             '/auth/password/reset' => [
                 'controller' => 'ForgotPasswordApiController',
-                'method' => 'sendResetLinkEmail',
+                'action' => 'sendResetLinkEmail',
                 'name' => 'password.sendResetLink',
             ],
         ]);
@@ -58,7 +58,7 @@ class ApiRouteImplementationGuesserTest extends LaravelToolsTestsHelpers
         $actual = $routeGuesser->getRouteImplementationDetails($route);
 
         $this->assertEquals($expectedController, $actual->controller);
-        $this->assertEquals($expectedMethod, $actual->method);
+        $this->assertEquals($expectedMethod, $actual->action);
         $this->assertEquals($expectedName, $actual->name);
     }
 

@@ -127,54 +127,54 @@ return [
         'known_routes' => [
             'GET' => [
                 '/{{resourceName}}' => [
-                    'method' => 'index',
+                    'action' => 'index',
                     'name' => '{{resourceName}}.index',
                 ],
                 '/{{resourceName}}/{id}' => [
-                    'method' => 'show',
+                    'action' => 'show',
                     'name' => '{{resourceName}}.show',
                 ],
             ],
             'POST' => [
                 '/{{resourceName}}' => [
-                    'method' => 'store',
+                    'action' => 'store',
                     'name' => '{{resourceName}}.store',
                 ],
                 '/auth' => [
                     'controller' => 'AuthApiController',
-                    'method' => 'login',
+                    'action' => 'login',
                     'name' => 'login',
                 ],
                 '/auth/password/reset' => [
                     'controller' => 'ForgotPasswordApiController',
-                    'method' => 'sendResetLinkEmail',
+                    'action' => 'sendResetLinkEmail',
                     'name' => 'password.sendResetLink',
                 ],
             ],
             'PUT' => [
                 '/{{resourceName}}/{id}' => [
-                    'method' => 'update',
+                    'action' => 'update',
                     'name' => '{{resourceName}}.update',
                 ],
                 '/auth' => [
                     'controller' => 'AuthApiController',
-                    'method' => 'refreshToken',
+                    'action' => 'refreshToken',
                     'name' => 'authToken.refresh',
                 ],
                 '/auth/password/reset' => [
                     'controller' => 'ResetPasswordApiController',
-                    'method' => 'reset',
+                    'action' => 'reset',
                     'name' => 'password.reset',
                 ],
             ],
             'DELETE' => [
                 '/{{resourceName}}/{id}' => [
-                    'method' => 'destroy',
+                    'action' => 'destroy',
                     'name' => '{{resourceName}}.destroy',
                 ],
                 '/auth' => [
                     'controller' => 'AuthApiController',
-                    'method' => 'logout',
+                    'action' => 'logout',
                     'name' => 'auth.logout',
                 ],
             ],
