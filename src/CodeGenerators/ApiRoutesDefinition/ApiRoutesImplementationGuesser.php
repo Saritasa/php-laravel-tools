@@ -4,9 +4,12 @@ namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 
 use Illuminate\Config\Repository;
 use Illuminate\Support\Str;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\FunctionObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteImplementationObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\DTO\Routes\KnownApiRouteObject;
+use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 
 /**
  * Api route implementation guesser that can guess which controller, method and name should be used for api route
@@ -169,6 +172,31 @@ class ApiRoutesImplementationGuesser
             ApiRouteImplementationObject::CONTROLLER => $this->guessControllerName($route),
             ApiRouteImplementationObject::ACTION => $this->guessMethodName($route),
             ApiRouteImplementationObject::NAME => $this->guessRouteName($route),
+            ApiRouteImplementationObject::FUNCTION => $this->guessFunctionDetails($route),
+        ]);
+    }
+
+    private function guessFunctionDetails(ApiRouteObject $route): FunctionObject
+    {
+        $parameters = [];
+        foreach ($route->parameters as $parameter) {
+            if ($parameter->in !== 'path') {
+                continue;
+            }
+
+            $parameters[] = new ClassPropertyObject([
+                ClassPropertyObject::DESCRIPTION => $parameter->description,
+                ClassPropertyObject::NAME => $parameter->name,
+                ClassPropertyObject::TYPE => $parameter->type,
+                ClassPropertyObject::NULLABLE => !$parameter->required,
+            ]);
+        }
+
+        return new FunctionObject([
+            FunctionObject::NAME => $this->guessMethodName($route),
+            FunctionObject::DESCRIPTION => $route->description,
+            FunctionObject::VISIBILITY_TYPE => ClassMemberVisibilityTypes::PUBLIC,
+            FunctionObject::PARAMETERS => $parameters,
         ]);
     }
 }
