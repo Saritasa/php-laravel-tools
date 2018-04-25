@@ -12,6 +12,7 @@ class FunctionObject extends Dto
 {
     const NAME = 'name';
     const RETURN_TYPE = 'returnType';
+    const NULLABLE_RESULT = 'nullableResult';
     const DESCRIPTION = 'description';
     const PARAMETERS = 'parameters';
     const VISIBILITY_TYPE = 'visibilityType';
@@ -30,6 +31,13 @@ class FunctionObject extends Dto
      * @var string
      */
     public $returnType;
+
+    /**
+     * Whether return type of function can be null or not.
+     *
+     * @var boolean
+     */
+    public $nullableResult;
 
     /**
      * Function description.
