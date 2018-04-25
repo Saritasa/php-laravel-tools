@@ -85,7 +85,7 @@ class DtoFactory extends ModelBasedClassFactory
      * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      * @param IPhpTypeMapper $phpTypeMapper Storage type to PHP scalar type mapper
      * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Allows to build PHPDoc class description
-     * @param \Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator $variableDescriptionBuilder Allows to build PHPDoc for properties
+     * @param ClassPropertyGenerator $variableDescriptionBuilder Allows to build PHPDoc for properties
      * @param GetterGenerator $getterGenerator Allows to generate getter function declaration
      * @param SetterGenerator $setterGenerator Allows to generate setter function declaration
      */

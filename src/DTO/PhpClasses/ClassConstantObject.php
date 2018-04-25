@@ -23,7 +23,7 @@ class ClassConstantObject extends Dto
     public $name;
 
     /**
-     * Constant value.
+     * Constant value. If value is a string value then it should be escaped by quotes by developer.
      *
      * @var string
      */
