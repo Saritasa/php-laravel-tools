@@ -14,6 +14,7 @@ class ClassObject extends Dto
     const PARENT = 'parent';
     const DESCRIPTION = 'description';
     const PROPERTIES = 'properties';
+    const PHPDOC_PROPERTIES = 'phpDocProperties';
     const CONSTANTS = 'constants';
     const METHODS = 'methods';
 
@@ -53,11 +54,18 @@ class ClassObject extends Dto
     public $properties = [];
 
     /**
+     * Class properties that are declared in PhpDoc block.
+     *
+     * @var ClassPhpDocPropertyObject[]
+     */
+    public $phpDocProperties = [];
+
+    /**
      * Class constants.
      *
      * @var ClassConstantObject[]
      */
-    public $constants;
+    public $constants = [];
 
     /**
      * Class methods.
