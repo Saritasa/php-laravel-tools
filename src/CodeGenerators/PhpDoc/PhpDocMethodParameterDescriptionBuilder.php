@@ -38,15 +38,12 @@ class PhpDocMethodParameterDescriptionBuilder
      */
     public function render(FunctionParameterObject $methodParameter): string
     {
-        $nullableType = $methodParameter->nullable
-            ? '|null'
-            : '';
-
         $phpDocType = $this->phpToPhpDocTypeMapper->getPhpDocType($methodParameter->type);
 
-        return "@param " . trim(
-                "{$phpDocType}{$nullableType} \${$methodParameter->name} " .
-                "{$methodParameter->description}"
-            );
+        if ($methodParameter->nullable) {
+            $phpDocType .= '|null';
+        }
+
+        return "@param " . trim("{$phpDocType} \${$methodParameter->name} {$methodParameter->description}");
     }
 }
