@@ -244,7 +244,7 @@ class ClassGenerator
         $imports = [];
 
         foreach ($result as $placeholder => $value) {
-            $imports = array_merge($imports, $this->namespaceExtractor->extract($result[$placeholder]));
+            $imports = array_unique(array_merge($imports, $this->namespaceExtractor->extract($result[$placeholder])));
         }
 
         $result[static::PLACEHOLDER_NAMESPACE] = $classObject->namespace;
