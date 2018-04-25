@@ -107,6 +107,13 @@ EXPECTED;
                     ClassPropertyObject::DESCRIPTION => 'When request was started',
                     ClassPropertyObject::VISIBILITY_TYPE => ClassMemberVisibilityTypes::PUBLIC,
                 ]),
+                new ClassPropertyObject([
+                    ClassPropertyObject::NAME => 'finishedAt',
+                    ClassPropertyObject::TYPE => '\\Carbon\\Carbon',
+                    ClassPropertyObject::NULLABLE => true,
+                    ClassPropertyObject::DESCRIPTION => 'When request was ended',
+                    ClassPropertyObject::VISIBILITY_TYPE => ClassMemberVisibilityTypes::PUBLIC,
+                ]),
             ],
             ClassObject::METHODS => [
                 new FunctionObject([
@@ -123,6 +130,15 @@ EXPECTED;
                             FunctionParameterObject::TYPE => 'int',
                         ]),
                     ],
+                ]),
+                new FunctionObject([
+                    FunctionObject::NAME => 'index',
+                    FunctionObject::VISIBILITY_TYPE => ClassMemberVisibilityTypes::PUBLIC,
+                    FunctionObject::DESCRIPTION => 'Get all users',
+                    FunctionObject::NULLABLE_RESULT => false,
+                    FunctionObject::RETURN_TYPE => '\\Illuminate\\Http\\Response',
+                    FunctionObject::CONTENT => 'return new Response(\\App\\Models\\User::get());',
+                    FunctionObject::PARAMETERS => [],
                 ]),
             ],
         ]);
@@ -157,6 +173,13 @@ class UsersApiController extends AppApiController
     public $startedAt;
 
     /**
+     * When request was ended.
+     *
+     * @var Carbon|null
+     */
+    public $finishedAt;
+
+    /**
      * Show user details.
      *
      * @param integer $id User identifier to retrieve details
@@ -166,6 +189,16 @@ class UsersApiController extends AppApiController
     public function show(int $id): Response
     {
         return new Response(User::findOrFail($id));
+    }
+
+    /**
+     * Get all users.
+     *
+     * @return Response
+     */
+    public function index(): Response
+    {
+        return new Response(User::get());
     }
 }
 
