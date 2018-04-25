@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\Exceptions\ConfigurationException;
-use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
 use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
 use Saritasa\LaravelTools\Factories\DtoFactory;
 
@@ -59,7 +59,7 @@ class DtoService
      * @param string $modelClassName Model class name to which need to generate DTO
      * @param null|string $dtoClassName Result DTO class name. When not passed
      * then will be automatically generated according to model class name
-     * @param DtoFactoryConfig $initialFactoryConfig Initial configuration
+     * @param \Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig $initialFactoryConfig Initial configuration
      *
      * @return string Result DTO file name
      * @throws Exception
@@ -80,9 +80,9 @@ class DtoService
      *
      * @param string $modelClassName Target model class name
      * @param string $dtoClassName Result DTO file name
-     * @param DtoFactoryConfig $initialFactoryConfig Initial configuration
+     * @param \Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig $initialFactoryConfig Initial configuration
      *
-     * @return DtoFactoryConfig
+     * @return \Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig
      * @throws ConfigurationException
      */
     private function getConfiguration(

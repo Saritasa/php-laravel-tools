@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\LaravelTools\DTO;
+namespace Saritasa\LaravelTools\DTO\Configs;
 
 use Saritasa\Dto;
 

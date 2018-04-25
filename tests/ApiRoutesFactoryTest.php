@@ -11,7 +11,7 @@ use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGener
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
-use Saritasa\LaravelTools\DTO\ApiRoutesFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\ApiRoutesFactoryConfig;
 use Saritasa\LaravelTools\Factories\ApiRoutesDeclarationFactory;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 

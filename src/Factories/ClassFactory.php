@@ -2,7 +2,7 @@
 
 namespace Saritasa\LaravelTools\Factories;
 
-use Saritasa\LaravelTools\DTO\ClassFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\ClassFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
 /**

@@ -7,7 +7,7 @@ use Saritasa\Exceptions\NotImplementedException;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\Database\SchemaReader;
-use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
 use Saritasa\LaravelTools\Mappings\IPhpTypeMapper;

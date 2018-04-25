@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\Exceptions\ConfigurationException;
-use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
 
@@ -78,7 +78,7 @@ class FormRequestService
      * @param string $modelClassName Target model class name
      * @param string $formRequestClassName Result form request file name
      *
-     * @return FormRequestFactoryConfig
+     * @return \Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig
      * @throws ConfigurationException
      */
     private function getDefaultConfiguration(

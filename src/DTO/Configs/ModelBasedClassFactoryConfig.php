@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\LaravelTools\DTO;
+namespace Saritasa\LaravelTools\DTO\Configs;
 
 /**
  * Configuration for class based on model generation. Contains necessary class names and namespaces.

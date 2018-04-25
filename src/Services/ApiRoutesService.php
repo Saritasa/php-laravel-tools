@@ -5,7 +5,7 @@ namespace Saritasa\LaravelTools\Services;
 use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Saritasa\LaravelTools\DTO\ApiRoutesFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\ApiRoutesFactoryConfig;
 use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
 use Saritasa\LaravelTools\Factories\ApiRoutesDeclarationFactory;
 

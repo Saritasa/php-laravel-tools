@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Str;
-use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
 use Saritasa\LaravelTools\Services\DtoService;
 
 /**
@@ -118,7 +118,7 @@ class DtoScaffoldCommand extends Command
     /**
      * Get user preferences for new DTO.
      *
-     * @return DtoFactoryConfig
+     * @return \Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig
      */
     private function getPreConfig(): DtoFactoryConfig
     {

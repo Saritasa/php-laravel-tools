@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\LaravelTools\DTO;
+namespace Saritasa\LaravelTools\DTO\Configs;
 
 /**
  * Configuration for DTO generation. Contains necessary class names and namespaces.

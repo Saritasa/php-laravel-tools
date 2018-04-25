@@ -6,8 +6,8 @@ use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
-use Saritasa\LaravelTools\DTO\ClassFactoryConfig;
-use Saritasa\LaravelTools\DTO\TemplateBasedFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\ClassFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\TemplateBasedFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
 /**
@@ -83,7 +83,7 @@ abstract class TemplateBasedFactory
     /**
      * Configure factory to build new class.
      *
-     * @param TemplateBasedFactoryConfig $config Class configuration
+     * @param \Saritasa\LaravelTools\DTO\Configs\TemplateBasedFactoryConfig $config Class configuration
      *
      * @return static
      * @throws ConfigurationException

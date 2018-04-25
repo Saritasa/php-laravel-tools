@@ -12,7 +12,7 @@ use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocVariableDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
-use Saritasa\LaravelTools\DTO\DtoFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
 use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
@@ -36,7 +36,7 @@ class DtoFactory extends ModelBasedClassFactory
     /**
      * DTO builder configuration.
      *
-     * @var DtoFactoryConfig
+     * @var \Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig
      */
     protected $config = null;
 

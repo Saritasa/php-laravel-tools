@@ -15,14 +15,14 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
 use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
+use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\Database\SchemaReader;
-use Saritasa\LaravelTools\DTO\FormRequestFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
 use Saritasa\LaravelTools\Mappings\DbalToLaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
-use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 use Saritasa\LaravelTools\Rules\StringValidationRulesDictionary;
 use Saritasa\LaravelTools\Services\FormRequestService;
@@ -77,7 +77,7 @@ class FormRequestFactoryTest extends TestCase
      * @param bool $suggestAttributeNames Suggest that attribute names constants in model exists
      * @param array $excludedAttributes Array with attributes of model that should be removed from form request
      *
-     * @return FormRequestFactoryConfig
+     * @return \Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig
      */
     private function getFormRequestFactoryConfig(
         bool $suggestAttributeNames = false,

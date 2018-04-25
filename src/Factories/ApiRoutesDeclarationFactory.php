@@ -9,7 +9,7 @@ use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGener
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
-use Saritasa\LaravelTools\DTO\ApiRoutesFactoryConfig;
+use Saritasa\LaravelTools\DTO\Configs\ApiRoutesFactoryConfig;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 use Saritasa\LaravelTools\Swagger\SwaggerReader;
