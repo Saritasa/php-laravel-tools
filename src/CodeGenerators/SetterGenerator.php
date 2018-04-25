@@ -2,7 +2,10 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators;
 
-use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
+use Saritasa\LaravelTools\DTO\PhpClasses\FunctionObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\FunctionParameterObject;
+use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
+use Saritasa\LaravelTools\Enums\PhpPseudoTypes;
 
 /**
  * Setter Generator class. Allows to generate setter function declaration for given attribute and type.
@@ -10,20 +13,21 @@ use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 class SetterGenerator
 {
     /**
-     * Php scalar type to PhpDoc scalar type mapper.
+     * Php function code generator. Allows to generate function declaration by parameters.
      *
-     * @var PhpToPhpDocTypeMapper
+     * @var FunctionGenerator
      */
-    private $phpToPhpDocTypeMapper;
+    private $functionGenerator;
 
     /**
      * Setter Generator class. Allows to generate setter function declaration for given attribute and type.
      *
-     * @param PhpToPhpDocTypeMapper $phpToPhpDocTypeMapper Php scalar type to PhpDoc scalar type mapper
+     * @param FunctionGenerator $functionGenerator Php function code generator. Allows to generate function declaration
+     *     by parameters
      */
-    public function __construct(PhpToPhpDocTypeMapper $phpToPhpDocTypeMapper)
+    public function __construct(FunctionGenerator $functionGenerator)
     {
-        $this->phpToPhpDocTypeMapper = $phpToPhpDocTypeMapper;
+        $this->functionGenerator = $functionGenerator;
     }
 
     /**
@@ -39,66 +43,23 @@ class SetterGenerator
     public function render(
         string $attributeName,
         string $attributeType,
-        string $visibilityType = 'public',
+        string $visibilityType = ClassMemberVisibilityTypes::PUBLIC,
         bool $nullable = false
     ): string {
-        $phpDocType = $this->phpToPhpDocTypeMapper->getPhpDocType($attributeType);
-
-        return implode("\n", [
-            $this->getDescription($attributeName, $phpDocType, $nullable),
-            $this->getDeclaration($attributeName, $attributeType, $visibilityType, $nullable),
-        ]);
-    }
-
-    /**
-     * Returns setter function declaration.
-     *
-     * @param string $attributeName Attribute name for which need to generate setter
-     * @param string $attributeType Attribute type to typehint value
-     * @param string $visibilityType Function visibility type. Public or protected, for example
-     * @param bool $nullable Determines is new value can be NULL
-     *
-     * @return string
-     */
-    protected function getDeclaration(
-        string $attributeName,
-        string $attributeType,
-        string $visibilityType,
-        bool $nullable = false
-    ): string {
-        $setterFunctionName = 'set' . studly_case($attributeName);
-
-        $attributeType = ($nullable ? '?' : '') . $attributeType;
-
-        return <<<template
-{$visibilityType} function {$setterFunctionName}({$attributeType} \${$attributeName}): void
-{
-    \$this->{$attributeName} = \${$attributeName};
-}
-template;
-    }
-
-    /**
-     * Returns setter function description.
-     *
-     * @param string $attributeName Attribute name for which need to generate setter
-     * @param string $attributeType Attribute type to typehint value
-     * @param bool $nullable Determines is new value can be NULL
-     *
-     * @return string
-     */
-    protected function getDescription(string $attributeName, string $attributeType, bool $nullable = false): string
-    {
-        $attributeType .= $nullable ? '|null' : '';
-
-        return <<<template
-/**
- * Set {$attributeName} attribute value.
- *
- * @param {$attributeType} \${$attributeName} New attribute value
- *
- * @return void
- */
-template;
+        return $this->functionGenerator->render(new FunctionObject([
+            FunctionObject::NAME => 'set' . studly_case($attributeName),
+            FunctionObject::DESCRIPTION => "Set {$attributeName} attribute value",
+            FunctionObject::RETURN_TYPE => PhpPseudoTypes::VOID,
+            FunctionObject::VISIBILITY_TYPE => $visibilityType,
+            FunctionObject::CONTENT => "\$this->{$attributeName} = \${$attributeName};",
+            FunctionObject::PARAMETERS => [
+                new FunctionParameterObject([
+                    FunctionParameterObject::NAME => $attributeName,
+                    FunctionParameterObject::DESCRIPTION => 'New attribute value',
+                    FunctionParameterObject::TYPE => $attributeType,
+                    FunctionParameterObject::NULLABLE => $nullable,
+                ]),
+            ],
+        ]));
     }
 }

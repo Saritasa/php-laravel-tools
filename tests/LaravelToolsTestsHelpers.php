@@ -8,6 +8,7 @@ use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 use Saritasa\LaravelTools\CodeGenerators\FunctionGenerator;
+use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocMethodParameterDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
@@ -118,5 +119,10 @@ abstract class LaravelToolsTestsHelpers extends TestCase
             new PhpToPhpDocTypeMapper(),
             new PhpDocMethodParameterDescriptionBuilder(new PhpToPhpDocTypeMapper())
         );
+    }
+
+    protected function getNamespaceExtractor(): NamespaceExtractor
+    {
+        return new NamespaceExtractor($this->getCodeFormatter());
     }
 }

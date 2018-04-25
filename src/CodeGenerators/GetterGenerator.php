@@ -2,7 +2,8 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators;
 
-use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
+use Saritasa\LaravelTools\DTO\PhpClasses\FunctionObject;
+use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 
 /**
  * Getter Generator class. Allows to generate getter function declaration for given attribute and type.
@@ -10,20 +11,21 @@ use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 class GetterGenerator
 {
     /**
-     * Php scalar type to PhpDoc scalar type mapper.
+     * Php function code generator. Allows to generate function declaration by parameters.
      *
-     * @var PhpToPhpDocTypeMapper
+     * @var FunctionGenerator
      */
-    private $phpToPhpDocTypeMapper;
+    private $functionGenerator;
 
     /**
      * Getter Generator class. Allows to generate getter function declaration for given attribute and type.
      *
-     * @param PhpToPhpDocTypeMapper $phpToPhpDocTypeMapper Php scalar type to PhpDoc scalar type mapper
+     * @param FunctionGenerator $functionGenerator Php function code generator. Allows to generate function declaration
+     *     by parameters
      */
-    public function __construct(PhpToPhpDocTypeMapper $phpToPhpDocTypeMapper)
+    public function __construct(FunctionGenerator $functionGenerator)
     {
-        $this->phpToPhpDocTypeMapper = $phpToPhpDocTypeMapper;
+        $this->functionGenerator = $functionGenerator;
     }
 
     /**
@@ -39,64 +41,16 @@ class GetterGenerator
     public function render(
         string $attributeName,
         string $attributeType,
-        string $visibilityType = 'public',
+        string $visibilityType = ClassMemberVisibilityTypes::PUBLIC,
         bool $nullable = false
     ): string {
-        $phpDocType = $this->phpToPhpDocTypeMapper->getPhpDocType($attributeType);
-
-        return implode("\n", [
-            $this->getDescription($attributeName, $phpDocType, $nullable),
-            $this->getDeclaration($attributeName, $attributeType, $visibilityType, $nullable),
-        ]);
-    }
-
-    /**
-     * Returns getter function declaration.
-     *
-     * @param string $attributeName Attribute name for which need to generate getter
-     * @param string $attributeType Attribute type to typehint getter
-     * @param string $visibilityType Function visibility type. Public or protected, for example
-     * @param bool $nullable Determines is returned value can be NULL
-     *
-     * @return string
-     */
-    protected function getDeclaration(
-        string $attributeName,
-        string $attributeType,
-        string $visibilityType,
-        bool $nullable = false
-    ): string {
-        $getterFunctionName = 'get' . studly_case($attributeName);
-
-        $attributeType = ($nullable ? '?' : '') . $attributeType;
-
-        return <<<template
-{$visibilityType} function {$getterFunctionName}(): {$attributeType}
-{
-    return \$this->{$attributeName};
-}
-template;
-    }
-
-    /**
-     * Returns getter function description.
-     *
-     * @param string $attributeName Attribute name for which need to generate getter
-     * @param string $attributeType Attribute type to typehint getter
-     * @param bool $nullable Determines is returned value can be NULL
-     *
-     * @return string
-     */
-    protected function getDescription(string $attributeName, string $attributeType, bool $nullable = false): string
-    {
-        $attributeType .= $nullable ? '|null' : '';
-
-        return <<<template
-/**
- * Get {$attributeName} attribute value.
- *
- * @return {$attributeType}
- */
-template;
+        return $this->functionGenerator->render(new FunctionObject([
+            FunctionObject::NAME => 'get' . studly_case($attributeName),
+            FunctionObject::DESCRIPTION => "Get {$attributeName} attribute value",
+            FunctionObject::RETURN_TYPE => $attributeType,
+            FunctionObject::NULLABLE_RESULT => $nullable,
+            FunctionObject::VISIBILITY_TYPE => $visibilityType,
+            FunctionObject::CONTENT => "return \$this->{$attributeName};",
+        ]));
     }
 }

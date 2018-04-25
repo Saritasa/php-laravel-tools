@@ -20,7 +20,6 @@ use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
 use Saritasa\LaravelTools\Factories\DtoFactory;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
-use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\Services\DtoService;
 use Saritasa\LaravelTools\Services\TemplatesManager;
 use Saritasa\LaravelTools\Services\TemplateWriter;
@@ -139,8 +138,8 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $classDescriptionBuilder = $this->getPhpDocClassDescriptionBuilder();
         $variableDescriptionBuilder = $this->getClassPropertyGenerator();
-        $getterGenerator = new GetterGenerator(new PhpToPhpDocTypeMapper());
-        $setterGenerator = new SetterGenerator(new PhpToPhpDocTypeMapper());
+        $getterGenerator = new GetterGenerator($this->getFunctionGenerator());
+        $setterGenerator = new SetterGenerator($this->getFunctionGenerator());
         /** @var SchemaReader $schemaReader */
         $schemaReader = \Mockery::mock(SchemaReader::class)
             ->expects('getTableDetails')

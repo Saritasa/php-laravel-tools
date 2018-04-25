@@ -4,6 +4,7 @@ namespace Saritasa\LaravelTools\CodeGenerators;
 
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocMethodParameterDescriptionBuilder;
 use Saritasa\LaravelTools\DTO\PhpClasses\FunctionObject;
+use Saritasa\LaravelTools\Enums\PhpPseudoTypes;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
 /**
@@ -100,7 +101,7 @@ class FunctionGenerator
         if ($functionObject->returnType) {
             $descriptionLines[] = '';
             $returnType = $this->phpToPhpDocTypeMapper->getPhpDocType($functionObject->returnType);
-            if ($functionObject->nullableResult) {
+            if ($functionObject->nullableResult && $functionObject->returnType != PhpPseudoTypes::VOID) {
                 $returnType .= '|null';
             }
             $descriptionLines[] = "@return {$returnType}";
@@ -134,12 +135,17 @@ class FunctionGenerator
             }
             $parameters[] = $parameterString;
         }
-
         $parametersList = implode(', ', $parameters);
-        $nullableResultPrefix = $functionObject->nullableResult ? '?' : '';
-        $returnType = $functionObject->returnType
-            ? ": {$nullableResultPrefix}{$functionObject->returnType}"
-            : '';
+
+        $returnType = $functionObject->returnType;
+        if ($returnType) {
+            if ($functionObject->nullableResult && $functionObject->returnType != PhpPseudoTypes::VOID) {
+                $returnType = "?{$returnType}";
+            }
+
+            $returnType = ": {$returnType}";
+        }
+
         $functionBody = $this->codeFormatter->indentBlock($functionObject->content
             ? $functionObject->content
             : '// Do not forget to fill function body');
