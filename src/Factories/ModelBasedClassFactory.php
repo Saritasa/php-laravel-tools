@@ -10,6 +10,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
+use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 use UnexpectedValueException;
@@ -58,15 +59,18 @@ abstract class ModelBasedClassFactory extends ClassFactory
      * Factory to scaffold some new class based on template.
      *
      * @param TemplateWriter $templateWriter Templates files writer
-     * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      * @param SchemaReader $schemaReader Database table information reader
+     * @param NamespaceExtractor $namespaceExtractor Namespace extractor. Allows to retrieve list of used namespaces
+     *     from code and remove FQN from it
+     * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      */
     public function __construct(
         TemplateWriter $templateWriter,
         SchemaReader $schemaReader,
+        NamespaceExtractor $namespaceExtractor,
         CodeFormatter $codeFormatter
     ) {
-        parent::__construct($templateWriter, $codeFormatter);
+        parent::__construct($templateWriter, $codeFormatter, $namespaceExtractor);
 
         $this->schemaReader = $schemaReader;
     }

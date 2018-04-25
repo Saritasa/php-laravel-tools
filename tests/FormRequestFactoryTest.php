@@ -14,6 +14,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
+use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
 use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
@@ -136,6 +137,7 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
         $phpTypeMapper = new DbalToPhpTypeMapper();
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $classDescriptionBuilder = $this->getPhpDocClassDescriptionBuilder();
+        $namespaceExtractor = new NamespaceExtractor($this->getCodeFormatter());
         /** @var SchemaReader $schemaReader */
         $schemaReader = \Mockery::mock(SchemaReader::class)
             ->expects('getTableDetails')
@@ -145,6 +147,7 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
         return new FormRequestFactory(
             $schemaReader,
             $templateWriter,
+            $namespaceExtractor,
             $codeFormatter,
             $ruleBuilder,
             $phpTypeMapper,

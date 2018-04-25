@@ -115,7 +115,7 @@ EXPECTED;
                     FunctionObject::DESCRIPTION => 'show user details.',
                     FunctionObject::NULLABLE_RESULT => false,
                     FunctionObject::RETURN_TYPE => '\\Illuminate\\Http\\Response',
-                    FunctionObject::CONTENT => 'return new Response();',
+                    FunctionObject::CONTENT => 'return new Response(\\App\\Models\\User::findOrFail($id));',
                     FunctionObject::PARAMETERS => [
                         new FunctionParameterObject([
                             FunctionParameterObject::NAME => 'id',
@@ -165,7 +165,7 @@ class UsersApiController extends AppApiController
      */
     public function show(int $id): Response
     {
-        return new Response();
+        return new Response(User::findOrFail($id));
     }
 }
 

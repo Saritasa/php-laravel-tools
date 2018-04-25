@@ -2,6 +2,8 @@
 
 namespace Saritasa\LaravelTools\Factories;
 
+use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
+use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
 use Saritasa\LaravelTools\DTO\Configs\ClassFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
@@ -10,13 +12,6 @@ use Saritasa\LaravelTools\Services\TemplateWriter;
  */
 abstract class ClassFactory extends TemplateBasedFactory
 {
-    /**
-     * Templates files writer.
-     *
-     * @var TemplateWriter
-     */
-    protected $templateWriter;
-
     /**
      * Factory configuration.
      *
@@ -32,6 +27,30 @@ abstract class ClassFactory extends TemplateBasedFactory
     protected $usedClasses = [];
 
     /**
+     * Namespace extractor. Allows to retrieve list of used namespaces from code and remove FQN from it.
+     *
+     * @var NamespaceExtractor
+     */
+    private $namespaceExtractor;
+
+    /**
+     * Factory to scaffold some new class based on template.
+     *
+     * @param TemplateWriter $templateWriter Templates files writer
+     * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
+     * @param NamespaceExtractor $namespaceExtractor Namespace extractor. Allows to retrieve list of used namespaces
+     *     from code and remove FQN from it
+     */
+    public function __construct(
+        TemplateWriter $templateWriter,
+        CodeFormatter $codeFormatter,
+        NamespaceExtractor $namespaceExtractor
+    ) {
+        parent::__construct($templateWriter, $codeFormatter);
+        $this->namespaceExtractor = $namespaceExtractor;
+    }
+
+    /**
      * Extract and replace fully-qualified class names from placeholder.
      *
      * @param string $placeholder Placeholder to extract class names from
@@ -40,20 +59,9 @@ abstract class ClassFactory extends TemplateBasedFactory
      */
     protected function extractUsedClasses($placeholder): string
     {
-        $classNamespaceRegExp = '/([\\\\a-zA-Z0-9_]*\\\\[\\\\a-zA-Z0-9_]*)/';
-        $matches = [];
         $optimizedPlaceholder = $placeholder;
-        if (preg_match_all($classNamespaceRegExp, $placeholder, $matches)) {
-            foreach ($matches[1] as $match) {
-                $usedClassName = $match;
-                $this->usedClasses[] = trim($usedClassName, '\\');
-                $namespaceParts = explode('\\', $usedClassName);
-                $resultClassName = array_pop($namespaceParts);
-                $optimizedPlaceholder = str_replace($usedClassName, $resultClassName, $optimizedPlaceholder);
-            }
-        }
-
-        $this->usedClasses = array_unique($this->usedClasses);
+        $extractedClasses = $this->namespaceExtractor->extract($optimizedPlaceholder);
+        $this->usedClasses = array_unique(array_merge($this->usedClasses, $extractedClasses));
 
         return $optimizedPlaceholder;
     }
@@ -65,13 +73,6 @@ abstract class ClassFactory extends TemplateBasedFactory
      */
     protected function formatUsedClasses(): string
     {
-        $result = [];
-        foreach ($this->usedClasses as $usedClass) {
-            $result[] = "use {$usedClass};";
-        }
-
-        sort($result);
-
-        return implode("\n", $result);
+        return $this->namespaceExtractor->format($this->usedClasses);
     }
 }

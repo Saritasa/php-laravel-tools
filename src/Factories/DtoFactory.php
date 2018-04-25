@@ -9,6 +9,7 @@ use Saritasa\Exceptions\NotImplementedException;
 use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
+use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocClassDescriptionBuilder;
 use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
 use Saritasa\LaravelTools\Database\SchemaReader;
@@ -82,6 +83,8 @@ class DtoFactory extends ModelBasedClassFactory
      *
      * @param SchemaReader $schemaReader Database table information reader
      * @param TemplateWriter $templateWriter Templates files writer
+     * @param NamespaceExtractor $namespaceExtractor Namespace extractor. Allows to retrieve list of used namespaces
+     *     from code and remove FQN from it
      * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings
      * @param IPhpTypeMapper $phpTypeMapper Storage type to PHP scalar type mapper
      * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Allows to build PHPDoc class description
@@ -92,6 +95,7 @@ class DtoFactory extends ModelBasedClassFactory
     public function __construct(
         SchemaReader $schemaReader,
         TemplateWriter $templateWriter,
+        NamespaceExtractor $namespaceExtractor,
         CodeFormatter $codeFormatter,
         IPhpTypeMapper $phpTypeMapper,
         PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder,
@@ -99,7 +103,7 @@ class DtoFactory extends ModelBasedClassFactory
         GetterGenerator $getterGenerator,
         SetterGenerator $setterGenerator
     ) {
-        parent::__construct($templateWriter, $schemaReader, $codeFormatter);
+        parent::__construct($templateWriter, $schemaReader, $namespaceExtractor, $codeFormatter);
         $this->phpTypeMapper = $phpTypeMapper;
         $this->phpDocClassDescriptionBuilder = $phpDocClassDescriptionBuilder;
         $this->classPropertyDescriptionBuilder = $variableDescriptionBuilder;
