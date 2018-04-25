@@ -13,4 +13,6 @@ class PhpDocScalarTypes extends Enum
     const INTEGER = 'integer';
     const FLOAT = 'float';
     const STRING = 'string';
+    const VOID = 'void';
+    const MIXED = 'mixed';
 }

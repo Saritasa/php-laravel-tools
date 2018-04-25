@@ -4,6 +4,7 @@ namespace Saritasa\LaravelTools\Mappings;
 
 use RuntimeException;
 use Saritasa\LaravelTools\Enums\PhpDocScalarTypes;
+use Saritasa\LaravelTools\Enums\PhpPseudoTypes;
 use Saritasa\LaravelTools\Enums\PhpScalarTypes;
 
 /**
@@ -21,6 +22,8 @@ class PhpToPhpDocTypeMapper
         PhpScalarTypes::INTEGER => PhpDocScalarTypes::INTEGER,
         PhpScalarTypes::STRING => PhpDocScalarTypes::STRING,
         PhpScalarTypes::FLOAT => PhpDocScalarTypes::FLOAT,
+        PhpPseudoTypes::VOID => PhpDocScalarTypes::VOID,
+        PhpPseudoTypes::MIXED => PhpDocScalarTypes::MIXED,
     ];
 
     /**
