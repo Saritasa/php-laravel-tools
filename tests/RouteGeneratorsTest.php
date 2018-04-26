@@ -2,10 +2,8 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
-use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
-use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
@@ -26,7 +24,7 @@ class RouteGeneratorsTest extends LaravelToolsTestsHelpers
      */
     public function testRouteGenerator(?string $description, string $method, string $path, string $expected): void
     {
-        $routeGenerator = new ApiRouteGenerator(new ApiRoutesImplementationGuesser($this->getConfigRepository()));
+        $apiRouteGenerator = $this->getApiRouteGenerator();
         $route = new ApiRouteObject([
             ApiRouteObject::DESCRIPTION => $description,
             ApiRouteObject::GROUP => 'Users',
@@ -34,7 +32,7 @@ class RouteGeneratorsTest extends LaravelToolsTestsHelpers
             ApiRouteObject::URL => $path,
         ]);
 
-        $actual = $routeGenerator->render($route);
+        $actual = $apiRouteGenerator->render($route);
         $this->assertEquals($expected, $actual);
     }
 
@@ -134,7 +132,7 @@ class RouteGeneratorsTest extends LaravelToolsTestsHelpers
         $routesBlockGenerator = new ApiRoutesBlockGenerator(
             new CodeFormatter($this->getConfigRepository()),
             new CommentsGenerator(),
-            new ApiRouteGenerator(new ApiRoutesImplementationGuesser($this->getConfigRepository()))
+            $this->getApiRouteGenerator()
         );
 
         $routes = [

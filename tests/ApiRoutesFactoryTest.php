@@ -5,10 +5,8 @@ namespace Saritasa\LaravelTools\Tests;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Saritasa\Exceptions\ConfigurationException;
-use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
-use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 use Saritasa\LaravelTools\DTO\Configs\ApiRoutesFactoryConfig;
@@ -62,7 +60,7 @@ class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $commentsGenerator = new CommentsGenerator();
         $swaggerReader = $this->getSwaggerReader();
-        $apiRouteGenerator = new ApiRouteGenerator(new ApiRoutesImplementationGuesser($this->getConfigRepository()));
+        $apiRouteGenerator = $this->getApiRouteGenerator();
         $apiRoutesGroupGenerator = new ApiRoutesGroupGenerator($codeFormatter, $commentsGenerator);
         $apiRoutesBlockGenerator = new ApiRoutesBlockGenerator($codeFormatter, $commentsGenerator, $apiRouteGenerator);
 

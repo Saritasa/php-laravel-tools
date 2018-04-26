@@ -100,11 +100,18 @@ class CodeFormatter
      * Format passed sentence.
      *
      * @param string|null $sentence Sentence to format
+     * @param bool $dotEnded Whether formatted sentence should be dot-ended or not
      *
      * @return string Sentence with upper cased first word and dot at the end. Just sentence in other words
      */
-    public function toSentence(?string $sentence): string
+    public function toSentence(?string $sentence, bool $dotEnded = true): string
     {
-        return ucfirst(trim(rtrim($sentence, '.'))) . '.';
+        $sentence = rtrim(ucfirst(trim($sentence)), '.');
+
+        if ($dotEnded) {
+            $sentence .= '.';
+        }
+
+        return $sentence;
     }
 }

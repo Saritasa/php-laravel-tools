@@ -4,6 +4,8 @@ namespace Saritasa\LaravelTools\Tests;
 
 use Illuminate\Config\Repository;
 use PHPUnit\Framework\TestCase;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
@@ -124,5 +126,14 @@ abstract class LaravelToolsTestsHelpers extends TestCase
     protected function getNamespaceExtractor(): NamespaceExtractor
     {
         return new NamespaceExtractor($this->getCodeFormatter());
+    }
+
+    public function getApiRouteGenerator(): ApiRouteGenerator
+    {
+        return new ApiRouteGenerator(
+            new ApiRoutesImplementationGuesser($this->getConfigRepository()),
+            $this->getCommentsGenerator(),
+            $this->getCodeFormatter()
+        );
     }
 }
