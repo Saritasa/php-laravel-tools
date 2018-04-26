@@ -57,11 +57,11 @@ class ClassGenerator
     private $functionGenerator;
 
     /**
-     * PhpDoc for variable builder. Allows to generate PhpDoc variable description block.
+     * Class property generator. Allows to generate class property definition and description.
      *
      * @var ClassPropertyGenerator
      */
-    private $phpDocClassPropertyDescriptionBuilder;
+    private $classPropertyGenerator;
 
     /**
      * Namespace extractor. Allows to retrieve list of used namespaces from code and remove FQN from it.
@@ -78,13 +78,13 @@ class ClassGenerator
      * @param CodeFormatter $codeFormatter Code style utility. Allows to format code according to settings. Can apply
      *     valid indent to code line or code block
      * @param CommentsGenerator $commentsGenerator Php comments generator. Allows to comment lines and blocks of text
-     * @param NamespaceExtractor $namespaceExtractor Allows to render php-class description
-     * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Php function code generator. Allows to
-     *     generate function declaration by parameters
-     * @param FunctionGenerator $functionGenerator PhpDoc for variable builder. Allows to generate PhpDoc variable
-     *     description block
-     * @param ClassPropertyGenerator $phpDocClassPropertyDescriptionBuilder Namespace extractor. Allows to retrieve
-     *     list of used namespaces from code and remove FQN from it
+     * @param NamespaceExtractor $namespaceExtractor Namespace extractor. Allows to retrieve list of used namespaces
+     *     from code and remove FQN from it
+     * @param PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder Allows to render php-class description
+     * @param FunctionGenerator $functionGenerator Php function code generator. Allows to generate function declaration
+     *     by parameters
+     * @param ClassPropertyGenerator $classPropertyGenerator Class property generator. Allows to generate class
+     *     property definition and description
      */
     public function __construct(
         TemplateWriter $templateWriter,
@@ -93,14 +93,14 @@ class ClassGenerator
         NamespaceExtractor $namespaceExtractor,
         PhpDocClassDescriptionBuilder $phpDocClassDescriptionBuilder,
         FunctionGenerator $functionGenerator,
-        ClassPropertyGenerator $phpDocClassPropertyDescriptionBuilder
+        ClassPropertyGenerator $classPropertyGenerator
     ) {
         $this->templateWriter = $templateWriter;
         $this->codeFormatter = $codeFormatter;
         $this->commentsGenerator = $commentsGenerator;
         $this->phpDocClassDescriptionBuilder = $phpDocClassDescriptionBuilder;
         $this->functionGenerator = $functionGenerator;
-        $this->phpDocClassPropertyDescriptionBuilder = $phpDocClassPropertyDescriptionBuilder;
+        $this->classPropertyGenerator = $classPropertyGenerator;
         $this->namespaceExtractor = $namespaceExtractor;
     }
 
@@ -158,7 +158,7 @@ class ClassGenerator
             if ($result) {
                 $result[] = '';
             }
-            $result[] = $this->phpDocClassPropertyDescriptionBuilder->render($property);
+            $result[] = $this->classPropertyGenerator->render($property);
         }
 
         return $this->codeFormatter->linesToBlock($result);
@@ -202,7 +202,7 @@ class ClassGenerator
         }
 
         $propertiesBlock = $this->getPropertiesBlock($classObject);
-        if ($constantsBlock) {
+        if ($propertiesBlock) {
             if ($result) {
                 $result[] = '';
             }
