@@ -2,6 +2,7 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
+use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use PHPUnit\Framework\TestCase;
@@ -103,7 +104,7 @@ class TemplateWriterTest extends TestCase
      *
      * @return void
      * @throws FileNotFoundException
-     * @throws \Exception
+     * @throws Exception
      */
     public function testFillFunction()
     {
@@ -132,7 +133,7 @@ class TemplateWriterTest extends TestCase
      *
      * @return void
      * @throws FileNotFoundException
-     * @throws \Exception
+     * @throws Exception
      */
     public function testWriteFunction()
     {

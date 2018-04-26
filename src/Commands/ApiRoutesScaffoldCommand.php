@@ -5,7 +5,7 @@ namespace Saritasa\LaravelTools\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\LaravelTools\DTO\Configs\ApiRoutesFactoryConfig;
-use Saritasa\LaravelTools\Services\ApiRoutesService;
+use Saritasa\LaravelTools\Services\ApiRoutesDefinitionGenerationService;
 
 /**
  * Console command to generate api routes based on swagger 2.0 specification.
@@ -29,16 +29,16 @@ class ApiRoutesScaffoldCommand extends Command
     /**
      * Generates api routes definition based on swagger specification.
      *
-     * @var ApiRoutesService
+     * @var ApiRoutesDefinitionGenerationService
      */
     private $apiRoutesService;
 
     /**
      * Console command to generate api routes based on swagger 2.0 specification.
      *
-     * @param ApiRoutesService $apiRoutesService Generates api routes definition based on swagger specification
+     * @param ApiRoutesDefinitionGenerationService $apiRoutesService Generates api routes definition based on swagger specification
      */
-    public function __construct(ApiRoutesService $apiRoutesService)
+    public function __construct(ApiRoutesDefinitionGenerationService $apiRoutesService)
     {
         parent::__construct();
 

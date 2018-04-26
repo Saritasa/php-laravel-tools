@@ -7,7 +7,7 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Str;
 use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
-use Saritasa\LaravelTools\Services\DtoService;
+use Saritasa\LaravelTools\Services\DtoGenerationService;
 
 /**
  * Console command to generate new DTO based on model's attributes.
@@ -36,7 +36,7 @@ class DtoScaffoldCommand extends Command
     /**
      * DTO scaffold service.
      *
-     * @var DtoService
+     * @var DtoGenerationService
      */
     private $dtoService;
 
@@ -50,10 +50,10 @@ class DtoScaffoldCommand extends Command
     /**
      * Console command to generate new Dto based on model's attributes.
      *
-     * @param DtoService $dtoService DTO scaffold service
+     * @param DtoGenerationService $dtoService DTO scaffold service
      * @param Repository $configRepository Configurations storage
      */
-    public function __construct(DtoService $dtoService, Repository $configRepository)
+    public function __construct(DtoGenerationService $dtoService, Repository $configRepository)
     {
         parent::__construct();
 
@@ -118,7 +118,7 @@ class DtoScaffoldCommand extends Command
     /**
      * Get user preferences for new DTO.
      *
-     * @return \Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig
+     * @return DtoFactoryConfig
      */
     private function getPreConfig(): DtoFactoryConfig
     {

@@ -5,7 +5,7 @@ namespace Saritasa\LaravelTools\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Saritasa\LaravelTools\Services\FormRequestService;
+use Saritasa\LaravelTools\Services\FormRequestGenerationService;
 
 /**
  * Console command to generate new FormRequest based on model's attributes.
@@ -31,16 +31,16 @@ class FormRequestsScaffoldCommand extends Command
     /**
      * Form request scaffold service.
      *
-     * @var FormRequestService
+     * @var FormRequestGenerationService
      */
     private $formRequestService;
 
     /**
      * Console command to generate new FormRequest based on model's attributes.
      *
-     * @param FormRequestService $formRequestService Form request scaffold service
+     * @param FormRequestGenerationService $formRequestService Form request scaffold service
      */
-    public function __construct(FormRequestService $formRequestService)
+    public function __construct(FormRequestGenerationService $formRequestService)
     {
         parent::__construct();
 

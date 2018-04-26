@@ -12,6 +12,7 @@ use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
 use Saritasa\LaravelTools\Database\SchemaReader;
+use Saritasa\LaravelTools\DTO\Configs\ModelBasedClassFactoryConfig;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 use UnexpectedValueException;
 
@@ -23,7 +24,7 @@ abstract class ModelBasedClassFactory extends ClassFactory
     /**
      * Factory configuration.
      *
-     * @var \Saritasa\LaravelTools\DTO\Configs\ModelBasedClassFactoryConfig
+     * @var ModelBasedClassFactoryConfig
      */
     protected $config;
 

@@ -5,28 +5,21 @@ namespace Saritasa\LaravelTools\Services;
 use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\DTO\Configs\ApiRoutesFactoryConfig;
-use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
 use Saritasa\LaravelTools\Factories\ApiRoutesDeclarationFactory;
 
 /**
  * Generates api routes definition based on swagger specification.
  */
-class ApiRoutesService
+class ApiRoutesDefinitionGenerationService extends TemplateBasedGenerationService
 {
     /**
-     * Application configuration repository.
+     * Section key in configuration repository where configuration for this service located.
      *
-     * @var Repository
+     * @var string
      */
-    private $configRepository;
-
-    /**
-     * Scaffold templates manager.
-     *
-     * @var TemplatesManager
-     */
-    private $templatesManager;
+    protected $serviceConfigurationKey = 'api_routes';
 
     /**
      * API routes file generator.
@@ -41,14 +34,15 @@ class ApiRoutesService
      * @param Repository $configRepository Application configuration repository
      * @param TemplatesManager $templatesManager Scaffold templates manager
      * @param ApiRoutesDeclarationFactory $apiRoutesDeclarationFactory API routes file generator
+     *
+     * @throws ConfigurationException
      */
     public function __construct(
         Repository $configRepository,
         TemplatesManager $templatesManager,
         ApiRoutesDeclarationFactory $apiRoutesDeclarationFactory
     ) {
-        $this->configRepository = $configRepository;
-        $this->templatesManager = $templatesManager;
+        parent::__construct($configRepository, $templatesManager);
         $this->apiRoutesDeclarationFactory = $apiRoutesDeclarationFactory;
     }
 
@@ -74,6 +68,7 @@ class ApiRoutesService
      * @param ApiRoutesFactoryConfig $initialFactoryConfig Initial configuration
      *
      * @return ApiRoutesFactoryConfig
+     * @throws ConfigurationException
      */
     private function getConfiguration(ApiRoutesFactoryConfig $initialFactoryConfig): ApiRoutesFactoryConfig
     {
@@ -98,7 +93,7 @@ class ApiRoutesService
      */
     private function getApiControllersNamespace(): string
     {
-        return $this->configRepository->get('laravel_tools.api_controllers.namespace');
+        return $this->getPackageConfig('api_controllers.namespace');
     }
 
     /**
@@ -108,7 +103,7 @@ class ApiRoutesService
      */
     private function getResultFileName(): string
     {
-        return $this->configRepository->get('laravel_tools.api_routes.result_file_name');
+        return $this->getServiceConfig('result_file_name');
     }
 
     /**
@@ -118,7 +113,7 @@ class ApiRoutesService
      */
     private function getSpecificationFileName(): string
     {
-        return $this->configRepository->get('laravel_tools.swagger.path');
+        return $this->getPackageConfig('swagger.path');
     }
 
     /**
@@ -128,21 +123,6 @@ class ApiRoutesService
      */
     private function getSecuritySchemesMiddlewares(): array
     {
-        return $this->configRepository->get('laravel_tools.api_routes.security_schemes_middlewares');
-    }
-
-    /**
-     * Returns api routes template file name.
-     *
-     * @return string
-     */
-    private function getTemplateFileName(): string
-    {
-        $templateFileName = $this->configRepository->get(
-            'laravel_tools.api_routes.template_file_name',
-            ScaffoldTemplates::API_ROUTES_TEMPLATE
-        );
-
-        return $this->templatesManager->getTemplatePath($templateFileName);
+        return $this->getServiceConfig('security_schemes_middlewares');
     }
 }

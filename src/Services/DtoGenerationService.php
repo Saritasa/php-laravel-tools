@@ -7,27 +7,19 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
-use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
 use Saritasa\LaravelTools\Factories\DtoFactory;
 
 /**
  * DTO service. Allows to configure DTO factory.
  */
-class DtoService
+class DtoGenerationService extends ClassGenerationService
 {
     /**
-     * Application configuration repository.
+     * Section key in configuration repository where configuration for this service located.
      *
-     * @var Repository
+     * @var string
      */
-    private $configRepository;
-
-    /**
-     * Scaffold templates manager.
-     *
-     * @var TemplatesManager
-     */
-    private $templatesManager;
+    protected $serviceConfigurationKey = 'dto';
 
     /**
      * DTO factory.
@@ -42,14 +34,15 @@ class DtoService
      * @param Repository $configRepository Application configuration repository
      * @param TemplatesManager $templatesManager Scaffold templates manager
      * @param DtoFactory $dtoFactory DTO factory
+     *
+     * @throws ConfigurationException
      */
     public function __construct(
         Repository $configRepository,
         TemplatesManager $templatesManager,
         DtoFactory $dtoFactory
     ) {
-        $this->configRepository = $configRepository;
-        $this->templatesManager = $templatesManager;
+        parent::__construct($configRepository, $templatesManager);
         $this->dtoFactory = $dtoFactory;
     }
 
@@ -59,7 +52,7 @@ class DtoService
      * @param string $modelClassName Model class name to which need to generate DTO
      * @param null|string $dtoClassName Result DTO class name. When not passed
      * then will be automatically generated according to model class name
-     * @param \Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig $initialFactoryConfig Initial configuration
+     * @param DtoFactoryConfig $initialFactoryConfig Initial configuration
      *
      * @return string Result DTO file name
      * @throws Exception
@@ -80,9 +73,9 @@ class DtoService
      *
      * @param string $modelClassName Target model class name
      * @param string $dtoClassName Result DTO file name
-     * @param \Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig $initialFactoryConfig Initial configuration
+     * @param DtoFactoryConfig $initialFactoryConfig Initial configuration
      *
-     * @return \Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig
+     * @return DtoFactoryConfig
      * @throws ConfigurationException
      */
     private function getConfiguration(
@@ -101,53 +94,36 @@ class DtoService
         // Choose parent for DTO
         switch (true) {
             case $strict && $immutable:
-                $dtoParentClassConfig = 'laravel_tools.dto.immutable_strict_type_parent';
+                $dtoParentClassConfig = 'immutable_strict_type_parent';
                 break;
             case $immutable:
-                $dtoParentClassConfig = 'laravel_tools.dto.immutable_parent';
+                $dtoParentClassConfig = 'immutable_parent';
                 break;
             case $strict:
-                $dtoParentClassConfig = 'laravel_tools.dto.strict_type_parent';
+                $dtoParentClassConfig = 'strict_type_parent';
                 break;
             default:
-                $dtoParentClassConfig = 'laravel_tools.dto.parent';
+                $dtoParentClassConfig = 'parent';
         }
 
-        $dtoParent = $this->configRepository->get($dtoParentClassConfig);
+        $dtoParent = $this->getServiceConfig($dtoParentClassConfig);
 
         $withConstants = is_null($initialFactoryConfig->withConstants)
             ? $this->isConstantsNeed()
             : $initialFactoryConfig->withConstants;
 
         return new DtoFactoryConfig([
-            DtoFactoryConfig::NAMESPACE => $this->getDtoClassesNamespace(),
-            DtoFactoryConfig::CLASS_NAME => $dtoClassName,
-            DtoFactoryConfig::MODEL_CLASS_NAME => $this->getModelFullClassName($modelClassName),
-            DtoFactoryConfig::RESULT_FILENAME => $this->getResultFileName($dtoClassName),
-            DtoFactoryConfig::EXCLUDED_ATTRIBUTES => $this->getIgnoredAttributes(),
+            DtoFactoryConfig::NAMESPACE => $this->getClassNamespace(),
             DtoFactoryConfig::TEMPLATE_FILENAME => $this->getTemplateFileName(),
             DtoFactoryConfig::PARENT_CLASS_NAME => $dtoParent,
+            DtoFactoryConfig::RESULT_FILENAME => $this->getResultFileName($dtoClassName),
+            DtoFactoryConfig::MODEL_CLASS_NAME => $this->getModelFullClassName($modelClassName),
+            DtoFactoryConfig::CLASS_NAME => $dtoClassName,
+            DtoFactoryConfig::EXCLUDED_ATTRIBUTES => $this->getIgnoredAttributes(),
             DtoFactoryConfig::IMMUTABLE => $immutable,
             DtoFactoryConfig::STRICT_TYPES => $strict,
             DtoFactoryConfig::WITH_CONSTANTS => $withConstants,
         ]);
-    }
-
-    /**
-     * Returns DTO target namespace.
-     *
-     * @return string
-     * @throws ConfigurationException When DTO namespace is empty
-     */
-    private function getDtoClassesNamespace(): string
-    {
-        $namespace = $this->configRepository->get('laravel_tools.dto.namespace');
-
-        if (!$namespace) {
-            throw new ConfigurationException('DTO namespace not configured');
-        }
-
-        return $namespace;
     }
 
     /**
@@ -159,23 +135,9 @@ class DtoService
      */
     private function getModelFullClassName(string $model): string
     {
-        $modelsNamespace = trim($this->configRepository->get('laravel_tools.models.namespace'), '\\');
+        $modelsNamespace = trim($this->getPackageConfig('models.namespace'), '\\');
 
         return "{$modelsNamespace}\\{$model}";
-    }
-
-    /**
-     * Returns full path to new DTO.
-     *
-     * @param string $dtoName DTO name to retrieve path for
-     *
-     * @return string
-     */
-    private function getResultFileName(string $dtoName): string
-    {
-        $dtoFilesPath = $this->configRepository->get('laravel_tools.dto.path');
-
-        return rtrim($dtoFilesPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $dtoName . '.php';
     }
 
     /**
@@ -186,7 +148,7 @@ class DtoService
      */
     private function getIgnoredAttributes(): array
     {
-        $ignoredAttributes = $this->configRepository->get('laravel_tools.dto.except');
+        $ignoredAttributes = $this->getServiceConfig('except');
 
         if (!is_array($ignoredAttributes)) {
             throw new ConfigurationException('DTO ignored attributes configuration is invalid');
@@ -196,28 +158,13 @@ class DtoService
     }
 
     /**
-     * Returns DTO template file name.
-     *
-     * @return string
-     */
-    private function getTemplateFileName(): string
-    {
-        $templateFileName = $this->configRepository->get(
-            'laravel_tools.dto.template_file_name',
-            ScaffoldTemplates::DTO_TEMPLATE
-        );
-
-        return $this->templatesManager->getTemplatePath($templateFileName);
-    }
-
-    /**
      * Whether constants generation is necessary.
      *
      * @return boolean
      */
     private function isConstantsNeed(): bool
     {
-        return (bool)$this->configRepository->get('laravel_tools.dto.with_constants');
+        return (bool)$this->getServiceConfig('with_constants');
     }
 
     /**
@@ -227,7 +174,7 @@ class DtoService
      */
     private function immutable(): bool
     {
-        return (bool)$this->configRepository->get('laravel_tools.dto.immutable');
+        return (bool)$this->getServiceConfig('immutable');
     }
 
     /**
@@ -237,6 +184,6 @@ class DtoService
      */
     private function strictTypes(): bool
     {
-        return (bool)$this->configRepository->get('laravel_tools.dto.strict');
+        return (bool)$this->getServiceConfig('strict');
     }
 }

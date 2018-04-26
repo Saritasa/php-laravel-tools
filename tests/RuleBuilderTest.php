@@ -2,6 +2,7 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Types\Type;
@@ -31,7 +32,7 @@ class RuleBuilderTest extends TestCase
      * Test that rule builder builds valid rule set for given column.
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function testRuleBuilder()
     {

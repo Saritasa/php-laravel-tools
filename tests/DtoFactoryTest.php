@@ -11,6 +11,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
+use Mockery;
 use Saritasa\Dto;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
@@ -20,7 +21,7 @@ use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
 use Saritasa\LaravelTools\Factories\DtoFactory;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
-use Saritasa\LaravelTools\Services\DtoService;
+use Saritasa\LaravelTools\Services\DtoGenerationService;
 use Saritasa\LaravelTools\Services\TemplatesManager;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
@@ -30,7 +31,7 @@ use Saritasa\LaravelTools\Services\TemplateWriter;
 class DtoFactoryTest extends LaravelToolsTestsHelpers
 {
     /** @var string Name of temporary created template file */
-    private $testTemplateFileName = 'UnitTestsDtoFakeTemplate.tmp';
+    private $testTemplateFileName = './UnitTestsDtoFakeTemplate.tmp';
 
     /** @var string Name of temporary created filled template file */
     private $testResultFileName = 'UnitTestsDtoFakeTemplateResult.tmp';
@@ -141,7 +142,7 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
         $getterGenerator = new GetterGenerator($this->getFunctionGenerator());
         $setterGenerator = new SetterGenerator($this->getFunctionGenerator());
         /** @var SchemaReader $schemaReader */
-        $schemaReader = \Mockery::mock(SchemaReader::class)
+        $schemaReader = Mockery::mock(SchemaReader::class)
             ->expects('getTableDetails')
             ->andReturn($table)
             ->getMock();
@@ -206,10 +207,11 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
             'laravel_tools.dto.namespace' => $dtoFactoryConfig->namespace,
             'laravel_tools.dto.parent' => $dtoFactoryConfig->parentClassName,
             'laravel_tools.dto.except' => $dtoFactoryConfig->excludedAttributes,
+            'laravel_tools.dto.template_file_name' => $this->testTemplateFileName,
             'laravel_tools.dto.path' => __DIR__,
         ]);
 
-        $dtoService = new DtoService($repository, $templatesManager, $dtoFactory);
+        $dtoService = new DtoGenerationService($repository, $templatesManager, $dtoFactory);
         $resultFileName = $dtoService->generateDto(
             $dtoFactoryConfig->modelClassName,
             $dtoFactoryConfig->className,
@@ -248,6 +250,7 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
             'laravel_tools.dto.namespace' => $dtoFactoryConfig->namespace,
             'laravel_tools.dto.parent' => $dtoFactoryConfig->parentClassName,
             'laravel_tools.dto.except' => $dtoFactoryConfig->excludedAttributes,
+            'laravel_tools.dto.template_file_name' => $this->testTemplateFileName,
             'laravel_tools.dto.path' => __DIR__,
         ];
         unset($config[$missedConfig]);
@@ -255,7 +258,7 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
 
         $this->expectExceptionMessage($expectedExceptionMessage);
 
-        $dtoService = new DtoService($repository, $templatesManager, $dtoFactory);
+        $dtoService = new DtoGenerationService($repository, $templatesManager, $dtoFactory);
         $dtoService->generateDto(
             $dtoFactoryConfig->modelClassName,
             $dtoFactoryConfig->className,
@@ -274,7 +277,7 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
         return [
             'Missed namespace config' => [
                 'laravel_tools.dto.namespace',
-                'DTO namespace not configured',
+                'Class namespace not configured',
             ],
             'Missed except config' => [
                 'laravel_tools.dto.except',

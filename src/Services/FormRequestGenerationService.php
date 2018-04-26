@@ -7,27 +7,19 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig;
-use Saritasa\LaravelTools\Enums\ScaffoldTemplates;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
 
 /**
  * Form request service. Allows to configure form request factory.
  */
-class FormRequestService
+class FormRequestGenerationService extends ClassGenerationService
 {
     /**
-     * Application configuration repository.
+     * Section key in configuration repository where configuration for this service located.
      *
-     * @var Repository
+     * @var string
      */
-    private $configRepository;
-
-    /**
-     * Scaffold templates manager.
-     *
-     * @var TemplatesManager
-     */
-    private $templatesManager;
+    protected $serviceConfigurationKey = 'form_requests';
 
     /**
      * Form request factory.
@@ -42,14 +34,15 @@ class FormRequestService
      * @param Repository $configRepository Application configuration repository
      * @param TemplatesManager $templatesManager Scaffold templates manager
      * @param FormRequestFactory $formRequestFactory Form request factory
+     *
+     * @throws ConfigurationException
      */
     public function __construct(
         Repository $configRepository,
         TemplatesManager $templatesManager,
         FormRequestFactory $formRequestFactory
     ) {
-        $this->configRepository = $configRepository;
-        $this->templatesManager = $templatesManager;
+        parent::__construct($configRepository, $templatesManager);
         $this->formRequestFactory = $formRequestFactory;
     }
 
@@ -78,7 +71,7 @@ class FormRequestService
      * @param string $modelClassName Target model class name
      * @param string $formRequestClassName Result form request file name
      *
-     * @return \Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig
+     * @return FormRequestFactoryConfig
      * @throws ConfigurationException
      */
     private function getDefaultConfiguration(
@@ -86,49 +79,15 @@ class FormRequestService
         string $formRequestClassName
     ): FormRequestFactoryConfig {
         return new FormRequestFactoryConfig([
-            FormRequestFactoryConfig::NAMESPACE => $this->getFormRequestsNamespace(),
-            FormRequestFactoryConfig::PARENT_CLASS_NAME => $this->getFormRequestParentClassName(),
+            FormRequestFactoryConfig::NAMESPACE => $this->getClassNamespace(),
+            FormRequestFactoryConfig::PARENT_CLASS_NAME => $this->getParentClassName(),
+            FormRequestFactoryConfig::TEMPLATE_FILENAME => $this->getTemplateFileName(),
+            FormRequestFactoryConfig::RESULT_FILENAME => $this->getResultFileName($formRequestClassName),
             FormRequestFactoryConfig::CLASS_NAME => $formRequestClassName,
             FormRequestFactoryConfig::MODEL_CLASS_NAME => $this->getModelFullClassName($modelClassName),
-            FormRequestFactoryConfig::RESULT_FILENAME => $this->getResultFileName($formRequestClassName),
-            FormRequestFactoryConfig::TEMPLATE_FILENAME => $this->getTemplateFileName(),
             FormRequestFactoryConfig::EXCLUDED_ATTRIBUTES => $this->getIgnoredAttributes(),
             FormRequestFactoryConfig::SUGGEST_ATTRIBUTE_NAMES_CONSTANTS => $this->getSuggestAttributesConstants(),
         ]);
-    }
-
-    /**
-     * Returns form request target namespace.
-     *
-     * @return string
-     * @throws ConfigurationException When form request namespace is empty
-     */
-    private function getFormRequestsNamespace(): string
-    {
-        $namespace = $this->configRepository->get('laravel_tools.form_requests.namespace');
-
-        if (!$namespace) {
-            throw new ConfigurationException('Form request namespace not configured');
-        }
-
-        return $namespace;
-    }
-
-    /**
-     * Returns form request parent class name.
-     *
-     * @return string
-     * @throws ConfigurationException When form request parent is empty
-     */
-    private function getFormRequestParentClassName(): string
-    {
-        $parentClassName = $this->configRepository->get('laravel_tools.form_requests.parent');
-
-        if (!$parentClassName) {
-            throw new ConfigurationException('Form request parent class name not configured');
-        }
-
-        return $parentClassName;
     }
 
     /**
@@ -140,23 +99,9 @@ class FormRequestService
      */
     private function getModelFullClassName(string $model): string
     {
-        $modelsNamespace = trim($this->configRepository->get('laravel_tools.models.namespace'), '\\');
+        $modelsNamespace = trim($this->getPackageConfig('models.namespace'), '\\');
 
         return "{$modelsNamespace}\\{$model}";
-    }
-
-    /**
-     * Returns full path to new form request.
-     *
-     * @param string $formRequestName Form Request name to retrieve path for
-     *
-     * @return string
-     */
-    private function getResultFileName(string $formRequestName): string
-    {
-        $formRequestsPath = $this->configRepository->get('laravel_tools.form_requests.path');
-
-        return rtrim($formRequestsPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $formRequestName . '.php';
     }
 
     /**
@@ -167,7 +112,7 @@ class FormRequestService
      */
     private function getIgnoredAttributes(): array
     {
-        $ignoredAttributes = $this->configRepository->get('laravel_tools.form_requests.except');
+        $ignoredAttributes = $this->getServiceConfig('except');
 
         if (!is_array($ignoredAttributes)) {
             throw new ConfigurationException('Form request ignored attributes configuration is invalid');
@@ -183,21 +128,6 @@ class FormRequestService
      */
     private function getSuggestAttributesConstants(): bool
     {
-        return $this->configRepository->get('laravel_tools.models.suggest_attribute_names_constants', true);
-    }
-
-    /**
-     * Returns form request template file name.
-     *
-     * @return string
-     */
-    private function getTemplateFileName(): string
-    {
-        $templateFileName = $this->configRepository->get(
-            'laravel_tools.form_requests.template_file_name',
-            ScaffoldTemplates::FORM_REQUEST_TEMPLATE
-        );
-
-        return $this->templatesManager->getTemplatePath($templateFileName);
+        return $this->getServiceConfig('suggest_attribute_names_constants', true);
     }
 }

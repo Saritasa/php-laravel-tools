@@ -83,7 +83,7 @@ abstract class TemplateBasedFactory
     /**
      * Configure factory to build new class.
      *
-     * @param \Saritasa\LaravelTools\DTO\Configs\TemplateBasedFactoryConfig $config Class configuration
+     * @param TemplateBasedFactoryConfig $config Class configuration
      *
      * @return static
      * @throws ConfigurationException

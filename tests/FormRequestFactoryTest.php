@@ -13,6 +13,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Auth\User;
+use Mockery;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
 use Saritasa\LaravelTools\Database\SchemaReader;
@@ -22,7 +23,7 @@ use Saritasa\LaravelTools\Mappings\DbalToLaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 use Saritasa\LaravelTools\Rules\StringValidationRulesDictionary;
-use Saritasa\LaravelTools\Services\FormRequestService;
+use Saritasa\LaravelTools\Services\FormRequestGenerationService;
 use Saritasa\LaravelTools\Services\TemplatesManager;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
@@ -32,7 +33,7 @@ use Saritasa\LaravelTools\Services\TemplateWriter;
 class FormRequestFactoryTest extends LaravelToolsTestsHelpers
 {
     /** @var string Name of temporary created template file */
-    private $testTemplateFileName = 'UnitTestsFakeTemplate.tmp';
+    private $testTemplateFileName = './UnitTestsFakeTemplate.tmp';
 
     /** @var string Name of temporary created filled template file */
     private $testResultFileName = 'UnitTestsFakeTemplateResult.tmp';
@@ -74,7 +75,7 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
      * @param bool $suggestAttributeNames Suggest that attribute names constants in model exists
      * @param array $excludedAttributes Array with attributes of model that should be removed from form request
      *
-     * @return \Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig
+     * @return FormRequestFactoryConfig
      */
     private function getFormRequestFactoryConfig(
         bool $suggestAttributeNames = false,
@@ -139,7 +140,7 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
         $classDescriptionBuilder = $this->getPhpDocClassDescriptionBuilder();
         $namespaceExtractor = new NamespaceExtractor($this->getCodeFormatter());
         /** @var SchemaReader $schemaReader */
-        $schemaReader = \Mockery::mock(SchemaReader::class)
+        $schemaReader = Mockery::mock(SchemaReader::class)
             ->expects('getTableDetails')
             ->andReturn($table)
             ->getMock();
@@ -244,10 +245,11 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
             'laravel_tools.form_requests.namespace' => $formRequestFactoryConfig->namespace,
             'laravel_tools.form_requests.parent' => $formRequestFactoryConfig->parentClassName,
             'laravel_tools.form_requests.except' => $formRequestFactoryConfig->excludedAttributes,
+            'laravel_tools.form_requests.template_file_name' => $this->testTemplateFileName,
             'laravel_tools.form_requests.path' => __DIR__,
         ]);
 
-        $formRequestService = new FormRequestService($repository, $templatesManager, $formRequestFactory);
+        $formRequestService = new FormRequestGenerationService($repository, $templatesManager, $formRequestFactory);
         $resultFileName = $formRequestService->generateFormRequest(
             $formRequestFactoryConfig->modelClassName,
             $formRequestFactoryConfig->className
@@ -285,6 +287,7 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
             'laravel_tools.form_requests.namespace' => $formRequestFactoryConfig->namespace,
             'laravel_tools.form_requests.parent' => $formRequestFactoryConfig->parentClassName,
             'laravel_tools.form_requests.except' => $formRequestFactoryConfig->excludedAttributes,
+            'laravel_tools.form_requests.template_file_name' => $this->testTemplateFileName,
             'laravel_tools.form_requests.path' => __DIR__,
         ];
         unset($config[$missedConfig]);
@@ -292,7 +295,7 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
 
         $this->expectExceptionMessage($expectedExceptionMessage);
 
-        $formRequestService = new FormRequestService($repository, $templatesManager, $formRequestFactory);
+        $formRequestService = new FormRequestGenerationService($repository, $templatesManager, $formRequestFactory);
         $formRequestService->generateFormRequest(
             $formRequestFactoryConfig->modelClassName,
             $formRequestFactoryConfig->className
@@ -310,11 +313,11 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
         return [
             'Missed namespace config' => [
                 'laravel_tools.form_requests.namespace',
-                'Form request namespace not configured',
+                'Class namespace not configured',
             ],
             'Missed parent config' => [
                 'laravel_tools.form_requests.parent',
-                'Form request parent class name not configured',
+                'Parent class name not configured',
             ],
             'Missed except config' => [
                 'laravel_tools.form_requests.except',
@@ -351,8 +354,7 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
      *
      * @return void
      */
-    private
-    function createFormRequestTestTemplate(): void
+    private function createFormRequestTestTemplate(): void
     {
         $testTemplate = <<<templateContent
 <?php
@@ -387,8 +389,7 @@ templateContent;
      *
      * @return string
      */
-    private
-    function getExpectedFormRequestContent(): string
+    private function getExpectedFormRequestContent(): string
     {
         return <<<templateContent
 <?php
@@ -431,8 +432,7 @@ templateContent;
      *
      * @return string
      */
-    private
-    function getExpectedFormRequestContentWithoutIdAttribute(): string
+    private function getExpectedFormRequestContentWithoutIdAttribute(): string
     {
         return <<<templateContent
 <?php
@@ -473,8 +473,7 @@ templateContent;
      *
      * @return string
      */
-    private
-    function getExpectedFormRequestContentWithConstants(): string
+    private function getExpectedFormRequestContentWithConstants(): string
     {
         return <<<templateContent
 <?php
