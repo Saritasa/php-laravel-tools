@@ -4,6 +4,7 @@ namespace Saritasa\LaravelTools\Services;
 
 use Exception;
 use Illuminate\Config\Repository;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Saritasa\Exceptions\ConfigurationException;
@@ -51,6 +52,13 @@ class ApiControllerGenerationService extends ClassGenerationService
     private $swaggerReader;
 
     /**
+     * Files storage.
+     *
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
      * Service that can scaffold controllers and methods that covers api specification.
      *
      * @param Repository $configRepository Configuration storage
@@ -60,6 +68,7 @@ class ApiControllerGenerationService extends ClassGenerationService
      * @param ApiRoutesImplementationGuesser $apiRoutesImplementationGuesser Api route implementation guesser that can
      *     guess which controller, method and name should be used for api route specification
      * @param SwaggerReader $swaggerReader Swagger specification file reader. Allows to retrieve API specification
+     * @param Filesystem $filesystem Files storage
      *
      * @throws ConfigurationException
      */
@@ -68,12 +77,14 @@ class ApiControllerGenerationService extends ClassGenerationService
         TemplatesManager $templatesManager,
         ClassGenerator $classGenerator,
         ApiRoutesImplementationGuesser $apiRoutesImplementationGuesser,
-        SwaggerReader $swaggerReader
+        SwaggerReader $swaggerReader,
+        Filesystem $filesystem
     ) {
         parent::__construct($configRepository, $templatesManager);
         $this->classGenerator = $classGenerator;
         $this->apiRoutesImplementationGuesser = $apiRoutesImplementationGuesser;
         $this->swaggerReader = $swaggerReader;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -243,11 +254,11 @@ class ApiControllerGenerationService extends ClassGenerationService
             ClassObject::METHODS => $controllerMethods,
         ]);
 
-        $classTemplate = file_get_contents($config->templateFilename);
+        $classTemplate = $this->filesystem->get($config->templateFilename);
 
         $classBody = $this->classGenerator->render($classObject, $classTemplate);
 
-        file_put_contents($config->resultFilename, $classBody);
+        $this->filesystem->put($config->resultFilename, $classBody);
 
         return $config->resultFilename;
     }

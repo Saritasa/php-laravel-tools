@@ -46,7 +46,8 @@ class ApiControllerGenerationServiceTest extends LaravelToolsTestsHelpers
             new TemplatesManager(),
             $this->getClassGenerator(),
             new ApiRoutesImplementationGuesser($configRepository),
-            $this->getSwaggerReader()
+            $this->getSwaggerReader(),
+            $this->getFileSystem()
         );
 
         $generatedClasses = $apiControllerGenerationService

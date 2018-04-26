@@ -156,9 +156,14 @@ abstract class LaravelToolsTestsHelpers extends TestCase
         );
     }
 
+    protected function getFileSystem(): Filesystem
+    {
+        return app(Filesystem::class);
+    }
+
     protected function getTemplateWriter(): TemplateWriter
     {
-        return new TemplateWriter(app(Filesystem::class));
+        return new TemplateWriter($this->getFilesystem());
     }
 
     protected function getClassGenerator(): ClassGenerator
