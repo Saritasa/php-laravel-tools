@@ -3,10 +3,11 @@
 namespace Saritasa\LaravelTools\CodeGenerators;
 
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
+use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
 /**
- * PhpDoc for variable builder. Allows to generate PhpDoc variable description block.
+ * Class property generator. Allows to generate class property definition and description.
  */
 class ClassPropertyGenerator
 {
@@ -33,7 +34,7 @@ class ClassPropertyGenerator
     private $codeFormatter;
 
     /**
-     * PhpDoc for variable builder. Allows to generate PhpDoc variable description block.
+     * Class property generator. Allows to generate class property definition and description.
      *
      * @param PhpToPhpDocTypeMapper $phpToPhpDocTypeMapper Php scalar type to PhpDoc scalar type mapper
      * @param CommentsGenerator $commentsGenerator Php comments generator. Allows to comment lines and blocks of text
@@ -71,7 +72,15 @@ class ClassPropertyGenerator
 
         $result = [];
         $result[] = $this->commentsGenerator->block($this->codeFormatter->linesToBlock($description));
-        $result[] = "{$classProperty->visibilityType} \${$classProperty->name};";
+        $propertyDeclaration = '';
+        $propertyDeclaration .= $classProperty->visibilityType ?? ClassMemberVisibilityTypes::PUBLIC;
+        $propertyDeclaration .= " \${$classProperty->name}";
+        if ($classProperty->value) {
+            $propertyDeclaration .= " = {$classProperty->value}";
+        }
+        $propertyDeclaration .= ';';
+
+        $result[] = $propertyDeclaration;
 
         return $this->codeFormatter->linesToBlock($result);
     }

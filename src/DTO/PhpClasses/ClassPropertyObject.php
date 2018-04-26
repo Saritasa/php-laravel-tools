@@ -10,6 +10,7 @@ use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 class ClassPropertyObject extends VariableObject
 {
     const VISIBILITY_TYPE = 'visibilityType';
+    const VALUE = 'value';
 
     /**
      * Property visibility type. Public, protected or private.
@@ -18,4 +19,11 @@ class ClassPropertyObject extends VariableObject
      * @var string
      */
     public $visibilityType;
+
+    /**
+     * Default value of class property.
+     *
+     * @var string
+     */
+    public $value;
 }
