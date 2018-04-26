@@ -112,6 +112,21 @@ return [
 
         // The generated controller name suffix
         'name_suffix' => 'ApiController',
+
+        // Custom properties that will be added to generated API controller class.
+        // Values should match ClassPropertyObject::class structure.
+        // available placeholders for values is :
+        // - {{resourceClass}} - FQN of guessed resource class that is handled by controller.
+        // When placeholder value is empty then property will be ignored
+        'custom_properties' => [
+            [
+                'name' => 'modelsClass',
+                'type' => '{{resourceClass}}',
+                'value' => '{{resourceClass}}::class',
+                'description' => 'Resource class that handled by this API controller',
+                'visibilityType' => 'protected',
+            ],
+        ],
     ],
 
     // Api routes configuration

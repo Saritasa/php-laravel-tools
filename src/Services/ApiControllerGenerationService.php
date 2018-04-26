@@ -5,13 +5,16 @@ namespace Saritasa\LaravelTools\Services;
 use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\CodeGenerators\ClassGenerator;
 use Saritasa\LaravelTools\DTO\Configs\ApiControllerFactoryConfig;
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassObject;
+use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteImplementationObject;
 use Saritasa\LaravelTools\Swagger\SwaggerReader;
+use UnexpectedValueException;
 
 /**
  * Service that can scaffold controllers and methods that covers api specification.
@@ -141,6 +144,61 @@ class ApiControllerGenerationService extends ClassGenerationService
     }
 
     /**
+     * Fill placeholders in passed array values.
+     *
+     * @param array $values Values to replace placeholder in
+     * @param array $placeholders Placeholders values
+     *
+     * @return array
+     * @throws UnexpectedValueException when placeholder value is empty
+     */
+    private function fillPlaceholders(array $values, array $placeholders): array
+    {
+        foreach ($values as $key => $value) {
+            foreach ($placeholders as $placeholder => $placeholderValue) {
+                if (strpos($value, $placeholder) !== false) {
+                    if (!$placeholderValue) {
+                        throw new UnexpectedValueException("Placeholder {$placeholder} is empty.");
+                    }
+
+                    $values[$key] = str_replace(
+                        $placeholder,
+                        $placeholderValue,
+                        $value
+                    );
+                }
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * Returns list of class properties that should be added into generated api controller.
+     *
+     * @param array $placeholders Placeholders to fill custom class properties
+     *
+     * @return ClassPropertyObject[]
+     */
+    private function getCustomProperties(array $placeholders): array
+    {
+        $configCustomProperties = $this->getServiceConfig('custom_properties');
+        $customProperties = [];
+        foreach ($configCustomProperties as $configCustomProperty) {
+            try {
+                $configCustomProperty = $this->fillPlaceholders($configCustomProperty, $placeholders);
+            } catch (UnexpectedValueException $e) {
+                fputs(STDERR, $e->getMessage() . ' Skipping property...');
+                continue;
+            }
+
+            $customProperties[] = new ClassPropertyObject($configCustomProperty);
+        }
+
+        return $customProperties;
+    }
+
+    /**
      * Generates new controller based on controller name and suggested methods.
      *
      * @param string $controllerName Name of the new api controller cass
@@ -150,7 +208,7 @@ class ApiControllerGenerationService extends ClassGenerationService
      * @throws ConfigurationException
      * @throws Exception
      */
-    public function generateController(string $controllerName, array $apiRoutesImplementations): string
+    private function generateController(string $controllerName, array $apiRoutesImplementations): string
     {
         $config = $this->getConfiguration($controllerName);
 
@@ -161,7 +219,9 @@ class ApiControllerGenerationService extends ClassGenerationService
         }
 
         $controllerMethods = [];
+        $resourceClass = null;
         foreach ($apiRoutesImplementations as $implementation) {
+            $resourceClass = $resourceClass ?? $implementation->resourceClass;
             if (method_exists($config->parentClassName, $implementation->function->name)) {
                 continue;
             }
@@ -169,12 +229,15 @@ class ApiControllerGenerationService extends ClassGenerationService
             $controllerMethods[] = $implementation->function;
         }
 
+        $classProperties = $this->getCustomProperties(['{{resourceClass}}' => $resourceClass]);
+        $description = str_replace('_', ' ', Str::snake($controllerName));
+
         $classObject = new ClassObject([
             ClassObject::NAME => $config->className,
             ClassObject::NAMESPACE => $config->namespace,
             ClassObject::PARENT => $config->parentClassName,
-            ClassObject::DESCRIPTION => '',
-            ClassObject::PROPERTIES => [],
+            ClassObject::DESCRIPTION => $description,
+            ClassObject::PROPERTIES => $classProperties,
             ClassObject::PHPDOC_PROPERTIES => [],
             ClassObject::CONSTANTS => [],
             ClassObject::METHODS => $controllerMethods,
