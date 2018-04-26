@@ -34,6 +34,13 @@ class ApiRoutesImplementationGuesser
     private $knownRoutes = [];
 
     /**
+     * Namespace of models that are guessed as handled by route resources.
+     *
+     * @var string
+     */
+    private $modelsNamespace;
+
+    /**
      * Api route implementation guesser that can guess which controller, method and name should be used for api route
      * specification.
      *
@@ -47,6 +54,8 @@ class ApiRoutesImplementationGuesser
             ->get('laravel_tools.api_controllers.name_suffix');
         $this->knownRoutes = $configRepository
             ->get('laravel_tools.api_routes.known_routes', []);
+        $this->modelsNamespace = $configRepository
+            ->get('laravel_tools.models.namespace');
     }
 
     /**
@@ -56,9 +65,19 @@ class ApiRoutesImplementationGuesser
      *
      * @return string
      */
-    private function guessRouteResourceName(ApiRouteObject $route): string
+    private function guessRouteResourceName(ApiRouteObject $route): ?string
     {
-        return Str::camel(Str::plural(trim($route->group)));
+        $resource = $route->group;
+
+        if (!$resource) {
+            $resource = explode('/', ltrim($route->url, '/'))[0] ?? null;
+        }
+
+        if (!$resource) {
+            return null;
+        }
+
+        return Str::camel(Str::plural(trim($resource)));
     }
 
     /**
@@ -160,22 +179,36 @@ class ApiRoutesImplementationGuesser
     }
 
     /**
-     * Returns guessed route implementation details.
+     * Guess handled by route resource name.
      *
-     * @param ApiRouteObject $route Route to retrieve implementation details
+     * @param ApiRouteObject $route Route to retrieve resource information
      *
-     * @return ApiRouteImplementationObject
+     * @return null|string
      */
-    public function getRouteImplementationDetails(ApiRouteObject $route): ApiRouteImplementationObject
+    private function guessResourceClass(ApiRouteObject $route): ?string
     {
-        return new ApiRouteImplementationObject([
-            ApiRouteImplementationObject::CONTROLLER => $this->guessControllerName($route),
-            ApiRouteImplementationObject::ACTION => $this->guessMethodName($route),
-            ApiRouteImplementationObject::NAME => $this->guessRouteName($route),
-            ApiRouteImplementationObject::FUNCTION => $this->guessFunctionDetails($route),
-        ]);
+        $resourceName = $this->guessRouteResourceName($route);
+
+        if (!$resourceName) {
+            return null;
+        }
+
+        $resourceClassName = $this->modelsNamespace . '\\' . Str::studly(Str::singular($resourceName));
+
+        if (class_exists($resourceClassName)) {
+            return $resourceClassName;
+        }
+
+        return null;
     }
 
+    /**
+     * Guess function details that probably can handle this route.
+     *
+     * @param ApiRouteObject $route Route to retrieve function details
+     *
+     * @return FunctionObject
+     */
     private function guessFunctionDetails(ApiRouteObject $route): FunctionObject
     {
         $parameters = [];
@@ -197,6 +230,24 @@ class ApiRoutesImplementationGuesser
             FunctionObject::DESCRIPTION => $route->description,
             FunctionObject::VISIBILITY_TYPE => ClassMemberVisibilityTypes::PUBLIC,
             FunctionObject::PARAMETERS => $parameters,
+        ]);
+    }
+
+    /**
+     * Returns guessed route implementation details.
+     *
+     * @param ApiRouteObject $route Route to retrieve implementation details
+     *
+     * @return ApiRouteImplementationObject
+     */
+    public function getRouteImplementationDetails(ApiRouteObject $route): ApiRouteImplementationObject
+    {
+        return new ApiRouteImplementationObject([
+            ApiRouteImplementationObject::CONTROLLER => $this->guessControllerName($route),
+            ApiRouteImplementationObject::ACTION => $this->guessMethodName($route),
+            ApiRouteImplementationObject::NAME => $this->guessRouteName($route),
+            ApiRouteImplementationObject::FUNCTION => $this->guessFunctionDetails($route),
+            ApiRouteImplementationObject::RESOURCE_CLASS => $this->guessResourceClass($route),
         ]);
     }
 }
