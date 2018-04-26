@@ -4,9 +4,6 @@ namespace Saritasa\LaravelTools\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
-use Saritasa\LaravelTools\CodeGenerators\GetterGenerator;
-use Saritasa\LaravelTools\CodeGenerators\SetterGenerator;
-use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 
 /**
  * Test comment generation class.
@@ -26,7 +23,7 @@ class CommentsGeneratorTest extends TestCase
         $this->commentsGenerator = new CommentsGenerator();
     }
 
-    public function testLine():void
+    public function testLine(): void
     {
         $expected = '// Simple text to comment';
         $actual = $this->commentsGenerator->line('Simple text to comment');
@@ -37,7 +34,7 @@ class CommentsGeneratorTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testBlock():void
+    public function testBlock(): void
     {
         $expected = <<<BLOCK
 /**
@@ -71,7 +68,7 @@ BLOCK;
         $this->assertEquals($expected, $actual);
     }
 
-    public function testAlternativeBlock():void
+    public function testAlternativeBlock(): void
     {
         $expected = <<<BLOCK
 /////////////////

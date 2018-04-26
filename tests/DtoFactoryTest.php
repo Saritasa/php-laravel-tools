@@ -304,7 +304,7 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
             ],
             'Immutable without ID attribute' => [
                 $this->getDtoFactoryConfig(['id'], true),
-                $this->getExpectedImmutableithoutId(),
+                $this->getExpectedImmutableWithoutId(),
             ],
             'Strict typed DTO' => [
                 $this->getDtoFactoryConfig(['name', 'birth_date'], false, true),
@@ -483,7 +483,7 @@ templateContent;
      *
      * @return string
      */
-    private function getExpectedImmutableithoutId(): string
+    private function getExpectedImmutableWithoutId(): string
     {
         return <<<templateContent
 <?php

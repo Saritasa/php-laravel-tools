@@ -2,6 +2,7 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
+use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Saritasa\LaravelTools\CodeGenerators\ClassGenerator;
 use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
@@ -32,6 +33,10 @@ class {{className}} extends {{parent}}
 
 CLASS_TEMPLATE;
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testRender(): void
     {
         $classGenerator = new ClassGenerator(
