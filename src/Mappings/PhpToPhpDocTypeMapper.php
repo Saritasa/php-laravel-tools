@@ -3,7 +3,8 @@
 namespace Saritasa\LaravelTools\Mappings;
 
 use RuntimeException;
-use Saritasa\LaravelTools\Enums\PhpDocScalarTypes;
+use Saritasa\LaravelTools\Enums\PhpDocTypes;
+use Saritasa\LaravelTools\Enums\PhpMixedTypes;
 use Saritasa\LaravelTools\Enums\PhpPseudoTypes;
 use Saritasa\LaravelTools\Enums\PhpScalarTypes;
 
@@ -18,12 +19,17 @@ class PhpToPhpDocTypeMapper
      * @var array
      */
     private $typeMappings = [
-        PhpScalarTypes::BOOLEAN => PhpDocScalarTypes::BOOLEAN,
-        PhpScalarTypes::INTEGER => PhpDocScalarTypes::INTEGER,
-        PhpScalarTypes::STRING => PhpDocScalarTypes::STRING,
-        PhpScalarTypes::FLOAT => PhpDocScalarTypes::FLOAT,
-        PhpPseudoTypes::VOID => PhpDocScalarTypes::VOID,
-        PhpPseudoTypes::MIXED => PhpDocScalarTypes::MIXED,
+        // Scalar types mapping
+        PhpScalarTypes::BOOLEAN => PhpDocTypes::BOOLEAN,
+        PhpScalarTypes::INTEGER => PhpDocTypes::INTEGER,
+        PhpScalarTypes::STRING => PhpDocTypes::STRING,
+        PhpScalarTypes::FLOAT => PhpDocTypes::FLOAT,
+        // Pseudo types mapping
+        PhpPseudoTypes::VOID => PhpDocTypes::VOID,
+        PhpPseudoTypes::MIXED => PhpDocTypes::MIXED,
+        // Mixed types mapping
+        PhpMixedTypes::OBJECT => PhpDocTypes::OBJECT,
+        PhpMixedTypes::ARRAY => PhpDocTypes::ARRAY,
     ];
 
     /**

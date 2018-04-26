@@ -7,7 +7,7 @@ use Saritasa\Enum;
 /**
  * Available PhpDoc scalar types.
  */
-class PhpDocScalarTypes extends Enum
+class PhpDocTypes extends Enum
 {
     const BOOLEAN = 'boolean';
     const INTEGER = 'integer';
@@ -15,4 +15,6 @@ class PhpDocScalarTypes extends Enum
     const STRING = 'string';
     const VOID = 'void';
     const MIXED = 'mixed';
+    const ARRAY = 'array';
+    const OBJECT = 'object';
 }

@@ -24,6 +24,10 @@ return [
         // Form requests parent class FQN
         'parent' => \Illuminate\Foundation\Http\FormRequest::class,
 
+        // Form request class template. If template name is just a string than template from package will be taken.
+        // If path passed then file by this path will be taken
+        'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::FORM_REQUEST_TEMPLATE,
+
         // Attributes that should not be taken into account
         'except' => [
             'id',
@@ -31,10 +35,6 @@ return [
             'updated_at',
             'deleted_at',
         ],
-
-        // Form request class template. If template name is just a string than template from package will be taken.
-        // If path passed then file by this path will be taken
-        'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::FORM_REQUEST_TEMPLATE,
     ],
 
     // Validation rules configuration
@@ -46,23 +46,27 @@ return [
 
     // Data Transfer Objects configuration
     'dto' => [
-        // Whether constants block with attributes names should be generated
-        'with_constants' => false,
-
         // Path where DTOs are located
         'path' => app_path('Models/Dto'),
-
-        // Whether generated DTO be with protected properties or not
-        'immutable' => false,
-
-        // Whether generated DTO be with typehinted getters and setters
-        'strict' => false,
 
         // DTO classes namespace
         'namespace' => 'App\Models\Dto',
 
         // DTO parent class FQN
         'parent' => \Saritasa\Dto::class,
+
+        // DTO class template. If template name is just a string than template from package will be taken.
+        // If path passed then file by this path will be taken
+        'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::DTO_TEMPLATE,
+
+        // Whether constants block with attributes names should be generated
+        'with_constants' => false,
+
+        // Whether generated DTO be with protected properties or not
+        'immutable' => false,
+
+        // Whether generated DTO be with typehinted getters and setters
+        'strict' => false,
 
         // Immutable DTO parent class FQN in case you need immutable DTO
         'immutable_parent' => \Saritasa\Dto::class,
@@ -72,10 +76,6 @@ return [
 
         // Strict-typed DTO parent class FQN in case you need immutable DTO with strong attribute types
         'immutable_strict_type_parent' => \Saritasa\Dto::class,
-
-        // DTO class template. If template name is just a string than template from package will be taken.
-        // If path passed then file by this path will be taken
-        'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::DTO_TEMPLATE,
 
         // Attributes that should not be taken into account
         'except' => [
@@ -97,22 +97,27 @@ return [
 
     // Api controllers configuration
     'api_controllers' => [
-        // The generated controller name suffix
-        'generated_controller_suffix' => 'ApiController',
+        // Path where API controllers are located
+        'path' => app_path('Http/Controllers/Api'),
 
         // API controllers namespace
         'namespace' => 'App\Http\Controllers\Api',
 
-        // Path where API controllers are located
-        'path' => app_path('Http/Controllers/Api'),
-
         // Api controllers parent class FQN
-        'parent' => 'Controller',
+        'parent' => 'AppApiController',
+
+        // Api controller class template. If template name is just a string than template from package will be taken.
+        // If path passed then file by this path will be taken
+        'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::API_CONTROLLER_TEMPLATE,
+
+        // The generated controller name suffix
+        'name_suffix' => 'ApiController',
     ],
 
     // Api routes configuration
     'api_routes' => [
-        // Template of the api.php file that will be generated
+        // Template of the api.php file that will be generated. If template name is just a string than template from package will be taken.
+        // If path passed then file by this path will be taken
         'template_file_name' => \Saritasa\LaravelTools\Enums\ScaffoldTemplates::API_ROUTES_TEMPLATE,
 
         // Route middleware for security schemes

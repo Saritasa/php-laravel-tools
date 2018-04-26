@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools;
 use Doctrine\DBAL\Connection;
 use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
+use Saritasa\LaravelTools\Commands\ApiControllersScaffoldCommand;
 use Saritasa\LaravelTools\Commands\ApiRoutesScaffoldCommand;
 use Saritasa\LaravelTools\Commands\DtoScaffoldCommand;
 use Saritasa\LaravelTools\Commands\FormRequestsScaffoldCommand;
@@ -51,6 +52,7 @@ class LaravelToolsServiceProvider extends ServiceProvider
                 FormRequestsScaffoldCommand::class,
                 DtoScaffoldCommand::class,
                 ApiRoutesScaffoldCommand::class,
+                ApiControllersScaffoldCommand::class,
             ]);
 
             $this->app->when(SchemaReader::class)

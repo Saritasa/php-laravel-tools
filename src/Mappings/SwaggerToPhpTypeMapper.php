@@ -3,6 +3,7 @@
 namespace Saritasa\LaravelTools\Mappings;
 
 use Saritasa\Exceptions\NotImplementedException;
+use Saritasa\LaravelTools\Enums\PhpMixedTypes;
 use Saritasa\LaravelTools\Enums\PhpScalarTypes;
 use Saritasa\LaravelTools\Enums\SwaggerTypes;
 
@@ -17,9 +18,8 @@ class SwaggerToPhpTypeMapper implements IPhpTypeMapper
      * @var array
      */
     private $typeMappings = [
-        // Not supported types
-        SwaggerTypes::ARRAY => null,
-        SwaggerTypes::OBJECT => null,
+        SwaggerTypes::ARRAY => PhpMixedTypes::ARRAY,
+        SwaggerTypes::OBJECT => PhpMixedTypes::OBJECT,
         // Integer types
         SwaggerTypes::INTEGER => PhpScalarTypes::INTEGER,
         // Float types

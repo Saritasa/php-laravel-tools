@@ -20,7 +20,17 @@ class ScaffoldTemplates extends Enum
     const DTO_TEMPLATE = 'ModelDtoTemplate';
 
     /**
-     * API routes template.
+     * API routes file template.
      */
     const API_ROUTES_TEMPLATE = 'ApiRoutesTemplate';
+
+    /**
+     * API controller class template.
+     */
+    const API_CONTROLLER_TEMPLATE = 'ClassTemplate';
+
+    /**
+     * General PHP class template.
+     */
+    const CLASS_TEMPLATE = 'ClassTemplate';
 }

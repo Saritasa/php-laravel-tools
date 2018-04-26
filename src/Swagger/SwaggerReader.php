@@ -2,6 +2,7 @@
 
 namespace Saritasa\LaravelTools\Swagger;
 
+use Exception;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteParameterObject;
 use Saritasa\LaravelTools\Enums\HttpMethods;
@@ -86,6 +87,11 @@ class SwaggerReader
             $type = null;
             if ($parameter instanceof Parameter) {
                 $type = $parameter->getType();
+                try {
+                    $type = $this->phpTypeMapper->getPhpType($type);
+                } catch (Exception $e) {
+                    $type = null;
+                }
             }
             $routeParameters[] = new ApiRouteParameterObject([
                 ApiRouteParameterObject::NAME => $parameter->getName(),
@@ -162,7 +168,7 @@ class SwaggerReader
      *
      * @return ApiRouteObject[]
      */
-    public function getApiPaths(string $sourceFile, array $supportedSecuritySchemes): array
+    public function getApiPaths(string $sourceFile, array $supportedSecuritySchemes = []): array
     {
         $swagger = $this->getSpecification($sourceFile);
         $paths = $swagger->getPaths()->getPaths();

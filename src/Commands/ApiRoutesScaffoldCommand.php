@@ -17,7 +17,7 @@ class ApiRoutesScaffoldCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:routes';
+    protected $signature = 'make:api_routes';
 
     /**
      * The console command description.
@@ -36,7 +36,8 @@ class ApiRoutesScaffoldCommand extends Command
     /**
      * Console command to generate api routes based on swagger 2.0 specification.
      *
-     * @param ApiRoutesDefinitionGenerationService $apiRoutesService Generates api routes definition based on swagger specification
+     * @param ApiRoutesDefinitionGenerationService $apiRoutesService Generates api routes definition based on swagger
+     *     specification
      */
     public function __construct(ApiRoutesDefinitionGenerationService $apiRoutesService)
     {
@@ -54,6 +55,7 @@ class ApiRoutesScaffoldCommand extends Command
     public function handle(): void
     {
         $resultFileName = $this->apiRoutesService->generateApiRoutes(new ApiRoutesFactoryConfig([]));
+
         $this->info("Check out generated file [{$resultFileName}]");
     }
 }
