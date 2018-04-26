@@ -3,9 +3,11 @@
 namespace Saritasa\LaravelTools\Tests;
 
 use Illuminate\Config\Repository;
+use Illuminate\Filesystem\Filesystem;
 use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
+use Saritasa\LaravelTools\CodeGenerators\ClassGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
@@ -16,6 +18,7 @@ use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocMethodParameterDescription
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\Mappings\SwaggerToPhpTypeMapper;
+use Saritasa\LaravelTools\Services\TemplateWriter;
 use Saritasa\LaravelTools\Swagger\SwaggerReader;
 use WakeOnWeb\Component\Swagger\Loader\JsonLoader;
 use WakeOnWeb\Component\Swagger\Loader\YamlLoader;
@@ -32,9 +35,25 @@ abstract class LaravelToolsTestsHelpers extends TestCase
     {
         return new Repository([
             'laravel_tools' => [
+                'models' => [
+                    'namespace' => 'App\\Models',
+                ],
                 'api_controllers' => [
                     // The generated controller name suffix
                     'name_suffix' => 'ApiController',
+                    'namespace' => 'App\Http\Controllers\Api',
+                    'path' => __DIR__,
+                    'template_file_name' => 'ClassTemplate',
+                    'parent' => 'BaseApiController',
+                    'custom_properties' => [
+                        [
+                            'name' => 'modelsClass',
+                            'type' => '{{resourceClass}}',
+                            'value' => '{{resourceClass}}::class',
+                            'description' => 'Resource class that handled by this API controller',
+                            'visibilityType' => 'protected',
+                        ],
+                    ],
                 ],
                 'api_routes' => [
                     // Well-known routes which controller, action and route names should not be guessed and used from config
@@ -128,12 +147,30 @@ abstract class LaravelToolsTestsHelpers extends TestCase
         return new NamespaceExtractor($this->getCodeFormatter());
     }
 
-    public function getApiRouteGenerator(): ApiRouteGenerator
+    protected function getApiRouteGenerator(): ApiRouteGenerator
     {
         return new ApiRouteGenerator(
             new ApiRoutesImplementationGuesser($this->getConfigRepository()),
             $this->getCommentsGenerator(),
             $this->getCodeFormatter()
+        );
+    }
+
+    protected function getTemplateWriter(): TemplateWriter
+    {
+        return new TemplateWriter(app(Filesystem::class));
+    }
+
+    protected function getClassGenerator(): ClassGenerator
+    {
+        return new ClassGenerator(
+            $this->getTemplateWriter(),
+            $this->getCodeFormatter(),
+            $this->getCommentsGenerator(),
+            new NamespaceExtractor($this->getCodeFormatter()),
+            $this->getPhpDocClassDescriptionBuilder(),
+            $this->getFunctionGenerator(),
+            $this->getClassPropertyGenerator()
         );
     }
 }

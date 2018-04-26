@@ -3,9 +3,6 @@
 namespace Saritasa\LaravelTools\Tests;
 
 use Exception;
-use Illuminate\Filesystem\Filesystem;
-use Saritasa\LaravelTools\CodeGenerators\ClassGenerator;
-use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassConstantObject;
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassObject;
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassPhpDocPropertyObject;
@@ -14,7 +11,6 @@ use Saritasa\LaravelTools\DTO\PhpClasses\FunctionObject;
 use Saritasa\LaravelTools\DTO\PhpClasses\FunctionParameterObject;
 use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 use Saritasa\LaravelTools\Enums\PhpDocPropertyAccessTypes;
-use Saritasa\LaravelTools\Services\TemplateWriter;
 
 class ClassGeneratorTest extends LaravelToolsTestsHelpers
 {
@@ -39,15 +35,7 @@ CLASS_TEMPLATE;
      */
     public function testRender(): void
     {
-        $classGenerator = new ClassGenerator(
-            new TemplateWriter(app(Filesystem::class)),
-            $this->getCodeFormatter(),
-            $this->getCommentsGenerator(),
-            new NamespaceExtractor($this->getCodeFormatter()),
-            $this->getPhpDocClassDescriptionBuilder(),
-            $this->getFunctionGenerator(),
-            $this->getClassPropertyGenerator()
-        );
+        $classGenerator = $this->getClassGenerator();
 
         // Simple class generation
         $classObject = new ClassObject([
