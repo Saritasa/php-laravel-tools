@@ -3,7 +3,7 @@
 namespace Saritasa\LaravelTools\Tests;
 
 use Saritasa\Exceptions\ConfigurationException;
-use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
+use Saritasa\LaravelTools\Services\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\Services\GenerationServices\ApiControllerGenerationService;
 use Saritasa\LaravelTools\Services\TemplatesManager;
 

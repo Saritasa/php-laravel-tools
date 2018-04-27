@@ -6,7 +6,6 @@ use Illuminate\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
 use PHPUnit\Framework\TestCase;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
-use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\CodeGenerators\ClassGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
@@ -18,6 +17,7 @@ use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocMethodParameterDescription
 use Saritasa\LaravelTools\CodeGenerators\PhpDoc\PhpDocSingleLinePropertyDescriptionBuilder;
 use Saritasa\LaravelTools\Mappings\PhpToPhpDocTypeMapper;
 use Saritasa\LaravelTools\Mappings\SwaggerToPhpTypeMapper;
+use Saritasa\LaravelTools\Services\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 use Saritasa\LaravelTools\Swagger\SwaggerReader;
 use WakeOnWeb\Component\Swagger\Loader\JsonLoader;

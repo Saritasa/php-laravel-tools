@@ -2,8 +2,8 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
-use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
+use Saritasa\LaravelTools\Services\ApiRoutesImplementationGuesser;
 
 class ApiRouteImplementationGuesserTest extends LaravelToolsTestsHelpers
 {

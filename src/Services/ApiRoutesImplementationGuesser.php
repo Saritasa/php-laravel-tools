@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
+namespace Saritasa\LaravelTools\Services;
 
 use Illuminate\Config\Repository;
 use Illuminate\Support\Str;

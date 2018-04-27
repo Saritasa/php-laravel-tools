@@ -92,6 +92,6 @@ GROUP;
             return null;
         }
 
-        return$this->commentsGenerator->line($formattedDescription);
+        return $this->commentsGenerator->line($formattedDescription);
     }
 }
