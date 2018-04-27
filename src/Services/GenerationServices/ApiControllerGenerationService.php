@@ -114,6 +114,15 @@ class ApiControllerGenerationService extends ClassGenerationService
          * @var Collection $controllerMethodsImplementations
          */
         foreach ($implementationsByControllers as $fullyQualifiedControllerName => $controllerMethodsImplementations) {
+            try {
+                if (class_exists($fullyQualifiedControllerName)) {
+                    fputs(STDERR, "Class {$fullyQualifiedControllerName} already exists. Skipping...\n");
+
+                    continue;
+                }
+            } catch (Exception $e) {
+                fputs(STDERR, "Can't check class {$fullyQualifiedControllerName} existence. Trying to generate...\n");
+            }
             $controllerName = array_reverse(explode('\\', $fullyQualifiedControllerName))[0];
             $controllerNames[] = $this->generateController(
                 $controllerName,
@@ -142,18 +151,6 @@ class ApiControllerGenerationService extends ClassGenerationService
             ApiControllerFactoryConfig::CLASS_NAME => $controllerClassName,
             ApiControllerFactoryConfig::NAMES_SUFFIX => $this->getServiceConfig('name_suffix'),
         ]);
-    }
-
-    /**
-     * Check whether controller exists or not.
-     *
-     * @param string $controllerFilename File name to check
-     *
-     * @return boolean
-     */
-    private function controllerExists(string $controllerFilename): bool
-    {
-        return file_exists($controllerFilename);
     }
 
     /**
@@ -201,7 +198,7 @@ class ApiControllerGenerationService extends ClassGenerationService
             try {
                 $configCustomProperty = $this->fillPlaceholders($configCustomProperty, $placeholders);
             } catch (UnexpectedValueException $e) {
-                fputs(STDERR, $e->getMessage() . ' Skipping property...');
+                // Ignore empty custom property
                 continue;
             }
 
@@ -224,13 +221,6 @@ class ApiControllerGenerationService extends ClassGenerationService
     private function generateController(string $controllerName, array $apiRoutesImplementations): string
     {
         $config = $this->getConfiguration($controllerName);
-
-        if ($this->controllerExists($config->resultFilename)) {
-            fputs(STDERR, "File {$config->resultFilename} already exists. Skipping...\n");
-
-            return $config->resultFilename;
-        }
-
         $controllerMethods = [];
         $resourceClass = null;
         foreach ($apiRoutesImplementations as $implementation) {
