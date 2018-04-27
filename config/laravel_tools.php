@@ -146,6 +146,13 @@ return [
         // Which route generator should be used to generate single route definition
         'route_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator::class,
 
+        // Which routes generator should be used to generate block of routes definition.
+        // Block of routes is not a $api->group(), but semantically united routes
+        'block_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator::class,
+
+        // Which route generator should be used to generate routes group
+        'group_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator::class,
+
         // Well-known routes which controller, action and route names should not be guessed and used from config
         'known_routes' => [
             'GET' => [

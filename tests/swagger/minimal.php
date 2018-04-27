@@ -17,9 +17,12 @@ use Dingo\Api\Routing\Router;
 $api = app(Router::class);
 
 $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api'], function (Router $api) {
-    //////////////////
-    // Pets routes. //
-    //////////////////
+    // Public routes without auth security
+    $api->group(['middleware' => ['bindings']], function (Router $api) {
+        //////////////////
+        // Pets routes. //
+        //////////////////
 
-    $api->get('/pets', 'PetsApiController@index')->name('pets.index');
+        $api->get('/pets', 'PetsApiController@index')->name('pets.index');
+    });
 });

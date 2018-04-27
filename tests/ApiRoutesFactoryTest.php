@@ -6,6 +6,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
@@ -53,9 +54,6 @@ class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
      */
     private function getFactory(): ApiRoutesDeclarationFactory
     {
-        /**
-         * Real and mocked dependencies.
-         */
         $codeFormatter = new CodeFormatter($this->getConfigRepository());
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $commentsGenerator = new CommentsGenerator();
@@ -63,14 +61,18 @@ class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
         $apiRouteGenerator = $this->getApiRouteGenerator();
         $apiRoutesGroupGenerator = new ApiRoutesGroupGenerator($codeFormatter, $commentsGenerator);
         $apiRoutesBlockGenerator = new ApiRoutesBlockGenerator($codeFormatter, $commentsGenerator, $apiRouteGenerator);
+        $apiRoutesGenerator = new ApiRoutesGenerator(
+            $apiRouteGenerator,
+            $apiRoutesBlockGenerator,
+            $apiRoutesGroupGenerator
+        );
 
         return new ApiRoutesDeclarationFactory(
             $templateWriter,
             $codeFormatter,
             $commentsGenerator,
             $swaggerReader,
-            $apiRoutesGroupGenerator,
-            $apiRoutesBlockGenerator
+            $apiRoutesGenerator
         );
     }
 

@@ -17,24 +17,27 @@ use Dingo\Api\Routing\Router;
 $api = app(Router::class);
 
 $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api'], function (Router $api) {
-    ///////////////////
-    // Users routes. //
-    ///////////////////
+    // Public routes without auth security
+    $api->group(['middleware' => ['bindings']], function (Router $api) {
+        ///////////////////
+        // Users routes. //
+        ///////////////////
 
-    // Returns all users from the system that the user has access to
-    $api->get('/users', 'UsersApiController@index')->name('users.index');
+        // Returns all users from the system that the user has access to
+        $api->get('/users', 'UsersApiController@index')->name('users.index');
 
-    //////////////////
-    // Pets routes. //
-    //////////////////
+        //////////////////
+        // Pets routes. //
+        //////////////////
 
-    // Returns all pets from the system that the user has access to
-    $api->get('/pets', 'PetsApiController@index')->name('pets.index');
-    // Returns a user based on a single ID, if the user does not have access to the pet
-    $api->get('/pets/{id}', 'PetsApiController@show')->name('pets.show');
+        // Returns all pets from the system that the user has access to
+        $api->get('/pets', 'PetsApiController@index')->name('pets.index');
+        // Returns a user based on a single ID, if the user does not have access to the pet
+        $api->get('/pets/{id}', 'PetsApiController@show')->name('pets.show');
+    });
 
-    // Routes under Auth token security
-    $api->group(['middleware' => ['jwt.auth']], function (Router $api) {
+    // Routes under auth token security
+    $api->group(['middleware' => ['bindings', 'jwt.auth']], function (Router $api) {
         //////////////////
         // Pets routes. //
         //////////////////
