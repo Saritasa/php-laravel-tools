@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools;
 use Doctrine\DBAL\Connection;
 use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\IApiRouteGenerator;
 use Saritasa\LaravelTools\Commands\ApiControllersScaffoldCommand;
 use Saritasa\LaravelTools\Commands\ApiRoutesScaffoldCommand;
 use Saritasa\LaravelTools\Commands\DtoScaffoldCommand;
@@ -48,28 +49,9 @@ class LaravelToolsServiceProvider extends ServiceProvider
 
             $this->mergeConfigFrom(__DIR__ . '/../config/laravel_tools.php', 'laravel_tools');
 
-            $this->commands([
-                FormRequestsScaffoldCommand::class,
-                DtoScaffoldCommand::class,
-                ApiRoutesScaffoldCommand::class,
-                ApiControllersScaffoldCommand::class,
-            ]);
+            $this->registerCommands();
 
-            $this->app->when(SchemaReader::class)
-                ->needs(Connection::class)
-                ->give(function (Container $app) {
-                    return $app->make(DatabaseConnectionManager::class)->getConnection();
-                });
-
-            $rulesDictionary = config('laravel_tools.rules.dictionary');
-
-            $this->app->when(DtoFactory::class)->needs(IPhpTypeMapper::class)->give(DbalToPhpTypeMapper::class);
-            $this->app->when(FormRequestFactory::class)->needs(IPhpTypeMapper::class)->give(DbalToPhpTypeMapper::class);
-            $this->app->when(SwaggerReader::class)->needs(IPhpTypeMapper::class)->give(SwaggerToPhpTypeMapper::class);
-
-            $this->app->bind(ILaravelValidationTypeMapper::class, DbalToLaravelValidationTypeMapper::class);
-
-            $this->app->bind(IValidationRulesDictionary::class, $rulesDictionary);
+            $this->registerBindings();
         }
     }
 
@@ -81,5 +63,46 @@ class LaravelToolsServiceProvider extends ServiceProvider
     public function provides()
     {
         return [FormRequestFactory::class];
+    }
+
+    /**
+     * Register artisan commands, provided by this package.
+     *
+     * @return void
+     */
+    private function registerCommands(): void
+    {
+        $this->commands([
+            FormRequestsScaffoldCommand::class,
+            DtoScaffoldCommand::class,
+            ApiRoutesScaffoldCommand::class,
+            ApiControllersScaffoldCommand::class,
+        ]);
+    }
+
+    /**
+     * Register all dependencies.
+     *
+     * @return void
+     */
+    private function registerBindings(): void
+    {
+        $this->app->when(SchemaReader::class)
+            ->needs(Connection::class)
+            ->give(function (Container $app) {
+                return $app->make(DatabaseConnectionManager::class)->getConnection();
+            });
+
+        $this->app->when(DtoFactory::class)->needs(IPhpTypeMapper::class)->give(DbalToPhpTypeMapper::class);
+        $this->app->when(FormRequestFactory::class)->needs(IPhpTypeMapper::class)->give(DbalToPhpTypeMapper::class);
+        $this->app->when(SwaggerReader::class)->needs(IPhpTypeMapper::class)->give(SwaggerToPhpTypeMapper::class);
+
+        $this->app->bind(ILaravelValidationTypeMapper::class, DbalToLaravelValidationTypeMapper::class);
+
+        $rulesDictionary = config('laravel_tools.rules.dictionary');
+        $this->app->bind(IValidationRulesDictionary::class, $rulesDictionary);
+
+        $apiRouteGenerator = config('laravel_tools.api_routes.route_generator');
+        $this->app->bind(IApiRouteGenerator::class, $apiRouteGenerator);
     }
 }

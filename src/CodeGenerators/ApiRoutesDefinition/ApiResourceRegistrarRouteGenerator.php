@@ -8,9 +8,10 @@ use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\Services\ApiRoutesImplementationGuesser;
 
 /**
- * Api route generator. Allows to build route declaration with description according to route details.
+ * Api route via api resource registrar generator. Allows to build route declaration with description according to
+ * route details.
  */
-class ApiRouteGenerator implements IApiRouteGenerator
+class ApiResourceRegistrarRouteGenerator implements IApiRouteGenerator
 {
     /**
      * Api route implementation guesser that can guess which controller, method and name should be used for api route
@@ -36,7 +37,8 @@ class ApiRouteGenerator implements IApiRouteGenerator
     private $codeFormatter;
 
     /**
-     * Api route generator. Allows to build route declaration with description according to route details.
+     * Api route via api resource registrar generator. Allows to build route declaration with description according to
+     * route details.
      *
      * @param ApiRoutesImplementationGuesser $apiRoutesImplementationGuesser Api route implementation guesser that can
      *     guess which controller, method and name should be used for api route specification.
@@ -97,8 +99,11 @@ class ApiRouteGenerator implements IApiRouteGenerator
         $routeImplementation = $this->apiRoutesImplementationGuesser->getRouteImplementationDetails($routeData);
         $method = strtolower($routeData->method);
 
-        $routeAction = "{$routeImplementation->controller}@{$routeImplementation->action}";
-
-        return "\$api->{$method}('{$routeData->url}', '{$routeAction}')->name('{$routeImplementation->name}');";
+        return "\$registrar->{$method}(" .
+            "'{$routeData->url}', " .
+            "{$routeImplementation->controller}::class, " .
+            "'{$routeImplementation->action}', " .
+            "'{$routeImplementation->name}'" .
+            ");";
     }
 }

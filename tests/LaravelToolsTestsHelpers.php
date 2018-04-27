@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools\Tests;
 use Illuminate\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
 use PHPUnit\Framework\TestCase;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiResourceRegistrarRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ClassGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
@@ -150,6 +151,15 @@ abstract class LaravelToolsTestsHelpers extends TestCase
     protected function getApiRouteGenerator(): ApiRouteGenerator
     {
         return new ApiRouteGenerator(
+            new ApiRoutesImplementationGuesser($this->getConfigRepository()),
+            $this->getCommentsGenerator(),
+            $this->getCodeFormatter()
+        );
+    }
+
+    protected function getApiResourceRegistrarRouteGenerator(): ApiResourceRegistrarRouteGenerator
+    {
+        return new ApiResourceRegistrarRouteGenerator(
             new ApiRoutesImplementationGuesser($this->getConfigRepository()),
             $this->getCommentsGenerator(),
             $this->getCodeFormatter()

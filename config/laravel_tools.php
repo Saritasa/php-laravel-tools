@@ -143,6 +143,9 @@ return [
         // Result file location. File will be overwritten
         'result_file_name' => 'routes/api.php',
 
+        // Which route generator should be used to generate single route definition
+        'route_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator::class,
+
         // Well-known routes which controller, action and route names should not be guessed and used from config
         'known_routes' => [
             'GET' => [

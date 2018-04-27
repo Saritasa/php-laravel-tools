@@ -37,13 +37,13 @@ class ApiRoutesBlockGenerator
      *
      * @param CodeFormatter $codeFormatter Generated code formatter helper. Allows to apply indent to code
      * @param CommentsGenerator $commentsGenerator Php comments generator. Allows to comment lines and blocks of text
-     * @param ApiRouteGenerator $apiRouteGenerator Api route generator. Allows to build route declaration with
+     * @param IApiRouteGenerator $apiRouteGenerator Api route generator. Allows to build route declaration with
      *     description according to route details
      */
     public function __construct(
         CodeFormatter $codeFormatter,
         CommentsGenerator $commentsGenerator,
-        ApiRouteGenerator $apiRouteGenerator
+        IApiRouteGenerator $apiRouteGenerator
     ) {
         $this->codeFormatter = $codeFormatter;
         $this->commentsGenerator = $commentsGenerator;

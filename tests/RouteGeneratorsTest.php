@@ -12,7 +12,70 @@ use Saritasa\LaravelTools\Enums\HttpMethods;
 class RouteGeneratorsTest extends LaravelToolsTestsHelpers
 {
     /**
+     * @dataProvider apiResourceRouteGeneratorTestSet
      *
+     * @param null|string $description Route description
+     * @param string $method
+     * @param string $path
+     * @param string $expected
+     *
+     * @return void
+     */
+    public function testApiResourceRouteGenerator(
+        ?string $description,
+        string $method,
+        string $path,
+        string $expected
+    ): void {
+        $apiRouteGenerator = $this->getApiResourceRegistrarRouteGenerator();
+        $route = new ApiRouteObject([
+            ApiRouteObject::DESCRIPTION => $description,
+            ApiRouteObject::GROUP => 'Users',
+            ApiRouteObject::METHOD => $method,
+            ApiRouteObject::URL => $path,
+        ]);
+
+        $actual = $apiRouteGenerator->render($route);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function apiResourceRouteGeneratorTestSet(): array
+    {
+        return [
+            'GET route' => [
+                'Get list of users',
+                HttpMethods::GET,
+                '/users',
+                "// Get list of users\n\$registrar->get('/users', UsersApiController::class, 'index', 'users.index');",
+            ],
+            'PUT route' => [
+                'Update user',
+                HttpMethods::PUT,
+                '/users/{id}',
+                "// Update user\n\$registrar->put('/users/{id}', UsersApiController::class, 'update', 'users.update');",
+            ],
+            'GET route with param' => [
+                'Show user',
+                HttpMethods::GET,
+                '/users/{id}',
+                "// Show user\n\$registrar->get('/users/{id}', UsersApiController::class, 'show', 'users.show');",
+            ],
+            'POST route' => [
+                'Create new user',
+                HttpMethods::POST,
+                '/users',
+                "// Create new user\n\$registrar->post('/users', UsersApiController::class, 'store', 'users.store');",
+            ],
+            'Without description' => [
+                '',
+                HttpMethods::GET,
+                '/users',
+                "\$registrar->get('/users', UsersApiController::class, 'index', 'users.index');",
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider routeGeneratorTestSet
      *
      * @param null|string $description Route description
