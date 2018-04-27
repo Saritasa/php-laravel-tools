@@ -54,11 +54,11 @@ class ApiControllersScaffoldCommand extends Command
     public function handle(): void
     {
         $specificationFilename = $this->getSpecificationFileName();
-        $this->info("'$specificationFilename' swagger file used.");
+        $this->info("'{$specificationFilename}' swagger file used.");
 
         $controllerNames = $this->apiControllerGenerationService->generateControllers($specificationFilename);
 
-        $this->info("Check out generated files: \n\n" . implode("\n\t", $controllerNames));
+        $this->info("Check out generated files: \n\n\t" . implode("\n\t", $controllerNames));
     }
 
     /**
