@@ -3,6 +3,7 @@
 namespace Saritasa\LaravelTools\CodeGenerators;
 
 use Illuminate\Config\Repository;
+use Illuminate\Support\Str;
 
 /**
  * Code style utility. Allows to format code according to settings.
@@ -108,10 +109,22 @@ class CodeFormatter
     {
         $sentence = rtrim(ucfirst(trim($sentence)), '.');
 
-        if ($dotEnded) {
+        if ($dotEnded && $sentence) {
             $sentence .= '.';
         }
 
         return $sentence;
+    }
+
+    /**
+     * Separates camel-, studly-, kebab- or snake-cased string token by words.
+     *
+     * @param string $text String token to separate
+     *
+     * @return string Lower-cased words separated by space
+     */
+    public function anyCaseToWords(string $text): string
+    {
+        return str_replace('_', ' ', Str::snake(Str::studly($text)));
     }
 }

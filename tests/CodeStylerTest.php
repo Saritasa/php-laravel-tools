@@ -95,4 +95,62 @@ class CodeFormatterTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider toSentenceTestSet
+     *
+     * @param string $text Text to format as a sentence
+     * @param boolean $dotEnded Should formatted sentence be dot ended or not
+     * @param string $expected Expected result
+     *
+     * @return void
+     */
+    public function testToSentence(string $text, bool $dotEnded, string $expected)
+    {
+        $actual = $this->codeFormatter->toSentence($text, $dotEnded);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function toSentenceTestSet(): array
+    {
+        return [
+            'empty string' => ['', false, ''],
+            'empty string' => ['', true, ''],
+            'single space' => [' ', false, ''],
+            'single space' => [' ', true, ''],
+            'dot' => ['.', false, ''],
+            'dot' => ['.', true, ''],
+            ['simple sentence', false, 'Simple sentence'],
+            ['simple dot ended sentence', true, 'Simple dot ended sentence.'],
+            ['simple dot ended already dot ended sentence', true, 'Simple dot ended already dot ended sentence.'],
+            [' with spaces around ', false, 'With spaces around'],
+            [' with spaces around dot ended ', true, 'With spaces around dot ended.'],
+        ];
+    }
+
+    /**
+     * @dataProvider anyCaseToWordsTestSet
+     *
+     * @param string $text Text to split into words
+     * @param string $expected Expected result
+     *
+     * @return void
+     */
+    public function testAnyCaseToWords(string $text, string $expected)
+    {
+        $actual = $this->codeFormatter->anyCaseToWords($text);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function anyCaseToWordsTestSet(): array
+    {
+        return [
+            ['simple', 'simple'],
+            ['kebab-case', 'kebab case'],
+            ['snake_case', 'snake case'],
+            ['camelCase', 'camel case'],
+            ['StudlyCase', 'studly case'],
+            ['FBIAgency', 'f b i agency'],
+        ];
+    }
 }

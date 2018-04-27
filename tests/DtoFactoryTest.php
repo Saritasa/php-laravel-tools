@@ -370,15 +370,11 @@ class TestDto extends Dto
     const BIRTH_DATE = 'birth_date';
 
     /**
-     * .
-     *
      * @var integer
      */
     public \$id;
 
     /**
-     * .
-     *
      * @var string|null
      */
     public \$name;
@@ -417,8 +413,6 @@ class TestDto extends Dto
     const BIRTH_DATE = 'birth_date';
 
     /**
-     * .
-     *
      * @var string|null
      */
     public \$name;
@@ -454,15 +448,11 @@ use Saritasa\Dto;
 class TestDto extends Dto
 {
     /**
-     * .
-     *
      * @var integer
      */
     public \$id;
 
     /**
-     * .
-     *
      * @var string|null
      */
     public \$name;
@@ -504,8 +494,6 @@ class TestDto extends Dto
     const BIRTH_DATE = 'birth_date';
 
     /**
-     * .
-     *
      * @var string|null
      */
     protected \$name;
@@ -545,8 +533,6 @@ class TestDto extends Dto
     const ID = 'id';
 
     /**
-     * .
-     *
      * @var integer
      */
     protected \$id;
@@ -603,15 +589,11 @@ class TestDto extends Dto
     const NAME = 'name';
 
     /**
-     * .
-     *
      * @var integer
      */
     protected \$id;
 
     /**
-     * .
-     *
      * @var string|null
      */
     protected \$name;
