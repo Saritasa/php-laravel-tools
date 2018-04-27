@@ -162,6 +162,10 @@ return [
         // 'group_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupResourceRegistrarGenerator::class,
 
         // Well-known routes which controller, action and route names should not be guessed and used from config
+        // Array with method type contains list of known routes definitions. Supported placeholders are:
+        // - {{resourceName}} - suggested resource name in plural form, like 'users' or 'roles' that will be detected in urls
+        // Each known route should be compatible with KnownApiRouteObject class structure. If some attributes are empty then
+        // they will be guessed
         'known_routes' => [
             'GET' => [
                 '/{{resourceName}}' => [
@@ -178,42 +182,17 @@ return [
                     'action' => 'store',
                     'name' => '{{resourceName}}.store',
                 ],
-                '/auth' => [
-                    'controller' => 'AuthApiController',
-                    'action' => 'login',
-                    'name' => 'login',
-                ],
-                '/auth/password/reset' => [
-                    'controller' => 'ForgotPasswordApiController',
-                    'action' => 'sendResetLinkEmail',
-                    'name' => 'password.sendResetLink',
-                ],
             ],
             'PUT' => [
                 '/{{resourceName}}/{id}' => [
                     'action' => 'update',
                     'name' => '{{resourceName}}.update',
                 ],
-                '/auth' => [
-                    'controller' => 'AuthApiController',
-                    'action' => 'refreshToken',
-                    'name' => 'authToken.refresh',
-                ],
-                '/auth/password/reset' => [
-                    'controller' => 'ResetPasswordApiController',
-                    'action' => 'reset',
-                    'name' => 'password.reset',
-                ],
             ],
             'DELETE' => [
                 '/{{resourceName}}/{id}' => [
                     'action' => 'destroy',
                     'name' => '{{resourceName}}.destroy',
-                ],
-                '/auth' => [
-                    'controller' => 'AuthApiController',
-                    'action' => 'logout',
-                    'name' => 'auth.logout',
                 ],
             ],
         ],
