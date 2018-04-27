@@ -124,12 +124,11 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
         }
 
         $allRoutesDefinition = $this->codeFormatter->linesToBlock($result);
-        $allRoutesInsideRootGroup = $this->apiRoutesGenerator->renderGroup(
+
+        return $this->apiRoutesGenerator->renderGroup(
             $allRoutesDefinition,
             $this->config->rootGroupMiddlewares
         );
-
-        return $allRoutesInsideRootGroup;
     }
 
     /**
