@@ -114,7 +114,6 @@ class DtoScaffoldCommand extends Command
         }
     }
 
-
     /**
      * Get user preferences for new DTO.
      *
@@ -137,7 +136,6 @@ class DtoScaffoldCommand extends Command
             DtoFactoryConfig::WITH_CONSTANTS => $withConstants,
         ]);
     }
-
 
     /**
      * Get model class name to which need to build DTO.

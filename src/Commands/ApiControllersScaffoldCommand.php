@@ -45,7 +45,6 @@ class ApiControllersScaffoldCommand extends Command
         $this->apiControllerGenerationService = $apiControllerGenerationService;
     }
 
-
     /**
      * Execute the console command.
      *

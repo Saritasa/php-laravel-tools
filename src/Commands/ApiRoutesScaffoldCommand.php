@@ -46,7 +46,6 @@ class ApiRoutesScaffoldCommand extends Command
         $this->apiRoutesService = $apiRoutesService;
     }
 
-
     /**
      * Execute the console command.
      *
