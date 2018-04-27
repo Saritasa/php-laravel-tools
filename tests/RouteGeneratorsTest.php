@@ -2,12 +2,15 @@
 
 namespace Saritasa\LaravelTools\Tests;
 
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteModelBindingResourceRegistrarGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
+use Saritasa\LaravelTools\DTO\Routes\ApiRouteParameterObject;
 use Saritasa\LaravelTools\Enums\HttpMethods;
+use Saritasa\LaravelTools\Services\ApiRoutesImplementationGuesser;
 
 class RouteGeneratorsTest extends LaravelToolsTestsHelpers
 {
@@ -70,6 +73,112 @@ class RouteGeneratorsTest extends LaravelToolsTestsHelpers
                 '',
                 HttpMethods::GET,
                 '/users',
+                "\$registrar->get('/users', App\Http\Controllers\Api\UsersApiController::class, 'index', 'users.index');",
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider apiRouteModelBindingResourceRegistrarGeneratorTestSet
+     *
+     * @param null|string $description Route description
+     * @param string $method
+     * @param string $path
+     * @param array $parameters
+     * @param string $expected
+     *
+     * @return void
+     */
+    public function testApiRouteModelBindingResourceRegistrarGenerator(
+        ?string $description,
+        string $method,
+        string $path,
+        array $parameters,
+        string $expected
+    ): void {
+        $configRepository = $this->getConfigRepository();
+        $configRepository->set('laravel_tools.models.namespace', '');
+        $apiRouteGenerator = new ApiRouteModelBindingResourceRegistrarGenerator(
+            new ApiRoutesImplementationGuesser($configRepository),
+            $this->getCommentsGenerator(),
+            $this->getCodeFormatter()
+        );
+        $route = new ApiRouteObject([
+            ApiRouteObject::DESCRIPTION => $description,
+            ApiRouteObject::GROUP => 'Users',
+            ApiRouteObject::METHOD => $method,
+            ApiRouteObject::URL => $path,
+            ApiRouteObject::PARAMETERS => $parameters,
+        ]);
+
+        $actual = $apiRouteGenerator->render($route);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function apiRouteModelBindingResourceRegistrarGeneratorTestSet(): array
+    {
+        return [
+            'GET route' => [
+                'Get list of users',
+                HttpMethods::GET,
+                '/users',
+                [],
+                "// Get list of users\n\$registrar->get('/users', App\Http\Controllers\Api\UsersApiController::class, 'index', 'users.index');",
+            ],
+            'PUT route' => [
+                'Update user',
+                HttpMethods::PUT,
+                '/users/{id}',
+                [
+                    new ApiRouteParameterObject([
+                        ApiRouteParameterObject::NAME => 'id',
+                        ApiRouteParameterObject::IN => 'path',
+                    ]),
+                ],
+                "// Update user\n\$registrar->put('/users/{model}', App\Http\Controllers\Api\UsersApiController::class, 'update', 'users.update', ['model' => \User::class]);",
+            ],
+            'GET route with param' => [
+                'Show user',
+                HttpMethods::GET,
+                '/users/{id}',
+                [
+                    new ApiRouteParameterObject([
+                        ApiRouteParameterObject::NAME => 'id',
+                        ApiRouteParameterObject::IN => 'path',
+                    ]),
+                ],
+                "// Show user\n\$registrar->get('/users/{model}', App\Http\Controllers\Api\UsersApiController::class, 'show', 'users.show', ['model' => \User::class]);",
+            ],
+            'GET route with two {id} params' => [
+                'Show user order',
+                HttpMethods::GET,
+                '/users/{id}/orders/{id}',
+                [
+                    new ApiRouteParameterObject([
+                        ApiRouteParameterObject::NAME => 'id',
+                        ApiRouteParameterObject::IN => 'path',
+                        ApiRouteParameterObject::DESCRIPTION => 'User identifier',
+                    ]),
+                    new ApiRouteParameterObject([
+                        ApiRouteParameterObject::NAME => 'id',
+                        ApiRouteParameterObject::IN => 'path',
+                        ApiRouteParameterObject::DESCRIPTION => 'Order identifier',
+                    ]),
+                ],
+                "// Show user order\n\$registrar->get('/users/{model}/orders/{id}', App\Http\Controllers\Api\UsersApiController::class, 'getUserOrders', 'users.getUserOrders', ['model' => \User::class]);",
+            ],
+            'POST route' => [
+                'Create new user',
+                HttpMethods::POST,
+                '/users',
+                [],
+                "// Create new user\n\$registrar->post('/users', App\Http\Controllers\Api\UsersApiController::class, 'store', 'users.store');",
+            ],
+            'Without description' => [
+                '',
+                HttpMethods::GET,
+                '/users',
+                [],
                 "\$registrar->get('/users', App\Http\Controllers\Api\UsersApiController::class, 'index', 'users.index');",
             ],
         ];

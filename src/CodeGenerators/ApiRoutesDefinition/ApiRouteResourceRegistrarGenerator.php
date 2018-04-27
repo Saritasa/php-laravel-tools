@@ -4,7 +4,6 @@ namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
-use Saritasa\LaravelTools\DTO\Routes\ApiRouteImplementationObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\Services\ApiRoutesImplementationGuesser;
 
@@ -20,14 +19,14 @@ class ApiRouteResourceRegistrarGenerator implements IApiRouteGenerator
      *
      * @var ApiRoutesImplementationGuesser
      */
-    private $apiRoutesImplementationGuesser;
+    protected $apiRoutesImplementationGuesser;
 
     /**
      * Php comments generator. Allows to comment lines and blocks of text.
      *
      * @var CommentsGenerator
      */
-    private $commentsGenerator;
+    protected $commentsGenerator;
 
     /**
      * Code style utility. Allows to format code according to settings. Can apply valid indent to code line or code
@@ -35,7 +34,7 @@ class ApiRouteResourceRegistrarGenerator implements IApiRouteGenerator
      *
      * @var CodeFormatter
      */
-    private $codeFormatter;
+    protected $codeFormatter;
 
     /**
      * Api route via api resource registrar generator. Allows to build route declaration with description according to
@@ -88,27 +87,6 @@ class ApiRouteResourceRegistrarGenerator implements IApiRouteGenerator
         return $this->commentsGenerator->line($this->codeFormatter->toSentence($routeData->description, false));
     }
 
-    private function substituteBindings(ApiRouteImplementationObject &$routeImplementation): bool
-    {
-        if (!$routeImplementation->resourceClass) {
-            return false;
-        }
-
-        foreach ($routeImplementation->function->parameters as $index => $parameter) {
-            if ($parameter->name === 'id') {
-                $parameter->name = 'model';
-                $parameter->type = $routeImplementation->resourceClass;
-                $parameter->description = 'related resource model';
-                $routeImplementation->function->parameters[$index] = $parameter;
-
-                // We are suggest that first 'id' parameter is the handled by implementation resource identifier
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * Returns API route declaration.
      *
@@ -120,23 +98,12 @@ class ApiRouteResourceRegistrarGenerator implements IApiRouteGenerator
     {
         $routeImplementation = $this->apiRoutesImplementationGuesser->getRouteImplementationDetails($routeData);
 
-        $resourceBindingSubstituted = $this->substituteBindings($routeImplementation);
-
-        $url = $routeData->url;
-        $routeBindings = '';
-
-        if ($resourceBindingSubstituted) {
-            $url = str_replace_first('{id}', '{model}', $routeData->url);
-            $routeBindings = ", ['model' => {$routeImplementation->resourceClass}::class]";
-        }
-
         $method = strtolower($routeData->method);
 
         return "\$registrar->{$method}(" .
-            "'{$url}', " .
+            "'{$routeData->url}', " .
             "{$routeImplementation->controller}::class, " .
             "'{$routeImplementation->action}', " .
-            "'{$routeImplementation->name}'" .
-            "{$routeBindings});";
+            "'{$routeImplementation->name}');";
     }
 }

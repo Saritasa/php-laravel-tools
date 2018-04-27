@@ -27,6 +27,19 @@ use WakeOnWeb\Component\Swagger\SwaggerFactory;
 
 abstract class LaravelToolsTestsHelpers extends TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        // Create alias for stub models to be detectable by class_exist() function
+        $stubClasses = ['Pet', 'User'];
+        foreach ($stubClasses as $stubClass) {
+            if (class_exists($stubClass)) {
+                continue;
+            }
+            class_alias(static::class, $stubClass);
+        }
+    }
+
     /**
      * Returns laravel-tools config repository.
      *

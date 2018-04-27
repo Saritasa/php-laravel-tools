@@ -11,19 +11,6 @@ class ApiControllerGenerationServiceTest extends LaravelToolsTestsHelpers
 {
     private $resultFileName = 'apiControllerGenerationUnitTestsResult.php';
 
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-        // Create alias for stub models to be detectable by class_exist() function
-        $stubClasses = ['Pet', 'User'];
-        foreach ($stubClasses as $stubClass) {
-            if (class_exists($stubClass)) {
-                continue;
-            }
-            class_alias(static::class, $stubClass);
-        }
-    }
-
     protected function tearDown()
     {
         parent::tearDown();
