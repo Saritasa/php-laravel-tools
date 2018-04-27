@@ -12,6 +12,7 @@
 */
 
 use Dingo\Api\Routing\Router;
+use App\Http\Controllers\Api\PetsApiController;
 
 /** @var Router $api */
 $api = app(Router::class);
@@ -22,6 +23,6 @@ $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api']
         // Pets routes. //
         //////////////////
 
-        $api->get('/pets', 'PetsApiController@index')->name('pets.index');
+        $api->get('/pets', PetsApiController::class . '@index')->name('pets.index');
     });
 });

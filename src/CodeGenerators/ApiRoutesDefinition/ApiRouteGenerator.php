@@ -97,8 +97,8 @@ class ApiRouteGenerator implements IApiRouteGenerator
         $routeImplementation = $this->apiRoutesImplementationGuesser->getRouteImplementationDetails($routeData);
         $method = strtolower($routeData->method);
 
-        $routeAction = "{$routeImplementation->controller}@{$routeImplementation->action}";
+        $routeAction = "{$routeImplementation->controller}::class . '@{$routeImplementation->action}'";
 
-        return "\$api->{$method}('{$routeData->url}', '{$routeAction}')->name('{$routeImplementation->name}');";
+        return "\$api->{$method}('{$routeData->url}', {$routeAction})->name('{$routeImplementation->name}');";
     }
 }

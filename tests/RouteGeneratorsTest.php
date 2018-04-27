@@ -27,7 +27,7 @@ class RouteGeneratorsTest extends LaravelToolsTestsHelpers
         string $path,
         string $expected
     ): void {
-        $apiRouteGenerator = $this->getApiResourceRegistrarRouteGenerator();
+        $apiRouteGenerator = $this->getApiRouteResourceRegistrarGenerator();
         $route = new ApiRouteObject([
             ApiRouteObject::DESCRIPTION => $description,
             ApiRouteObject::GROUP => 'Users',
@@ -46,31 +46,31 @@ class RouteGeneratorsTest extends LaravelToolsTestsHelpers
                 'Get list of users',
                 HttpMethods::GET,
                 '/users',
-                "// Get list of users\n\$registrar->get('/users', UsersApiController::class, 'index', 'users.index');",
+                "// Get list of users\n\$registrar->get('/users', App\Http\Controllers\Api\UsersApiController::class, 'index', 'users.index');",
             ],
             'PUT route' => [
                 'Update user',
                 HttpMethods::PUT,
                 '/users/{id}',
-                "// Update user\n\$registrar->put('/users/{id}', UsersApiController::class, 'update', 'users.update');",
+                "// Update user\n\$registrar->put('/users/{id}', App\Http\Controllers\Api\UsersApiController::class, 'update', 'users.update');",
             ],
             'GET route with param' => [
                 'Show user',
                 HttpMethods::GET,
                 '/users/{id}',
-                "// Show user\n\$registrar->get('/users/{id}', UsersApiController::class, 'show', 'users.show');",
+                "// Show user\n\$registrar->get('/users/{id}', App\Http\Controllers\Api\UsersApiController::class, 'show', 'users.show');",
             ],
             'POST route' => [
                 'Create new user',
                 HttpMethods::POST,
                 '/users',
-                "// Create new user\n\$registrar->post('/users', UsersApiController::class, 'store', 'users.store');",
+                "// Create new user\n\$registrar->post('/users', App\Http\Controllers\Api\UsersApiController::class, 'store', 'users.store');",
             ],
             'Without description' => [
                 '',
                 HttpMethods::GET,
                 '/users',
-                "\$registrar->get('/users', UsersApiController::class, 'index', 'users.index');",
+                "\$registrar->get('/users', App\Http\Controllers\Api\UsersApiController::class, 'index', 'users.index');",
             ],
         ];
     }
@@ -106,31 +106,31 @@ class RouteGeneratorsTest extends LaravelToolsTestsHelpers
                 'Get list of users',
                 HttpMethods::GET,
                 '/users',
-                "// Get list of users\n\$api->get('/users', 'UsersApiController@index')->name('users.index');",
+                "// Get list of users\n\$api->get('/users', App\Http\Controllers\Api\UsersApiController::class . '@index')->name('users.index');",
             ],
             'PUT route' => [
                 'Update user',
                 HttpMethods::PUT,
                 '/users/{id}',
-                "// Update user\n\$api->put('/users/{id}', 'UsersApiController@update')->name('users.update');",
+                "// Update user\n\$api->put('/users/{id}', App\Http\Controllers\Api\UsersApiController::class . '@update')->name('users.update');",
             ],
             'GET route with param' => [
                 'Show user',
                 HttpMethods::GET,
                 '/users/{id}',
-                "// Show user\n\$api->get('/users/{id}', 'UsersApiController@show')->name('users.show');",
+                "// Show user\n\$api->get('/users/{id}', App\Http\Controllers\Api\UsersApiController::class . '@show')->name('users.show');",
             ],
             'POST route' => [
                 'Create new user',
                 HttpMethods::POST,
                 '/users',
-                "// Create new user\n\$api->post('/users', 'UsersApiController@store')->name('users.store');",
+                "// Create new user\n\$api->post('/users', App\Http\Controllers\Api\UsersApiController::class . '@store')->name('users.store');",
             ],
             'Without description' => [
                 '',
                 HttpMethods::GET,
                 '/users',
-                "\$api->get('/users', 'UsersApiController@index')->name('users.index');",
+                "\$api->get('/users', App\Http\Controllers\Api\UsersApiController::class . '@index')->name('users.index');",
             ],
         ];
     }
@@ -214,9 +214,9 @@ class RouteGeneratorsTest extends LaravelToolsTestsHelpers
         ];
         $expected = <<<'EXPECTED'
 // Get users
-$api->get('/users', 'UsersApiController@index')->name('users.index');
+$api->get('/users', App\Http\Controllers\Api\UsersApiController::class . '@index')->name('users.index');
 // Get user
-$api->get('/users/{id}', 'UsersApiController@show')->name('users.show');
+$api->get('/users/{id}', App\Http\Controllers\Api\UsersApiController::class . '@show')->name('users.show');
 EXPECTED;
 
         $actual = $routesBlockGenerator->render($routes);
@@ -228,9 +228,9 @@ EXPECTED;
 ////////////////////////////
 
 // Get users
-$api->get('/users', 'UsersApiController@index')->name('users.index');
+$api->get('/users', App\Http\Controllers\Api\UsersApiController::class . '@index')->name('users.index');
 // Get user
-$api->get('/users/{id}', 'UsersApiController@show')->name('users.show');
+$api->get('/users/{id}', App\Http\Controllers\Api\UsersApiController::class . '@show')->name('users.show');
 EXPECTED;
 
         $actual = $routesBlockGenerator->render($routes, 'User management routes');

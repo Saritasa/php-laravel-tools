@@ -20,13 +20,9 @@ class SwaggerToPhpTypeMapper implements IPhpTypeMapper
     private $typeMappings = [
         SwaggerTypes::ARRAY => PhpMixedTypes::ARRAY,
         SwaggerTypes::OBJECT => PhpMixedTypes::OBJECT,
-        // Integer types
         SwaggerTypes::INTEGER => PhpScalarTypes::INTEGER,
-        // Float types
         SwaggerTypes::NUMBER => PhpScalarTypes::FLOAT,
-        // Boolean types
         SwaggerTypes::BOOLEAN => PhpScalarTypes::BOOLEAN,
-        // String types
         SwaggerTypes::STRING => PhpScalarTypes::STRING,
     ];
 

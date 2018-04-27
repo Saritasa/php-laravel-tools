@@ -15,8 +15,13 @@ class ApiControllerGenerationServiceTest extends LaravelToolsTestsHelpers
     {
         parent::setUpBeforeClass();
         // Create alias for stub models to be detectable by class_exist() function
-        class_alias(static::class, 'Pet');
-        class_alias(static::class, 'User');
+        $stubClasses = ['Pet', 'User'];
+        foreach ($stubClasses as $stubClass) {
+            if (class_exists($stubClass)) {
+                continue;
+            }
+            class_alias(static::class, $stubClass);
+        }
     }
 
     protected function tearDown()
@@ -57,8 +62,8 @@ class ApiControllerGenerationServiceTest extends LaravelToolsTestsHelpers
 
         foreach ($generatedClasses as $index => $generatedClass) {
             $this->assertEquals(
-                file_get_contents($generatedClass),
-                file_get_contents($expectedGeneratedClasses[$index])
+                file_get_contents($expectedGeneratedClasses[$index]),
+                file_get_contents($generatedClass)
             );
             unlink($generatedClass);
         }
@@ -70,8 +75,8 @@ class ApiControllerGenerationServiceTest extends LaravelToolsTestsHelpers
             'swagger file with security scheme and reach descriptions' => [
                 'secureReach',
                 [
-                    __DIR__ . DIRECTORY_SEPARATOR . 'PetsTestController.php',
-                    __DIR__ . DIRECTORY_SEPARATOR . 'UsersTestController.php',
+                    __DIR__ . DIRECTORY_SEPARATOR . 'swagger/PetsTestController.php',
+                    __DIR__ . DIRECTORY_SEPARATOR . 'swagger/UsersTestController.php',
                 ],
             ],
         ];

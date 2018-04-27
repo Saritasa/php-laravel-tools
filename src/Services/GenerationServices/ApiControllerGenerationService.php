@@ -113,7 +113,8 @@ class ApiControllerGenerationService extends ClassGenerationService
          *
          * @var Collection $controllerMethodsImplementations
          */
-        foreach ($implementationsByControllers as $controllerName => $controllerMethodsImplementations) {
+        foreach ($implementationsByControllers as $fullyQualifiedControllerName => $controllerMethodsImplementations) {
+            $controllerName = array_reverse(explode('\\', $fullyQualifiedControllerName))[0];
             $controllerNames[] = $this->generateController(
                 $controllerName,
                 $controllerMethodsImplementations->toArray()

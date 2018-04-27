@@ -41,6 +41,13 @@ class ApiRoutesImplementationGuesser
     private $modelsNamespace;
 
     /**
+     * Guessed controllers namespace.
+     *
+     * @var string
+     */
+    private $controllersNamespace;
+
+    /**
      * Api route implementation guesser that can guess which controller, method and name should be used for api route
      * specification.
      *
@@ -52,6 +59,8 @@ class ApiRoutesImplementationGuesser
     {
         $this->controllerNameSuffix = $configRepository
             ->get('laravel_tools.api_controllers.name_suffix');
+        $this->controllersNamespace = $configRepository
+            ->get('laravel_tools.api_controllers.namespace');
         $this->knownRoutes = $configRepository
             ->get('laravel_tools.api_routes.known_routes', []);
         $this->modelsNamespace = $configRepository
@@ -118,7 +127,9 @@ class ApiRoutesImplementationGuesser
             return $knownRoute->controller;
         }
 
-        return Str::studly($this->guessRouteResourceName($route)) . $this->controllerNameSuffix;
+        $controllerName = Str::studly($this->guessRouteResourceName($route)) . $this->controllerNameSuffix;
+
+        return "{$this->controllersNamespace}\\{$controllerName}";
     }
 
     /**

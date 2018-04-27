@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
+use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
 use Saritasa\LaravelTools\DTO\Configs\ApiRoutesFactoryConfig;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\Services\TemplateWriter;
@@ -18,8 +19,9 @@ use Saritasa\LaravelTools\Swagger\SwaggerReader;
 class ApiRoutesDeclarationFactory extends TemplateBasedFactory
 {
     // Template placeholders
-    private const PLACEHOLDER_CONTROLLERS_NAMESPACE = 'controllersNamespace';
-    private const PLACEHOLDER_API_ROUTES_DEFINITIONS = 'apiRoutesDefinitions';
+    protected const PLACEHOLDER_CONTROLLERS_NAMESPACE = 'controllersNamespace';
+    protected const PLACEHOLDER_API_ROUTES_DEFINITIONS = 'apiRoutesDefinitions';
+    protected const PLACEHOLDER_IMPORTS = 'imports';
 
     /**
      * Route factory configuration.
@@ -50,6 +52,13 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
     private $apiRoutesGenerator;
 
     /**
+     * Namespace extractor. Allows to retrieve list of used namespaces from code and remove FQN from it.
+     *
+     * @var NamespaceExtractor
+     */
+    private $namespaceExtractor;
+
+    /**
      * Api routes factory. Allows to build api routes definition according to swagger specification.
      *
      * @param TemplateWriter $templateWriter Templates files writer
@@ -58,18 +67,22 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
      * @param SwaggerReader $swaggerReader Swagger specification file reader
      * @param ApiRoutesGenerator $apiRoutesGenerator Api routes generation methods facade. Allows to render route,
      *     routes block and routes group definition
+     * @param NamespaceExtractor $namespaceExtractor Namespace extractor. Allows to retrieve list of used namespaces
+     *     from code and remove FQN from it
      */
     public function __construct(
         TemplateWriter $templateWriter,
         CodeFormatter $codeFormatter,
         CommentsGenerator $commentsGenerator,
         SwaggerReader $swaggerReader,
-        ApiRoutesGenerator $apiRoutesGenerator
+        ApiRoutesGenerator $apiRoutesGenerator,
+        NamespaceExtractor $namespaceExtractor
     ) {
         parent::__construct($templateWriter, $codeFormatter);
         $this->swaggerReader = $swaggerReader;
         $this->commentsGenerator = $commentsGenerator;
         $this->apiRoutesGenerator = $apiRoutesGenerator;
+        $this->namespaceExtractor = $namespaceExtractor;
     }
 
     /**
@@ -140,10 +153,12 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
     protected function getPlaceHoldersValues(): array
     {
         $routesDefinitions = $this->codeFormatter->indentBlock($this->getRoutesDefinition());
+        $usedClasses = $this->namespaceExtractor->extract($routesDefinitions);
 
         return [
-            static::PLACEHOLDER_CONTROLLERS_NAMESPACE => $this->config->controllersNamespace,
             static::PLACEHOLDER_API_ROUTES_DEFINITIONS => $routesDefinitions,
+            static::PLACEHOLDER_IMPORTS => $this->namespaceExtractor->format($usedClasses),
+            static::PLACEHOLDER_CONTROLLERS_NAMESPACE => $this->config->controllersNamespace,
         ];
     }
 }

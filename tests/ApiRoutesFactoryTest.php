@@ -5,6 +5,7 @@ namespace Saritasa\LaravelTools\Tests;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Saritasa\Exceptions\ConfigurationException;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesBlockGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator;
@@ -12,11 +13,26 @@ use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 use Saritasa\LaravelTools\DTO\Configs\ApiRoutesFactoryConfig;
 use Saritasa\LaravelTools\Factories\ApiRoutesDeclarationFactory;
+use Saritasa\LaravelTools\Services\ApiRoutesImplementationGuesser;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 
 class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
 {
     private $resultFileName = 'apiFactoryUnitTestsResult.php';
+
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        // Create alias for stub models to be detectable by class_exist() function
+        $stubClasses = ['Pet', 'User'];
+        foreach ($stubClasses as $stubClass) {
+            if (class_exists($stubClass)) {
+                continue;
+            }
+            class_alias(static::class, $stubClass);
+        }
+    }
 
     protected function tearDown()
     {
@@ -59,7 +75,13 @@ class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
         $templateWriter = new TemplateWriter(app(Filesystem::class));
         $commentsGenerator = new CommentsGenerator();
         $swaggerReader = $this->getSwaggerReader();
-        $apiRouteGenerator = $this->getApiRouteGenerator();
+        $configRepository = $this->getConfigRepository();
+        $configRepository->set('laravel_tools.models.namespace', '');
+        $apiRouteGenerator = new ApiRouteGenerator(
+            new ApiRoutesImplementationGuesser($configRepository),
+            $this->getCommentsGenerator(),
+            $this->getCodeFormatter()
+        );
         $apiRoutesGroupGenerator = new ApiRoutesGroupGenerator($codeFormatter, $commentsGenerator);
         $apiRoutesBlockGenerator = new ApiRoutesBlockGenerator($codeFormatter, $commentsGenerator, $apiRouteGenerator);
         $apiRoutesGenerator = new ApiRoutesGenerator(
@@ -73,7 +95,8 @@ class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
             $codeFormatter,
             $commentsGenerator,
             $swaggerReader,
-            $apiRoutesGenerator
+            $apiRoutesGenerator,
+            $this->getNamespaceExtractor()
         );
     }
 

@@ -5,8 +5,8 @@ namespace Saritasa\LaravelTools\Tests;
 use Illuminate\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
 use PHPUnit\Framework\TestCase;
-use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiResourceRegistrarRouteGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteResourceRegistrarGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ClassGenerator;
 use Saritasa\LaravelTools\CodeGenerators\ClassPropertyGenerator;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
@@ -42,7 +42,7 @@ abstract class LaravelToolsTestsHelpers extends TestCase
                 'api_controllers' => [
                     // The generated controller name suffix
                     'name_suffix' => 'ApiController',
-                    'namespace' => 'App\Http\Controllers\Api',
+                    'namespace' => 'App\\Http\\Controllers\\Api',
                     'path' => __DIR__,
                     'template_file_name' => 'ClassTemplate',
                     'parent' => 'BaseApiController',
@@ -157,9 +157,9 @@ abstract class LaravelToolsTestsHelpers extends TestCase
         );
     }
 
-    protected function getApiResourceRegistrarRouteGenerator(): ApiResourceRegistrarRouteGenerator
+    protected function getApiRouteResourceRegistrarGenerator(): ApiRouteResourceRegistrarGenerator
     {
-        return new ApiResourceRegistrarRouteGenerator(
+        return new ApiRouteResourceRegistrarGenerator(
             new ApiRoutesImplementationGuesser($this->getConfigRepository()),
             $this->getCommentsGenerator(),
             $this->getCodeFormatter()

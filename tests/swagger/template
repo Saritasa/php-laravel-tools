@@ -12,6 +12,7 @@
 */
 
 use Dingo\Api\Routing\Router;
+{{imports}}
 
 /** @var Router $api */
 $api = app(Router::class);

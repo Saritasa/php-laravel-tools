@@ -115,11 +115,11 @@ class CodeFormatterTest extends TestCase
     {
         return [
             'empty string' => ['', false, ''],
-            'empty string' => ['', true, ''],
+            'empty string dot ended' => ['', true, ''],
             'single space' => [' ', false, ''],
-            'single space' => [' ', true, ''],
+            'single space dot ended' => [' ', true, ''],
             'dot' => ['.', false, ''],
-            'dot' => ['.', true, ''],
+            'dot dot ended' => ['.', true, ''],
             ['simple sentence', false, 'Simple sentence'],
             ['simple dot ended sentence', true, 'Simple dot ended sentence.'],
             ['simple dot ended already dot ended sentence', true, 'Simple dot ended already dot ended sentence.'],
@@ -145,12 +145,18 @@ class CodeFormatterTest extends TestCase
     public function anyCaseToWordsTestSet(): array
     {
         return [
-            ['simple', 'simple'],
+            ['lowercase', 'lowercase'],
+            ['UPPERCASE', 'u p p e r c a s e'],
             ['kebab-case', 'kebab case'],
+            ['-dirty-kebab-case-', 'dirty kebab case'],
             ['snake_case', 'snake case'],
+            ['_dirty_snake_case_', 'dirty snake case'],
             ['camelCase', 'camel case'],
             ['StudlyCase', 'studly case'],
-            ['FBIAgency', 'f b i agency'],
+            [
+                '-Some---DirtyMixed-randomly___generated_NotCOOLCase_',
+                'some dirty mixed randomly generated not c o o l case',
+            ],
         ];
     }
 }

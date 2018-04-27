@@ -11,6 +11,7 @@
 |
 */
 
+{{imports}}
 use Dingo\Api\Routing\Router;
 
 /** @var Router $api */
