@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\PetsApiController;
 /** @var Router $api */
 $api = app(Router::class);
 
-$api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api'], function (Router $api) {
+$api->version(config('api.version'), function (Router $api) {
     $api->group(['middleware' => ['bindings']], function (Router $api) {
         //////////////////
         // Pets routes. //

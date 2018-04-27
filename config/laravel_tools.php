@@ -120,7 +120,7 @@ return [
         // When placeholder value is empty then property will be ignored
         'custom_properties' => [
             [
-                'name' => 'modelsClass',
+                'name' => 'modelClass',
                 'type' => '{{resourceClass}}',
                 'value' => '{{resourceClass}}::class',
                 'description' => 'Resource class that handled by this API controller',
@@ -150,6 +150,8 @@ return [
 
         // Which route generator should be used to generate single route definition
         'route_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteGenerator::class,
+        // 'route_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteResourceRegistrarGenerator::class,
+        // 'route_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRouteModelBindingResourceRegistrarGenerator::class,
 
         // Which routes generator should be used to generate block of routes definition.
         // Block of routes is not a $api->group(), but semantically united routes
@@ -157,6 +159,7 @@ return [
 
         // Which route generator should be used to generate routes group
         'group_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupGenerator::class,
+        // 'group_generator' => \Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\ApiRoutesGroupResourceRegistrarGenerator::class,
 
         // Well-known routes which controller, action and route names should not be guessed and used from config
         'known_routes' => [

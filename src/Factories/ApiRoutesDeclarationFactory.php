@@ -19,7 +19,6 @@ use Saritasa\LaravelTools\Swagger\SwaggerReader;
 class ApiRoutesDeclarationFactory extends TemplateBasedFactory
 {
     // Template placeholders
-    protected const PLACEHOLDER_CONTROLLERS_NAMESPACE = 'controllersNamespace';
     protected const PLACEHOLDER_API_ROUTES_DEFINITIONS = 'apiRoutesDefinitions';
     protected const PLACEHOLDER_IMPORTS = 'imports';
 
@@ -158,7 +157,6 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
         return [
             static::PLACEHOLDER_API_ROUTES_DEFINITIONS => $routesDefinitions,
             static::PLACEHOLDER_IMPORTS => $this->namespaceExtractor->format($usedClasses),
-            static::PLACEHOLDER_CONTROLLERS_NAMESPACE => $this->config->controllersNamespace,
         ];
     }
 }

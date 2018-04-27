@@ -17,6 +17,6 @@ use Dingo\Api\Routing\Router;
 /** @var Router $api */
 $api = app(Router::class);
 
-$api->version(config('api.version'), ['namespace' => '{{controllersNamespace}}'], function (Router $api) {
+$api->version(config('api.version'), function (Router $api) {
 {{apiRoutesDefinitions}}
 });
