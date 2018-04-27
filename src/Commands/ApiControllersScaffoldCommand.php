@@ -4,7 +4,7 @@ namespace Saritasa\LaravelTools\Commands;
 
 use Illuminate\Console\Command;
 use Saritasa\Exceptions\ConfigurationException;
-use Saritasa\LaravelTools\Services\ApiControllerGenerationService;
+use Saritasa\LaravelTools\Services\GenerationServices\ApiControllerGenerationService;
 
 /**
  * Console command to generate api controllers based on swagger 2.0 specification.

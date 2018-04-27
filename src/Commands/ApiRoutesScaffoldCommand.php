@@ -5,7 +5,7 @@ namespace Saritasa\LaravelTools\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\LaravelTools\DTO\Configs\ApiRoutesFactoryConfig;
-use Saritasa\LaravelTools\Services\ApiRoutesDefinitionGenerationService;
+use Saritasa\LaravelTools\Services\GenerationServices\ApiRoutesDefinitionGenerationService;
 
 /**
  * Console command to generate api routes based on swagger 2.0 specification.

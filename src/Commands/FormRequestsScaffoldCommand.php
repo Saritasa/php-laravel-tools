@@ -5,7 +5,7 @@ namespace Saritasa\LaravelTools\Commands;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Saritasa\LaravelTools\Services\FormRequestGenerationService;
+use Saritasa\LaravelTools\Services\GenerationServices\FormRequestGenerationService;
 
 /**
  * Console command to generate new FormRequest based on model's attributes.

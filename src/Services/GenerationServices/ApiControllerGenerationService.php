@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\LaravelTools\Services;
+namespace Saritasa\LaravelTools\Services\GenerationServices;
 
 use Exception;
 use Illuminate\Config\Repository;
@@ -14,6 +14,7 @@ use Saritasa\LaravelTools\DTO\Configs\ApiControllerFactoryConfig;
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassObject;
 use Saritasa\LaravelTools\DTO\PhpClasses\ClassPropertyObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteImplementationObject;
+use Saritasa\LaravelTools\Services\TemplatesManager;
 use Saritasa\LaravelTools\Swagger\SwaggerReader;
 use UnexpectedValueException;
 

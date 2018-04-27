@@ -23,7 +23,7 @@ use Saritasa\LaravelTools\Mappings\DbalToLaravelValidationTypeMapper;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
 use Saritasa\LaravelTools\Rules\RuleBuilder;
 use Saritasa\LaravelTools\Rules\StringValidationRulesDictionary;
-use Saritasa\LaravelTools\Services\FormRequestGenerationService;
+use Saritasa\LaravelTools\Services\GenerationServices\FormRequestGenerationService;
 use Saritasa\LaravelTools\Services\TemplatesManager;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 

@@ -1,9 +1,10 @@
 <?php
 
-namespace Saritasa\LaravelTools\Services;
+namespace Saritasa\LaravelTools\Services\GenerationServices;
 
 use Illuminate\Config\Repository;
 use Saritasa\Exceptions\ConfigurationException;
+use Saritasa\LaravelTools\Services\TemplatesManager;
 
 /**
  * Parent class for template-based generation services. Contains initial configuration methods.

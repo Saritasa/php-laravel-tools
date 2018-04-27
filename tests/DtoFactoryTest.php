@@ -21,7 +21,7 @@ use Saritasa\LaravelTools\Database\SchemaReader;
 use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
 use Saritasa\LaravelTools\Factories\DtoFactory;
 use Saritasa\LaravelTools\Mappings\DbalToPhpTypeMapper;
-use Saritasa\LaravelTools\Services\DtoGenerationService;
+use Saritasa\LaravelTools\Services\GenerationServices\DtoGenerationService;
 use Saritasa\LaravelTools\Services\TemplatesManager;
 use Saritasa\LaravelTools\Services\TemplateWriter;
 

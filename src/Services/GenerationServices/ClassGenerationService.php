@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\LaravelTools\Services;
+namespace Saritasa\LaravelTools\Services\GenerationServices;
 
 use Saritasa\Exceptions\ConfigurationException;
 

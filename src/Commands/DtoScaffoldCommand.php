@@ -7,7 +7,7 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Str;
 use Saritasa\LaravelTools\DTO\Configs\DtoFactoryConfig;
-use Saritasa\LaravelTools\Services\DtoGenerationService;
+use Saritasa\LaravelTools\Services\GenerationServices\DtoGenerationService;
 
 /**
  * Console command to generate new DTO based on model's attributes.

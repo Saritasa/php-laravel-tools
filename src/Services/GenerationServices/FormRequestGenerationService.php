@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\LaravelTools\Services;
+namespace Saritasa\LaravelTools\Services\GenerationServices;
 
 use Exception;
 use Illuminate\Config\Repository;
@@ -8,6 +8,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Saritasa\Exceptions\ConfigurationException;
 use Saritasa\LaravelTools\DTO\Configs\FormRequestFactoryConfig;
 use Saritasa\LaravelTools\Factories\FormRequestFactory;
+use Saritasa\LaravelTools\Services\TemplatesManager;
 
 /**
  * Form request service. Allows to configure form request factory.
