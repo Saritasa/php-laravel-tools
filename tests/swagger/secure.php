@@ -17,7 +17,6 @@ use Dingo\Api\Routing\Router;
 $api = app(Router::class);
 
 $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api'], function (Router $api) {
-    // Public routes without auth security
     $api->group(['middleware' => ['bindings']], function (Router $api) {
         //////////////////
         // Pets routes. //
@@ -25,15 +24,15 @@ $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api']
 
         $api->get('/pets', 'PetsApiController@index')->name('pets.index');
         $api->get('/pets/{id}', 'PetsApiController@show')->name('pets.show');
-    });
 
-    // Routes under auth token security
-    $api->group(['middleware' => ['bindings', 'jwt.auth']], function (Router $api) {
-        //////////////////
-        // Pets routes. //
-        //////////////////
+        // Routes under auth token security
+        $api->group(['middleware' => ['jwt.auth']], function (Router $api) {
+            //////////////////
+            // Pets routes. //
+            //////////////////
 
-        $api->post('/pets', 'PetsApiController@store')->name('pets.store');
-        $api->delete('/pets/{id}', 'PetsApiController@destroy')->name('pets.destroy');
+            $api->post('/pets', 'PetsApiController@store')->name('pets.store');
+            $api->delete('/pets/{id}', 'PetsApiController@destroy')->name('pets.destroy');
+        });
     });
 });

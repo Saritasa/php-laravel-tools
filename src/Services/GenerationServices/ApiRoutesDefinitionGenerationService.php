@@ -84,6 +84,8 @@ class ApiRoutesDefinitionGenerationService extends TemplateBasedGenerationServic
                 $initialFactoryConfig->swaggerFile ?? $this->getSpecificationFileName(),
             ApiRoutesFactoryConfig::SECURITY_SCHEMES_MIDDLEWARES =>
                 $initialFactoryConfig->securitySchemesMiddlewares ?? $this->getSecuritySchemesMiddlewares(),
+            ApiRoutesFactoryConfig::ROOT_GROUP_MIDDLEWARES =>
+                $initialFactoryConfig->rootGroupMiddlewares ?? $this->getRootGroupMiddlewares(),
         ]);
     }
 
@@ -125,5 +127,15 @@ class ApiRoutesDefinitionGenerationService extends TemplateBasedGenerationServic
     private function getSecuritySchemesMiddlewares(): array
     {
         return $this->getServiceConfig('security_schemes_middlewares');
+    }
+
+    /**
+     * Returns middlewares that should be applied for root routes group.
+     *
+     * @return array
+     */
+    private function getRootGroupMiddlewares(): array
+    {
+        return $this->getServiceConfig('root_group_middlewares');
     }
 }

@@ -75,9 +75,9 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
     /**
      * Returns api routes definitions lines.
      *
-     * @return array
+     * @return string
      */
-    private function getRoutesDefinition(): array
+    private function getRoutesDefinition(): string
     {
         $apiRoutes = $this->swaggerReader->getApiPaths(
             $this->config->swaggerFile,
@@ -106,25 +106,30 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
                 $result[] = '';
             }
 
-            $routeGroupMiddlewares = ['bindings'];
             // Use appropriate middleware to handle security scheme
             $groupSecurityMiddleware = $this->config->securitySchemesMiddlewares[$securityScheme] ?? null;
+
+            // If group of routes are secure, than need to wrap them into routes group with middleware
             if ($groupSecurityMiddleware) {
-                $routeGroupMiddlewares[] = $groupSecurityMiddleware;
                 $humanReadableToken = $this->codeFormatter->anyCaseToWords($securityScheme);
                 $routeGroupDescription = "Routes under {$humanReadableToken} security";
+                $result[] = $this->apiRoutesGenerator->renderGroup(
+                    $schemeRoutesDefinitionsBlock,
+                    [$groupSecurityMiddleware],
+                    $routeGroupDescription
+                );
             } else {
-                $routeGroupDescription = 'Public routes without auth security';
+                $result[] = $schemeRoutesDefinitionsBlock;
             }
-
-            $result[] = $this->apiRoutesGenerator->renderGroup(
-                $schemeRoutesDefinitionsBlock,
-                $routeGroupMiddlewares,
-                $routeGroupDescription
-            );
         }
 
-        return $result;
+        $allRoutesDefinition = $this->codeFormatter->linesToBlock($result);
+        $allRoutesInsideRootGroup = $this->apiRoutesGenerator->renderGroup(
+            $allRoutesDefinition,
+            $this->config->rootGroupMiddlewares
+        );
+
+        return $allRoutesInsideRootGroup;
     }
 
     /**
@@ -135,11 +140,11 @@ class ApiRoutesDeclarationFactory extends TemplateBasedFactory
      */
     protected function getPlaceHoldersValues(): array
     {
-        $routesDefinitions = $this->codeFormatter->linesToBlock($this->getRoutesDefinition());
+        $routesDefinitions = $this->codeFormatter->indentBlock($this->getRoutesDefinition());
 
         return [
             static::PLACEHOLDER_CONTROLLERS_NAMESPACE => $this->config->controllersNamespace,
-            static::PLACEHOLDER_API_ROUTES_DEFINITIONS => $this->codeFormatter->indentBlock($routesDefinitions),
+            static::PLACEHOLDER_API_ROUTES_DEFINITIONS => $routesDefinitions,
         ];
     }
 }

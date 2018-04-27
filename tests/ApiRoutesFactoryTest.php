@@ -40,6 +40,7 @@ class ApiRoutesFactoryTest extends LaravelToolsTestsHelpers
                 'NotExistingInSwaggerScheme' => 'token.auth',
                 'AuthToken' => 'jwt.auth',
             ],
+            ApiRoutesFactoryConfig::ROOT_GROUP_MIDDLEWARES => ['bindings'],
             ApiRoutesFactoryConfig::SWAGGER_FILE => __DIR__ . "/swagger/{$swaggerExample}.yaml",
             ApiRoutesFactoryConfig::CONTROLLERS_NAMESPACE => 'App\Http\Controllers\Api',
             ApiRoutesFactoryConfig::TEMPLATE_FILENAME => __DIR__ . '/swagger/template',

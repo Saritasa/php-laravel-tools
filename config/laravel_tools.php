@@ -140,6 +140,11 @@ return [
             'AuthToken' => 'jwt.auth',
         ],
 
+        // List of middlewares that should be applied for root routes group
+        'root_group_middlewares' => [
+            'bindings',
+        ],
+
         // Result file location. File will be overwritten
         'result_file_name' => 'routes/api.php',
 

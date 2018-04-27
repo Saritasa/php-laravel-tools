@@ -17,7 +17,6 @@ use Dingo\Api\Routing\Router;
 $api = app(Router::class);
 
 $api->version(config('api.version'), ['namespace' => 'App\Http\Controllers\Api'], function (Router $api) {
-    // Public routes without auth security
     $api->group(['middleware' => ['bindings']], function (Router $api) {
         //////////////////
         // Pets routes. //

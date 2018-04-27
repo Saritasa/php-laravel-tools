@@ -10,6 +10,7 @@ class ApiRoutesFactoryConfig extends TemplateBasedFactoryConfig
     const CONTROLLERS_NAMESPACE = 'controllersNamespace';
     const SWAGGER_FILE = 'swaggerFile';
     const SECURITY_SCHEMES_MIDDLEWARES = 'securitySchemesMiddlewares';
+    const ROOT_GROUP_MIDDLEWARES = 'rootGroupMiddlewares';
 
     /**
      * API controllers namespace.
@@ -31,4 +32,11 @@ class ApiRoutesFactoryConfig extends TemplateBasedFactoryConfig
      * @var array|null
      */
     public $securitySchemesMiddlewares;
+
+    /**
+     * list of middlewares that should be applied for root routes group.
+     *
+     * @var array
+     */
+    public $rootGroupMiddlewares = [];
 }
