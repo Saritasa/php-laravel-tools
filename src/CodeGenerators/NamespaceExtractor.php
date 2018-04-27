@@ -8,7 +8,6 @@ namespace Saritasa\LaravelTools\CodeGenerators;
 class NamespaceExtractor
 {
     /**
-     *
      * Code style utility. Allows to format code according to settings. Can apply valid indent to code line or code
      * block.
      *

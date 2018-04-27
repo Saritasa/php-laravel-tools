@@ -9,7 +9,7 @@ use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 /**
  * Api routes block generator. Allows to build routes block (not routes group) with description.
  */
-class ApiRoutesBlockGenerator
+class ApiRoutesBlockGenerator implements IApiRoutesBlockGenerator
 {
     /**
      * Generated code formatter helper. Allows to apply indent to code.

@@ -8,7 +8,7 @@ use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
 /**
  * Api routes group generator. Allows to generate api routes group declaration.
  */
-class ApiRoutesGroupGenerator
+class ApiRoutesGroupGenerator implements IApiRoutesGroupGenerator
 {
     /**
      * Generated code formatter helper. Allows to apply indent to code.
@@ -50,7 +50,7 @@ class ApiRoutesGroupGenerator
         $description = $this->getGroupDescription($description);
         $declaration = $this->getGroupDeclaration($groupContent, $middleware);
 
-        return trim("{$description}\n${declaration}");
+        return $this->codeFormatter->linesToBlock(array_filter([$description, $declaration]));
     }
 
     /**

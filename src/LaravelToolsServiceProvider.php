@@ -6,6 +6,8 @@ use Doctrine\DBAL\Connection;
 use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\IApiRouteGenerator;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\IApiRoutesBlockGenerator;
+use Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition\IApiRoutesGroupGenerator;
 use Saritasa\LaravelTools\Commands\ApiControllersScaffoldCommand;
 use Saritasa\LaravelTools\Commands\ApiRoutesScaffoldCommand;
 use Saritasa\LaravelTools\Commands\DtoScaffoldCommand;
@@ -81,7 +83,7 @@ class LaravelToolsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register all dependencies.
+     * Register package dependencies.
      *
      * @return void
      */
@@ -98,11 +100,11 @@ class LaravelToolsServiceProvider extends ServiceProvider
         $this->app->when(SwaggerReader::class)->needs(IPhpTypeMapper::class)->give(SwaggerToPhpTypeMapper::class);
 
         $this->app->bind(ILaravelValidationTypeMapper::class, DbalToLaravelValidationTypeMapper::class);
+        $this->app->bind(IValidationRulesDictionary::class, config('laravel_tools.rules.dictionary'));
 
-        $rulesDictionary = config('laravel_tools.rules.dictionary');
-        $this->app->bind(IValidationRulesDictionary::class, $rulesDictionary);
-
-        $apiRouteGenerator = config('laravel_tools.api_routes.route_generator');
-        $this->app->bind(IApiRouteGenerator::class, $apiRouteGenerator);
+        // API-routes and controllers related bindings
+        $this->app->bind(IApiRouteGenerator::class, config('laravel_tools.api_routes.route_generator'));
+        $this->app->bind(IApiRoutesBlockGenerator::class, config('laravel_tools.api_routes.block_generator'));
+        $this->app->bind(IApiRoutesGroupGenerator::class, config('laravel_tools.api_routes.group_generator'));
     }
 }
