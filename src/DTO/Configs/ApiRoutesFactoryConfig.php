@@ -38,5 +38,5 @@ class ApiRoutesFactoryConfig extends TemplateBasedFactoryConfig
      *
      * @var array
      */
-    public $rootGroupMiddlewares = [];
+    public $rootGroupMiddlewares;
 }
