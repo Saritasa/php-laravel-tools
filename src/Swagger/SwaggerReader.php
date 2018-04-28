@@ -150,6 +150,7 @@ class SwaggerReader
                 ApiRouteObject::GROUP => $routesGroup,
                 ApiRouteObject::METHOD => $method,
                 ApiRouteObject::URL => $url,
+                ApiRouteObject::OPERATION_ID => $operation->getOperationId(),
                 ApiRouteObject::DESCRIPTION => $operation->getSummary() ?? $operation->getDescription(),
                 ApiRouteObject::PARAMETERS => $routeParameters,
                 // Now only one security scheme per route supported
