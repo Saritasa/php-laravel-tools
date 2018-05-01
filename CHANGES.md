@@ -1,4 +1,10 @@
 # Changes History
+1.5.0
+-----
++ Add API routes and controllers based on swagger specification scaffolding
++ Improve classes parenthesis structure
++ Move documentation to WIKI
+
 1.4.0
 -----
 Getters and setters uses camelCase for function names
