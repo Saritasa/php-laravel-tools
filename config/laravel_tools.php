@@ -93,6 +93,22 @@ return [
     'swagger' => [
         // Swagger file location
         'path' => 'Artifacts/API/swagger.yaml',
+
+        // Path parameters substitutions. List of path variables in swagger that should be substituted during
+        // route implementation guessing.
+        // If key of this array item is equals to swagger path parameter name the it will be substituted by provided
+        // values. Value should be compatible with ApiRouteParameterObject class structure.
+        // Available placeholders for 'type' parameter:
+        // - {{resourceClass}} - will be replaced with guessed route resource class
+        // When placeholder value is empty then substitution is not performed
+        'path_parameters_substitutions' => [
+            // Swagger path parameter 'id' should be renamed to 'model' with type hinting of resource class:
+            'id' => [
+                'name' => 'model',
+                'type' => '{{resourceClass}}',
+                'description' => 'Related resource model',
+            ],
+        ],
     ],
 
     // Api controllers configuration
@@ -119,11 +135,13 @@ return [
         // - {{resourceClass}} - FQN of guessed resource class that is handled by controller.
         // When placeholder value is empty then property will be ignored
         'custom_properties' => [
+            // This configuration is helpful when you need to initialize your API controller with
+            // resource class name that this controller handles, for example.
             [
+                'description' => 'Resource class that is handled by this API controller',
                 'name' => 'modelClass',
                 'type' => '{{resourceClass}}',
                 'value' => '{{resourceClass}}::class',
-                'description' => 'Resource class that handled by this API controller',
                 'visibilityType' => 'protected',
             ],
         ],

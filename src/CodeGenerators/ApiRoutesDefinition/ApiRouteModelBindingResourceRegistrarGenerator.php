@@ -12,28 +12,16 @@ use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 class ApiRouteModelBindingResourceRegistrarGenerator extends ApiRouteResourceRegistrarGenerator
 {
     /**
-     * Detects and substitutes default binding in route by resource model class.
+     * Detects binding in route by resource model class.
      *
-     * @param ApiRouteImplementationObject $routeImplementation Route implementation to detect suggested bindings
+     * @param ApiRouteImplementationObject $routeImplementation Route implementation to detect bindings
      *
      * @return boolean
      */
-    private function substituteBindings(ApiRouteImplementationObject &$routeImplementation): bool
+    private function modelBindingRequired(ApiRouteImplementationObject $routeImplementation): bool
     {
-        if (!$routeImplementation->resourceClass) {
-            return false;
-        }
-
-        foreach ($routeImplementation->function->parameters as $index => $parameter) {
-            if ($parameter->name === 'id') {
-                $parameter->name = 'model';
-                $parameter->type = $routeImplementation->resourceClass;
-                $parameter->description = 'related resource model';
-                $routeImplementation->function->parameters[$index] = $parameter;
-
-                // We are suggest that first 'id' parameter is the handled by implementation resource identifier
-                return true;
-            }
+        foreach ($routeImplementation->function->parameters as $parameter) {
+            return $parameter->name === 'model';
         }
 
         return false;
@@ -50,7 +38,7 @@ class ApiRouteModelBindingResourceRegistrarGenerator extends ApiRouteResourceReg
     {
         $routeImplementation = $this->apiRoutesImplementationGuesser->getRouteImplementationDetails($routeData);
 
-        $resourceBindingSubstituted = $this->substituteBindings($routeImplementation);
+        $resourceBindingSubstituted = $this->modelBindingRequired($routeImplementation);
 
         $url = $routeData->url;
         $routeBindings = '';

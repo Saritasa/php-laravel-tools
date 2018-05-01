@@ -8,6 +8,7 @@ use Saritasa\LaravelTools\DTO\PhpClasses\FunctionObject;
 use Saritasa\LaravelTools\DTO\PhpClasses\FunctionParameterObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteImplementationObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
+use Saritasa\LaravelTools\DTO\Routes\ApiRouteParameterObject;
 use Saritasa\LaravelTools\DTO\Routes\KnownApiRouteObject;
 use Saritasa\LaravelTools\Enums\ClassMemberVisibilityTypes;
 
@@ -48,6 +49,13 @@ class ApiRoutesImplementationGuesser
     private $controllersNamespace;
 
     /**
+     * List of function parameters substitutions.
+     *
+     * @var array
+     */
+    private $pathSubstitutions;
+
+    /**
      * Api route implementation guesser that can guess which controller, method and name should be used for api route
      * specification.
      *
@@ -65,6 +73,8 @@ class ApiRoutesImplementationGuesser
             ->get('laravel_tools.api_routes.known_routes', []);
         $this->modelsNamespace = $configRepository
             ->get('laravel_tools.models.namespace');
+        $this->pathSubstitutions = $configRepository
+            ->get('laravel_tools.swagger.path_parameters_substitutions', []);
     }
 
     /**
@@ -214,6 +224,70 @@ class ApiRoutesImplementationGuesser
     }
 
     /**
+     * Fill placeholders in string.
+     *
+     * @param string $templateString String to fill placeholders in
+     * @param array $placeholders Key-value pairs of placeholders names and values to replace in template string
+     *
+     * @return null|string Null when placeholder value is empty or result string
+     */
+    private function fillPlaceholder(?string $templateString, array $placeholders): ?string
+    {
+        foreach ($placeholders as $placeholder => $value) {
+            if (strpos($templateString, $placeholder) !== false) {
+                if (!$value) {
+                    return null;
+                }
+
+                $templateString = str_replace($placeholder, $value, $templateString);
+            }
+        }
+
+        return $templateString;
+    }
+
+    /**
+     * Substitutes API router parameter according to configuration.
+     *
+     * @param ApiRouteParameterObject $parameter Parameter to substitute
+     * @param ApiRouteObject $route Route details to retrieve substitution values
+     *
+     * @return ApiRouteParameterObject
+     */
+    private function substituteParameter(
+        ApiRouteParameterObject $parameter,
+        ApiRouteObject $route
+    ): ApiRouteParameterObject {
+        $resourceClass = $this->guessResourceClass($route);
+        $placeholders = [
+            '{{resourceClass}}' => $resourceClass,
+        ];
+
+        foreach ($this->pathSubstitutions as $substitutionParameterName => $substitution) {
+            if ($substitutionParameterName === $parameter->name) {
+                $type = $substitution[ApiRouteParameterObject::TYPE] ?? $parameter->type;
+                $type = $this->fillPlaceholder($type, $placeholders);
+
+                if (!$type) {
+                    break;
+                }
+
+                return new ApiRouteParameterObject([
+                    ApiRouteParameterObject::TYPE => $type,
+                    ApiRouteParameterObject::DESCRIPTION =>
+                        $substitution[ApiRouteParameterObject::DESCRIPTION] ?? $parameter->description,
+                    ApiRouteParameterObject::NAME =>
+                        $substitution[ApiRouteParameterObject::NAME] ?? $parameter->name,
+                    ApiRouteParameterObject::REQUIRED =>
+                        $substitution[ApiRouteParameterObject::REQUIRED] ?? $parameter->required,
+                ]);
+            }
+        }
+
+        return $parameter;
+    }
+
+    /**
      * Guess function details that probably can handle this route.
      *
      * @param ApiRouteObject $route Route to retrieve function details
@@ -227,6 +301,8 @@ class ApiRoutesImplementationGuesser
             if ($parameter->in !== 'path') {
                 continue;
             }
+
+            $parameter = $this->substituteParameter($parameter, $route);
 
             $parameters[] = new FunctionParameterObject([
                 FunctionParameterObject::DESCRIPTION => $parameter->description,
