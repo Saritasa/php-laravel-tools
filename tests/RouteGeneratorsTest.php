@@ -98,6 +98,16 @@ class RouteGeneratorsTest extends LaravelToolsTestsHelpers
     ): void {
         $configRepository = $this->getConfigRepository();
         $configRepository->set('laravel_tools.models.namespace', '');
+        $configRepository->set('laravel_tools.swagger', [
+            'path_parameters_substitutions' => [
+                // Swagger path parameter 'id' should be renamed to 'model' with typehinting of resource class:
+                'id' => [
+                    'name' => 'model',
+                    'type' => '{{resourceClass}}',
+                    'description' => 'Related resource model',
+                ],
+            ],
+        ]);
         $apiRouteGenerator = new ApiRouteModelBindingResourceRegistrarGenerator(
             new ApiRoutesImplementationGuesser($configRepository),
             $this->getCommentsGenerator(),
