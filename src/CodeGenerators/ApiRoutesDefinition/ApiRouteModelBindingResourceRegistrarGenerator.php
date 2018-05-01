@@ -2,7 +2,6 @@
 
 namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 
-use Saritasa\LaravelTools\DTO\Routes\ApiRouteImplementationObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 
 /**
@@ -11,21 +10,6 @@ use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
  */
 class ApiRouteModelBindingResourceRegistrarGenerator extends ApiRouteResourceRegistrarGenerator
 {
-    /**
-     * Detects binding in route by resource model class.
-     *
-     * @param ApiRouteImplementationObject $routeImplementation Route implementation to detect bindings
-     *
-     * @return boolean
-     */
-    private function modelBindingRequired(ApiRouteImplementationObject $routeImplementation): bool
-    {
-        foreach ($routeImplementation->function->parameters as $parameter) {
-            return $parameter->name === 'model';
-        }
-
-        return false;
-    }
 
     /**
      * Returns API route declaration.
@@ -38,12 +22,10 @@ class ApiRouteModelBindingResourceRegistrarGenerator extends ApiRouteResourceReg
     {
         $routeImplementation = $this->apiRoutesImplementationGuesser->getRouteImplementationDetails($routeData);
 
-        $resourceBindingSubstituted = $this->modelBindingRequired($routeImplementation);
-
         $url = $routeData->url;
         $routeBindings = '';
 
-        if ($resourceBindingSubstituted) {
+        if ($this->modelBindingRequired($routeImplementation)) {
             $url = str_replace_first('{id}', '{model}', $routeData->url);
             $routeBindings = ", ['model' => {$routeImplementation->resourceClass}::class]";
         }

@@ -4,6 +4,7 @@ namespace Saritasa\LaravelTools\CodeGenerators\ApiRoutesDefinition;
 
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\CommentsGenerator;
+use Saritasa\LaravelTools\DTO\Routes\ApiRouteImplementationObject;
 use Saritasa\LaravelTools\DTO\Routes\ApiRouteObject;
 use Saritasa\LaravelTools\Services\ApiRoutesImplementationGuesser;
 
@@ -72,6 +73,22 @@ class ApiRouteResourceRegistrarGenerator implements IApiRouteGenerator
     }
 
     /**
+     * Detects binding in route by resource model class.
+     *
+     * @param ApiRouteImplementationObject $routeImplementation Route implementation to detect bindings
+     *
+     * @return boolean
+     */
+    protected function modelBindingRequired(ApiRouteImplementationObject $routeImplementation): bool
+    {
+        foreach ($routeImplementation->function->parameters as $parameter) {
+            return $parameter->name === 'model';
+        }
+
+        return false;
+    }
+
+    /**
      * Returns description for route.
      *
      * @param ApiRouteObject $routeData Route data to retrieve description
@@ -98,10 +115,16 @@ class ApiRouteResourceRegistrarGenerator implements IApiRouteGenerator
     {
         $routeImplementation = $this->apiRoutesImplementationGuesser->getRouteImplementationDetails($routeData);
 
+        $url = $routeData->url;
+
+        if ($this->modelBindingRequired($routeImplementation)) {
+            $url = str_replace_first('{id}', '{model}', $routeData->url);
+        }
+
         $method = strtolower($routeData->method);
 
         return "\$registrar->{$method}(" .
-            "'{$routeData->url}', " .
+            "'{$url}', " .
             "{$routeImplementation->controller}::class, " .
             "'{$routeImplementation->action}', " .
             "'{$routeImplementation->name}');";
