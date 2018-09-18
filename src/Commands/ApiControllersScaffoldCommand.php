@@ -33,7 +33,7 @@ class ApiControllersScaffoldCommand extends Command
     private $apiControllerGenerationService;
 
     /**
-     * Console command to generate api routes based on swagger 2.0 specification.
+     * Console command to generate api controllers based on swagger 2.0 specification.
      *
      * @param ApiControllerGenerationService $apiControllerGenerationService Service that can scaffold controllers and
      *     methods that covers api specification
