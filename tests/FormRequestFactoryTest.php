@@ -110,6 +110,8 @@ class FormRequestFactoryTest extends LaravelToolsTestsHelpers
             new Column('active', Type::getType(Type::BOOLEAN), ['comment' => 'Is this user active or not']),
             // Test foreign key
             new Column('role_id', Type::getType(Type::BIGINT)),
+            // Test camel cased attribute
+            new Column('notConfirmed', Type::getType(Type::SMALLINT)),
         ];
 
         $foreignKey = new ForeignKeyConstraint(['role_id'], 'roles', ['id']);
@@ -405,6 +407,7 @@ use App\FormRequests\Request;
  * @property-read integer \$role_id
  * @property-read string|null \$name
  * @property-read boolean \$active Is this user active or not
+ * @property-read integer \$notConfirmed
  */
 class TestFormRequest extends Request
 {
@@ -419,7 +422,8 @@ class TestFormRequest extends Request
             'id' => 'required|integer',
             'role_id' => 'required|exists:roles,id|integer',
             'name' => 'nullable|string|max:40',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
+            'notConfirmed' => 'required|integer',
         ];
     }
 }
@@ -447,6 +451,7 @@ use App\FormRequests\Request;
  * @property-read integer \$role_id
  * @property-read string|null \$name
  * @property-read boolean \$active Is this user active or not
+ * @property-read integer \$notConfirmed
  */
 class TestFormRequest extends Request
 {
@@ -460,7 +465,8 @@ class TestFormRequest extends Request
         return [
             'role_id' => 'required|exists:roles,id|integer',
             'name' => 'nullable|string|max:40',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
+            'notConfirmed' => 'required|integer',
         ];
     }
 }
@@ -490,6 +496,7 @@ use Illuminate\Foundation\Auth\User;
  * @property-read integer \$role_id
  * @property-read string|null \$name
  * @property-read boolean \$active Is this user active or not
+ * @property-read integer \$notConfirmed
  */
 class TestFormRequest extends Request
 {
@@ -504,7 +511,8 @@ class TestFormRequest extends Request
             User::ID => 'required|integer',
             User::ROLE_ID => 'required|exists:roles,id|integer',
             User::NAME => 'nullable|string|max:40',
-            User::ACTIVE => 'required|boolean'
+            User::ACTIVE => 'required|boolean',
+            User::NOT_CONFIRMED => 'required|integer',
         ];
     }
 }

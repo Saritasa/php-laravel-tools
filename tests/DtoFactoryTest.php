@@ -112,6 +112,8 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
             new Column('name', Type::getType(Type::STRING), ['length' => 40, 'notNull' => false]),
             // Test dates
             new Column('birth_date', Type::getType(Type::DATE), ['comment' => 'The date when user was born']),
+            // Test camel cased attribute
+            new Column('notConfirmed', Type::getType(Type::SMALLINT), ['comment' => 'Whether email confirmed or not']),
         ];
 
         $table = new Table('users', $columns, [], [], 0);
@@ -307,7 +309,7 @@ class DtoFactoryTest extends LaravelToolsTestsHelpers
                 $this->getExpectedImmutableWithoutId(),
             ],
             'Strict typed DTO' => [
-                $this->getDtoFactoryConfig(['name', 'birth_date'], false, true),
+                $this->getDtoFactoryConfig(['name', 'birth_date', 'notConfirmed'], false, true),
                 $this->getExpectedStrictTypedDto(),
             ],
             'Immutable strict typed DTO' => [
@@ -368,6 +370,7 @@ class TestDto extends Dto
     const ID = 'id';
     const NAME = 'name';
     const BIRTH_DATE = 'birth_date';
+    const NOT_CONFIRMED = 'notConfirmed';
 
     /**
      * @var integer
@@ -385,6 +388,13 @@ class TestDto extends Dto
      * @var string
      */
     public \$birth_date;
+
+    /**
+     * Whether email confirmed or not.
+     *
+     * @var integer
+     */
+    public \$notConfirmed;
 }
 
 templateContent;
@@ -411,6 +421,7 @@ class TestDto extends Dto
 {
     const NAME = 'name';
     const BIRTH_DATE = 'birth_date';
+    const NOT_CONFIRMED = 'notConfirmed';
 
     /**
      * @var string|null
@@ -423,6 +434,13 @@ class TestDto extends Dto
      * @var string
      */
     public \$birth_date;
+
+    /**
+     * Whether email confirmed or not.
+     *
+     * @var integer
+     */
+    public \$notConfirmed;
 }
 
 templateContent;
@@ -463,6 +481,13 @@ class TestDto extends Dto
      * @var string
      */
     public \$birth_date;
+
+    /**
+     * Whether email confirmed or not.
+     *
+     * @var integer
+     */
+    public \$notConfirmed;
 }
 
 templateContent;
@@ -487,11 +512,13 @@ use Saritasa\Dto;
  *
  * @property-read string|null \$name
  * @property-read string \$birth_date The date when user was born
+ * @property-read integer \$notConfirmed Whether email confirmed or not
  */
 class TestDto extends Dto
 {
     const NAME = 'name';
     const BIRTH_DATE = 'birth_date';
+    const NOT_CONFIRMED = 'notConfirmed';
 
     /**
      * @var string|null
@@ -504,6 +531,13 @@ class TestDto extends Dto
      * @var string
      */
     protected \$birth_date;
+
+    /**
+     * Whether email confirmed or not.
+     *
+     * @var integer
+     */
+    protected \$notConfirmed;
 }
 
 templateContent;
@@ -582,11 +616,13 @@ use Saritasa\Dto;
  *
  * @property-read integer \$id
  * @property-read string|null \$name
+ * @property-read integer \$notConfirmed Whether email confirmed or not
  */
 class TestDto extends Dto
 {
     const ID = 'id';
     const NAME = 'name';
+    const NOT_CONFIRMED = 'notConfirmed';
 
     /**
      * @var integer
@@ -597,6 +633,13 @@ class TestDto extends Dto
      * @var string|null
      */
     protected \$name;
+
+    /**
+     * Whether email confirmed or not.
+     *
+     * @var integer
+     */
+    protected \$notConfirmed;
 
     /**
      * Get id attribute value.
@@ -616,6 +659,16 @@ class TestDto extends Dto
     public function getName(): ?string
     {
         return \$this->name;
+    }
+
+    /**
+     * Get notConfirmed attribute value.
+     *
+     * @return integer
+     */
+    public function getNotConfirmed(): int
+    {
+        return \$this->notConfirmed;
     }
 
     /**
@@ -640,6 +693,18 @@ class TestDto extends Dto
     protected function setName(?string \$name): void
     {
         \$this->name = \$name;
+    }
+
+    /**
+     * Set notConfirmed attribute value.
+     *
+     * @param integer \$notConfirmed New attribute value
+     *
+     * @return void
+     */
+    protected function setNotConfirmed(int \$notConfirmed): void
+    {
+        \$this->notConfirmed = \$notConfirmed;
     }
 }
 
