@@ -1,4 +1,9 @@
 # Changes History
+1.5.1
+-----
++ Resolve issue with constant name generation in form request
++ Add unit tests to check compatibility of generation attributes with snake_cased and camelCased names
+
 1.5.0
 -----
 + Add API routes and controllers based on swagger specification scaffolding
