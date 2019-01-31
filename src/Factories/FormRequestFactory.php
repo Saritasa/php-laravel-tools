@@ -3,6 +3,7 @@
 namespace Saritasa\LaravelTools\Factories;
 
 use Exception;
+use Illuminate\Support\Str;
 use Saritasa\Exceptions\NotImplementedException;
 use Saritasa\LaravelTools\CodeGenerators\CodeFormatter;
 use Saritasa\LaravelTools\CodeGenerators\NamespaceExtractor;
@@ -27,7 +28,6 @@ class FormRequestFactory extends ModelBasedClassFactory
     protected const PLACEHOLDER_CLASS_PHP_DOC = 'classPhpDoc';
     protected const PLACEHOLDER_FORM_REQUEST_PARENT = 'formRequestParent';
     protected const PLACEHOLDER_RULES = 'rules';
-
     private const RULES_INDENTS = 3;
 
     /**
@@ -146,6 +146,8 @@ class FormRequestFactory extends ModelBasedClassFactory
     {
         $formattedRules = implode(",\n", $rules);
 
+        $formattedRules = $formattedRules ? $formattedRules . ',' : $formattedRules;
+
         return trim($this->codeFormatter->indentBlock($formattedRules, false, static::RULES_INDENTS));
     }
 
@@ -180,7 +182,7 @@ class FormRequestFactory extends ModelBasedClassFactory
     {
         if ($this->config->suggestAttributeNamesConstants) {
             $modelClassName = $this->config->modelClassName;
-            $constantName = strtoupper($columnName);
+            $constantName = Str::upper(Str::snake($columnName));
 
             return "\\{$modelClassName}::{$constantName}";
         }
