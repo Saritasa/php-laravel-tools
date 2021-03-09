@@ -1,6 +1,7 @@
 # Laravel Tools
 
-[![Build Status](https://travis-ci.org/Saritasa/php-laravel-tools.svg?branch=master)](https://travis-ci.org/Saritasa/php-laravel-tools)
+[![PHP Unit](https://github.com/Saritasa/php-laravel-tools/workflows/PHP%20Unit/badge.svg)](https://github.com/Saritasa/php-laravel-tools/actions)
+[![PHP CodeSniffer](https://github.com/Saritasa/php-laravel-tools/workflows/PHP%20Codesniffer/badge.svg)](https://github.com/Saritasa/php-laravel-tools/actions)
 [![CodeCov](https://codecov.io/gh/Saritasa/php-laravel-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/Saritasa/php-laravel-tools)
 [![Release](https://img.shields.io/github/release/Saritasa/php-laravel-tools.svg)](https://github.com/Saritasa/php-laravel-tools/releases)
 [![PHPv](https://img.shields.io/packagist/php-v/saritasa/laravel-tools.svg)](http://www.php.net)
